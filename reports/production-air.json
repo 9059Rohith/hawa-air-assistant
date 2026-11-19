@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-11-19T12:55:45.663Z",
+  "results": [
+    {
+      "path": "/api/geocode?q=Delhi",
+      "status": 200,
+      "resultCount": 5
+    },
+    {
+      "path": "/api/air?lat=28.61&lon=77.21",
+      "status": 502,
+      "error": {
+        "code": "UNAVAILABLE",
+        "message": "This service is unavailable. Please retry or enter PM2.5 manually."
+      }
+    }
+  ]
+}

@@ -1,8 +1,14 @@
 {
-  "provider": "Vercel",
+  "provider": "Sites / Cloudflare Workers",
   "project": "hawa-air-assistant",
-  "scope": "rohiths-projects-5e14931b",
-  "state": "blocked-before-project-creation",
-  "reason": "Your Team exceeded our fair use limits and has been blocked.",
-  "observedDate": "2026-11-19"
+  "state": "succeeded",
+  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "publicAccess": true,
+  "version": 2,
+  "sourceCommit": "718ce1d26bf664ea7f8ee4e234ee45ffde6d9812",
+  "observedDate": "2026-11-19",
+  "priorPlatformRestrictions": {
+    "vercel": "Team fair-use restriction prevented project creation",
+    "railway": "Workspace restricted after unusual activity; no upgrade or payment made"
+  }
 }

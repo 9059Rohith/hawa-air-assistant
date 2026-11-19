@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Cache } from "./cache";
 import { safeFetch } from "./http";
 import type { Air, Location } from "@/domain/types";
+import { AppError } from "@/lib/errors";
 const cache = new Cache<Air>();
 const payload = z.object({
   current: z.object({ pm2_5: z.number().min(0), time: z.string() }),
@@ -21,8 +22,20 @@ export async function getAir(location: Location): Promise<Air> {
     const response = await safeFetch(
       `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&hourly=pm2_5&forecast_days=2&timezone=auto`,
     );
-    if (!response.ok) throw new Error("Upstream unavailable");
-    const data = payload.parse(await response.json());
+    if (!response.ok)
+      throw new AppError(
+        "AIR_PROVIDER",
+        502,
+        `Air data is temporarily unavailable (provider ${response.status}). Enter a manual reading or retry shortly.`,
+      );
+    const parsed = payload.safeParse(await response.json());
+    if (!parsed.success)
+      throw new AppError(
+        "AIR_DATA",
+        502,
+        "The air provider returned incomplete readings. Enter a manual reading or retry shortly.",
+      );
+    const data = parsed.data;
     const hourly = data.hourly.time
       .flatMap((time, i) => {
         const pm25 = data.hourly.pm2_5[i];

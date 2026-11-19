@@ -229,6 +229,23 @@ it("geocodes with cached minimal output", async () => {
   mock.mockResolvedValue(new Response("", { status: 500 }));
   await expect(geocode("Failure")).rejects.toThrow();
 });
+it("rejects incomplete air readings instead of presenting a fabricated value", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          current: { pm2_5: null, time: "2026-11-19T12:00" },
+          hourly: { time: [], pm2_5: [] },
+          timezone: "UTC",
+        }),
+      ),
+    ),
+  );
+  await expect(
+    getAir({ name: "Unavailable monitor", lat: 1, lon: 1 }),
+  ).rejects.toMatchObject({ code: "AIR_DATA", status: 502 });
+});
 it("API rejects invalid queries and health discloses only status", async () => {
   expect((await airGET(new Request("https://hawa.test/api/air"))).status).toBe(
     400,

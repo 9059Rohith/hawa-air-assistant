@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-19T12:48:32.732Z",
+  "verifiedAt": "2026-11-19T12:55:43.570Z",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
   "status": 200,
-  "generatedBy": "rules",
+  "generatedBy": "llm",
   "actionCount": 10,
-  "elapsedMs": 262
+  "elapsedMs": 7608
 }
