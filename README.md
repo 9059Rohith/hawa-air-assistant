@@ -6,6 +6,8 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
+**Completion status:** the core application is implemented and deployed, with **103/103 tests and 14/14 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. All submission fields are prepared, including the owner-provided LinkedIn link. **Official assessment: pending** — the portal currently shows no results and no analysis attempts. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
+
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
 **[Open HAWA — public application](https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site)**
@@ -61,7 +63,7 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 
 ## Current feature completion
 
-The core problem statement is implemented across family planning, indoor guidance, sustainable routines and community kits. The detailed build brief is mapped to working features, checks and explicit design deviations in [traceability](docs/TRACEABILITY.md). LinkedIn publication is excluded from this delivery. Hosted CI execution still depends on the account billing restriction; local verification is reported separately.
+The core problem statement is implemented across family planning, indoor guidance, sustainable routines and community kits. The detailed build brief is mapped to working features, checks and explicit design deviations in [traceability](docs/TRACEABILITY.md). The owner supplied the [LinkedIn submission link](https://lnkd.in/p/gRcxW3pH), which is entered in the prepared form. Hosted CI execution still depends on the account billing restriction; local verification is reported separately.
 
 ## Quick start
 

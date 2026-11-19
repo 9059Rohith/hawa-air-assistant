@@ -1,6 +1,6 @@
 # HAWA submission handoff
 
-Challenge 6: Urban Air Quality Assistant. The core application is implemented, publicly deployed and verified against the problem statement. This is an evidence-based readiness record, not a guarantee of perfection, score or rank.
+Challenge 6: Urban Air Quality Assistant. The core application is implemented, publicly deployed and verified against the problem statement. All required submission fields are prepared. On 19 November 2026 the portal still displayed **No Results Yet**, **No analysis attempts yet**, and **0/3 attempts**. Official assessment is pending; neither a 100% score nor a top-1% placement is established by that screen.
 
 | Submission item                    | Status / destination                                                                                                                                          |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -14,10 +14,10 @@ Challenge 6: Urban Air Quality Assistant. The core application is implemented, p
 | Live integrations                  | Actual OpenAI plan verified on final release; browser Open-Meteo success separately recorded with source timestamp                                            |
 | GitHub CI                          | Workflow activated, but GitHub blocks all job steps because of the account billing lock                                                                       |
 | Hack2skill draft                   | GitHub, deployment, demo, changes and GenAI fields filled; final Submit has not been clicked                                                                  |
-| LinkedIn                           | Deliberately excluded by the owner; the portal marks this field required                                                                                      |
+| LinkedIn                           | [Owner-provided post link](https://lnkd.in/p/gRcxW3pH) entered into the required field; post content was not independently verified                           |
 
 The refreshed demo replaced the existing Drive file version without changing its public link. The sharing dialog confirms **Anyone with the link — Viewer**. It records labelled manual data and loaded-page offline rules mode; the separate real AI check is not portrayed as part of that recording.
 
 See [the quality report](QUALITY_REPORT.md) for dated measurements, an earlier intermittent browser-test failure, subsequent passing runs, accessibility review limits and the platform-managed Lighthouse finding. Documentation/evidence commits after the deployed source revision do not change the application bundle.
 
-The owner must supply the excluded LinkedIn field if required by the portal and perform final submission. Resolving the GitHub billing lock is an account-owner action; local passing checks are not described as a successful hosted CI run.
+The owner performs final submission; the Submit button has not been clicked. Resolving the GitHub billing lock is an account-owner action; local passing checks are not described as a successful hosted CI run.

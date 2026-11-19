@@ -61,11 +61,11 @@ Real browser Open-Meteo Delhi data was separately observed at 115.9 µg/m³ (sou
 
 - The public application and repository use the existing links in README. Vercel/Railway account restrictions do not block this Sites deployment.
 - GitHub's billing lock must be resolved by the account owner before hosted CI can execute. Local checks are not presented as hosted CI success.
-- LinkedIn publication is excluded by the owner. The submission portal may require that field before the owner can submit.
+- The owner-provided LinkedIn link is now entered in the required submission field. Its post content has not been independently verified. The portal still shows no assessment results or attempts; final submission remains with the owner.
 - The public captioned demo was refreshed from the deployed application (3 minutes 8 seconds), including loaded-page offline planning, community tools and calculators. It uses labelled manual data and rules mode; real AI is verified separately.
 - Independent NVDA/VoiceOver and professional Hindi review are not claimed. Some source names and technical explanations remain English.
 - No medical validation, empirical local calibration, full regulatory certification, or Docker runtime verification is claimed.
 - Loaded-page offline use works; first visits and uncached page loads need internet. No service-worker installation claim is made.
 - A key pasted into conversation should be rotated through its provider account. No key value is in committed source or packaged artifacts.
 
-The core problem statement is implemented and locally verified. External account actions and the deliberately excluded social post prevent an unqualified claim that every submission prerequisite is complete. See [traceability](TRACEABILITY.md) for the detailed brief and justified design boundaries.
+The core problem statement is implemented and verified, and all required form fields are prepared. Official assessment remains pending and hosted CI is blocked by the account billing restriction. A 100% evaluation score or top-1% ranking is not claimed. See [traceability](TRACEABILITY.md) for the detailed brief and justified design boundaries.
