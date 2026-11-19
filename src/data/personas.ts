@@ -2,6 +2,17 @@ import type { Profile } from "@/domain/types";
 export const baseProfile: Profile = {
   adults: 2,
   children: 0,
+  childAges: [],
+  dwelling: "apartment",
+  floor: 1,
+  ceiling: 2.7,
+  ventilation: "windows",
+  cookingHours: 1,
+  heatingHours: 0,
+  vehicleFuel: "petrol",
+  activity: "rest",
+  mask: "none",
+  timeMinutes: 30,
   elders: 0,
   higherRisk: false,
   pregnant: false,
@@ -26,7 +37,13 @@ export const baseProfile: Profile = {
   simple: false,
 };
 export const personas = {
-  Meera: { ...baseProfile, children: 2, higherRisk: true, schoolRun: true },
+  Meera: {
+    ...baseProfile,
+    children: 2,
+    childAges: [6, 9],
+    higherRisk: true,
+    schoolRun: true,
+  },
   Ramesh: {
     ...baseProfile,
     adults: 2,
@@ -45,6 +62,7 @@ export const personas = {
     sealing: "leaky",
     budget: "free",
     roomArea: 12,
+    dwelling: "hostel",
   },
 } satisfies Record<string, Profile>;
 export const cities = {

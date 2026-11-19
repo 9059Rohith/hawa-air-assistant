@@ -21,30 +21,31 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 ## What it does
 
 - Search a city, opt into approximate geolocation, or enter a PM2.5 sensor reading. Live data carries its source, timestamp and stale-data warning.
-- Configure a five-step household profile, or start with Meera, Ramesh or Ananya. Demo air is clearly identified as illustrative.
+- Configure a five-step profile including child ages, dwelling, ventilation, ceiling height, cooking/heating duration, fuel, mask/activity and time budget; or start with Meera, Ramesh or Ananya. Demo air is clearly identified as illustrative.
 - Generate a plan with up to ten curated actions for indoor air, daily routines, transport, cooking, heating and community participation.
 - Toggle actions in a what-if comparison. Combined exposure effects are recomputed rather than adding percentages.
-- Inspect every calculation, input and source. Quantitative results are labelled low-confidence scenarios; unsupported cooking/waste numbers are deliberately absent.
+- Inspect every calculation, input and source. Quantitative results are labelled low-confidence scenarios; fuel-energy scenarios are separate from qualitative particle-source guidance; waste benefits are not fabricated.
 - Ask follow-up questions, with validated AI language or rules fallback, knowledge citations and urgent-symptom escalation.
-- Print, download JSON, share a non-sensitive action summary, size a purifier, browse 60 bilingual guidance entries and create a community notice.
+- View a keyboard-accessible forecast chart, per-action steps/caveats and a seven-day scenario table.
+- Print, download JSON, share a link containing only curated action IDs, size a purifier, browse 60 bilingual guidance entries and create a community notice.
 - Choose Hindi, simple wording, light/dark/high-contrast themes and browser read-aloud. Some engineering explanations and secondary controls remain English.
 
 ## Why it is different
 
-**The calculator owns the numbers.** Model output cannot change action IDs, add links or supply numeric claims. A failed provider request, malformed output or missing key produces a useful rules-based plan. Source provenance, modelling boundaries and limitations are visible beside the result.
+**The calculator owns the numbers.** Schema and output checks reject unknown action IDs, links, digits and common unsafe medical or numeric language. These guards reduce risk rather than prove every sentence correct. A failed provider request, malformed output or missing key produces a useful rules-based plan. Source provenance, modelling boundaries and limitations are visible beside the result.
 
 **Safety comes before carbon savings.** HAWA does not recommend extra outdoor exercise during severe smog just because walking has low operational emissions. Indoor coal burning receives priority because a particle filter does not remove carbon monoxide.
 
 ## Judging parameters map
 
-| Parameter     | Concrete proofs                                                                                                     | Where to verify                                                                             |
-| ------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Code quality  | Strict TypeScript and unchecked-index checks; Zod contracts; pure domain/service/UI separation                      | `tsconfig.json`, `src/domain`, `npm run typecheck`                                          |
-| Security      | Server-only credentials; allowlisted HTTPS and no redirects; 8 KB strict bodies, rate/concurrency limits, nonce CSP | `src/services/{http,transport,llm}.ts`, `src/middleware.ts`, `npm run scan-secrets`         |
-| Efficiency    | Fifteen-minute air cache with bounded stale fallback; bounded plan cache; deferred chat and validation code         | `src/services/cache.ts`, `src/services/plan.ts`, `reports/bundle.json`                      |
-| Testing       | Boundary/invariant tests; hostile-output and API-failure tests; desktop/mobile browser journeys                     | `tests/domain.test.ts`, `tests/services.test.ts`, `tests/e2e`                               |
-| Accessibility | Semantic native controls and visible focus; three contrast-tested themes; axe checks across all five pages          | `scripts/check-contrast.mjs`, `reports/browser-accessibility.json`, `docs/ACCESSIBILITY.md` |
-| Alignment     | Household routines with impact comparisons; indoor/cooking guidance; community action kit                           | `src/components/PlanView.tsx`, `src/data/knowledge.ts`, `src/components/Community.tsx`      |
+| Parameter     | Concrete proofs                                                                                                                           | Where to verify                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Code quality  | Strict TypeScript and unchecked-index checks; Zod contracts; pure domain/service/UI separation                                            | `tsconfig.json`, `src/domain`, `npm run typecheck`                                          |
+| Security      | Server-only credentials; allowlisted HTTPS and no redirects; 8 KB strict bodies, rate/concurrency limits, nonce CSP                       | `src/services/{http,transport,llm}.ts`, `src/middleware.ts`, `npm run scan-secrets`         |
+| Efficiency    | Fifteen-minute air cache with bounded stale fallback; bounded plan cache; deferred forecast and validation code; local plan/chat fallback | `src/services/cache.ts`, `src/services/plan.ts`, `reports/bundle.json`                      |
+| Testing       | Boundary/invariant tests; hostile-output and API-failure tests; desktop/mobile browser journeys                                           | `tests/domain.test.ts`, `tests/services.test.ts`, `tests/e2e`                               |
+| Accessibility | Semantic native controls and visible focus; three contrast-tested themes; axe checks across all five pages                                | `scripts/check-contrast.mjs`, `reports/browser-accessibility.json`, `docs/ACCESSIBILITY.md` |
+| Alignment     | Household routines with impact comparisons; indoor/cooking guidance; community action kit                                                 | `src/components/PlanView.tsx`, `src/data/knowledge.ts`, `src/components/Community.tsx`      |
 
 ## Problem statement traceability
 
@@ -57,6 +58,10 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 | Indoor air quality hacks         | Filter sizing, source control, room checklist, myths                            | `src/components/Learn.tsx`                                 |
 | Location and lifestyle tailoring | City/coordinate selection, risk flags, home, travel, budget and language        | `tests/e2e/smoke.spec.ts`                                  |
 | Direct impact                    | Transparent combined scenario, sources, individual/weekly/community comparisons | `src/domain/impact.ts`, [methodology](docs/METHODOLOGY.md) |
+
+## Current feature completion
+
+The core problem statement is implemented across family planning, indoor guidance, sustainable routines and community kits. The detailed build brief is mapped to working features, checks and explicit design deviations in [traceability](docs/TRACEABILITY.md). LinkedIn publication is excluded from this delivery. Hosted CI execution still depends on the account billing restriction; local verification is reported separately.
 
 ## Quick start
 
@@ -101,7 +106,7 @@ See [architecture](docs/ARCHITECTURE.md) and the [decision records](docs/adr).
 
 ## Impact methodology
 
-Exposure is an **ambient-only illustrative scenario**, not a wearable measurement or medical prediction. Outdoor time, building infiltration, room volume, CADR and adult respirator penetration shape a single combined calculation. Transport emissions use explicitly rounded scenario factors; they are not represented as validated Indian inventory factors. Weekly and community projections assume repeat participation. See [formulas, worked example, boundaries and uncertainty](docs/METHODOLOGY.md).
+Exposure is an **ambient-only illustrative scenario**, not a wearable measurement or medical prediction. Outdoor time, building infiltration, room volume, CADR and adult respirator penetration shape a single combined calculation. Travel uses dated India-oriented operational CO₂ reference factors, with a separate input-energy fuel calculator. Boundaries, source years and uncertainty are explicit; these are not current fleet measurements or lifecycle CO₂e. Weekly and community projections assume repeat participation. See [formulas, worked example, boundaries and uncertainty](docs/METHODOLOGY.md).
 
 ## Security and accessibility
 
@@ -111,7 +116,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
+Current local release: **102 tests passed; 100% domain coverage; 90.94% overall lines; 14 desktop/mobile journeys passed; zero axe violations across 15 states; 117.4 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
 
 ## Project structure and scripts
 
@@ -147,7 +152,7 @@ The multi-stage non-root Dockerfile is an alternative packaging route. Docker ex
 
 Live air retrieval uses Open-Meteo's keyless public endpoint directly from your browser, with a 15-minute cache, duplicate-request suppression and provider cooldowns. Plans reuse the validated browser reading rather than requesting it again through shared hosting. Source labels distinguish browser-fetched estimates from server readings and manual inputs. Provider outages still offer clearly labelled stale data or manual entry; no universal uptime guarantee is claimed. See the [quality report](docs/QUALITY_REPORT.md) for verification and separate local/public performance measurements.
 
-Distributed rate limits, independent emissions-factor validation for Indian modes/fuels, full Hindi interface review, assistive-technology testing, school curriculum kits and optional community integrations. Rules mode works without an AI key but still requires access to the application server. Already displayed guidance remains readable after connectivity loss; HAWA does not currently provide an installable service-worker offline shell.
+Further work includes distributed rate limits, empirical local calibration, professional Hindi and screen-reader review, and optional community integrations. Once the Plan page is loaded, rules planning, source-linked chat, what-if calculations, print and JSON export run locally without a server request. First visits and uncached routes still require internet; no installable service-worker shell is claimed.
 
 ## Disclaimer, attribution and license
 

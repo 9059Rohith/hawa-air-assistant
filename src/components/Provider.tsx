@@ -38,6 +38,14 @@ export function Provider({ children }: { children: ReactNode }) {
     async function restore() {
       try {
         const value = localStorage.getItem("hawa-profile-v1");
+        const lang = localStorage.getItem("hawa-language");
+        if (
+          !value &&
+          (lang === "en" || lang === "hi") &&
+          active &&
+          !edited.current
+        )
+          setProfile((p) => ({ ...p, lang }));
         if (value) {
           const { ProfileSchema } = await import("@/domain/types");
           const parsed = ProfileSchema.parse(JSON.parse(value));
@@ -73,6 +81,7 @@ export function Provider({ children }: { children: ReactNode }) {
     edited.current = true;
     try {
       localStorage.removeItem("hawa-profile-v1");
+      localStorage.removeItem("hawa-language");
       setProfile(baseProfile);
       setPlan(null);
       setLocation(null);
@@ -91,6 +100,9 @@ export function Provider({ children }: { children: ReactNode }) {
         setProfile: (value) => {
           edited.current = true;
           setProfile(value);
+          try {
+            localStorage.setItem("hawa-language", value.lang);
+          } catch {}
         },
         location,
         setLocation,

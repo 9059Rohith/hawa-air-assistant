@@ -6,7 +6,8 @@ import { AirCard } from "./AirCard";
 import { personas, cities } from "@/data/personas";
 import { useRouter } from "next/navigation";
 export function Home() {
-  const { t, setProfile, setLocation, setAir, setNotice } = useHawa();
+  const { t, profile, setProfile, setLocation, setAir, setNotice } = useHawa();
+  const hi = profile.lang === "hi";
   const router = useRouter();
   return (
     <>
@@ -33,11 +34,17 @@ export function Home() {
                 <h3>{v}</h3>
                 <p>
                   {
-                    [
-                      "Check modelled air or enter your sensor reading.",
-                      "Choose practical steps that fit your household.",
-                      "Compare transparent scenarios, with assumptions.",
-                    ][i]
+                    (hi
+                      ? [
+                          "मॉडल डेटा या अपना सेंसर मान देखें।",
+                          "परिवार के अनुकूल व्यावहारिक कदम चुनें।",
+                          "अनुमानों के साथ पारदर्शी तुलना करें।",
+                        ]
+                      : [
+                          "Check modelled air or enter your sensor reading.",
+                          "Choose practical steps that fit your household.",
+                          "Compare transparent scenarios, with assumptions.",
+                        ])[i]
                   }
                 </p>
               </div>
@@ -47,15 +54,19 @@ export function Home() {
       </section>
       <section className="persona-strip">
         <div>
-          <h2>Try a household example</h2>
-          <p>Illustrative PM2.5 of 120 µg/m³ · not live data</p>
+          <h2>{hi ? "परिवार का उदाहरण देखें" : "Try a household example"}</h2>
+          <p>
+            {hi
+              ? "उदाहरण PM2.5 120 µg/m³ · लाइव डेटा नहीं"
+              : "Illustrative PM2.5 of 120 µg/m³ · not live data"}
+          </p>
         </div>
         <div className="button-row">
           {Object.entries(personas).map(([name, p], i) => (
             <button
               key={name}
               onClick={() => {
-                setProfile(p);
+                setProfile({ ...p, lang: profile.lang });
                 setLocation([cities.Delhi, cities.Lucknow, cities.Kolkata][i]!);
                 setAir({
                   pm25: 120,
@@ -78,8 +89,12 @@ export function Home() {
         </div>
       </section>
       <p className="trust">
-        Numbers come from a transparent calculator, not the AI.{" "}
-        <Link href="/about">See the assumptions →</Link>
+        {hi
+          ? "संख्याएँ पारदर्शी कैलकुलेटर से आती हैं, AI से नहीं।"
+          : "Numbers come from a transparent calculator, not the AI."}{" "}
+        <Link href="/about">
+          {hi ? "अनुमान देखें →" : "See the assumptions →"}
+        </Link>
       </p>
     </>
   );

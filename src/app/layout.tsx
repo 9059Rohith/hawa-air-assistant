@@ -12,6 +12,23 @@ export const metadata: Metadata = {
   description:
     "A family and community air-quality assistant with personalized routines, indoor guidance and transparent impact calculations.",
   icons: { icon: "/favicon.svg" },
+  metadataBase: new URL(
+    "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  ),
+  openGraph: {
+    title: "HAWA · Clean-air choices for families and communities",
+    description:
+      "Source-linked routines and transparent impact comparisons for winter smog.",
+    images: [
+      {
+        url: "/og.svg",
+        width: 1200,
+        height: 630,
+        alt: "HAWA — Breathe smarter through smog season",
+      },
+    ],
+    type: "website",
+  },
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

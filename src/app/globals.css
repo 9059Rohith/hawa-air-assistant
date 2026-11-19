@@ -817,3 +817,48 @@ section {
     font-size: 24pt;
   }
 }
+.forecast-chart,
+.weekly-chart {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  margin: 1rem 0;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.impact-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.impact-card meter {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+.gauge[data-level="3"] {
+  border-style: dashed;
+}
+.gauge[data-level="4"] {
+  border-style: double;
+  border-width: 6px;
+}
+.gauge[data-level="5"] {
+  border-style: double;
+  border-width: 8px;
+}
+[role="option"][aria-selected="true"] {
+  outline: 3px solid currentColor;
+  outline-offset: -3px;
+}
+@media (max-width: 380px) {
+  .form-grid,
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+  .button-row {
+    align-items: stretch;
+  }
+}

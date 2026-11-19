@@ -1,28 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { ProfileSchema, type Profile } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { Field } from "./ui";
-import { ProfileSchema, type Profile } from "@/domain/types";
-type NumberKey =
-  | "adults"
-  | "children"
-  | "elders"
-  | "roomArea"
-  | "cadr"
-  | "km"
-  | "occupancy"
-  | "outdoorHours"
-  | "wfhDays";
-type BooleanKey =
-  | "higherRisk"
-  | "pregnant"
-  | "pets"
-  | "purifier"
-  | "exhaust"
-  | "transit"
-  | "schoolRun"
-  | "exercise"
-  | "simple";
+import { numbers, choices, checks, optionLabel } from "./profile-fields";
 export function ProfileWizard({
   onGenerate,
   busy,
@@ -31,68 +12,59 @@ export function ProfileWizard({
   busy: boolean;
 }) {
   const { profile, setProfile, t, save } = useHawa();
-  const [step, setStep] = useState(0),
-    [error, setError] = useState("");
+  const [step, setStep] = useState(0);
+  const [errors, setErrors] = useState<{ key: string; message: string }[]>([]);
+  const summary = useRef<HTMLDivElement>(null);
   const hi = profile.lang === "hi";
   const titles = hi
     ? ["परिवार", "घर", "यात्रा", "दिनचर्या", "पसंद"]
     : ["Household", "Home", "Mobility", "Lifestyle", "Preferences"];
-  function num(key: NumberKey, label: string, min: number, max: number) {
-    return (
-      <Field key={key} id={key} label={label}>
-        <input
-          id={key}
-          type="number"
-          min={min}
-          max={max}
-          step={key === "outdoorHours" ? 0.5 : 1}
-          required
-          value={profile[key]}
-          onChange={(e) =>
-            setProfile({ ...profile, [key]: Number(e.target.value) })
-          }
-        />
-      </Field>
-    );
+  function change(key: keyof Profile, value: Profile[keyof Profile]) {
+    setProfile({
+      ...profile,
+      [key]: value,
+      ...(key === "children"
+        ? { childAges: profile.childAges.slice(0, Number(value)) }
+        : {}),
+    });
+    setErrors([]);
   }
-  function check(key: BooleanKey, label: string) {
-    return (
-      <label className="check" key={key}>
-        <input
-          type="checkbox"
-          checked={profile[key]}
-          onChange={(e) => setProfile({ ...profile, [key]: e.target.checked })}
-        />
-        {label}
-      </label>
-    );
-  }
-  function select(key: keyof Profile, label: string, options: string[]) {
-    return (
-      <Field id={key} label={label}>
-        <select
-          id={key}
-          value={String(profile[key])}
-          onChange={(e) => setProfile({ ...profile, [key]: e.target.value })}
-        >
-          {options.map((o) => (
-            <option key={o} value={o}>
-              {o.replaceAll("_", " ")}
-            </option>
-          ))}
-        </select>
-      </Field>
-    );
+  function validate() {
+    const parsed = ProfileSchema.safeParse(profile);
+    const found = parsed.success
+      ? []
+      : parsed.error.issues.map((e) => ({
+          key: String(e.path[0]),
+          message: hi
+            ? "दिखाई गई सीमा में मान भरें।"
+            : "Enter a value within the displayed limits.",
+        }));
+    if (profile.childAges.length > profile.children)
+      found.push({
+        key: "childAges",
+        message: hi
+          ? "उम्रों की संख्या बच्चों से अधिक है।"
+          : "More ages than children were entered.",
+      });
+    setErrors(found);
+    if (found.length) {
+      requestAnimationFrame(() => summary.current?.focus());
+      return false;
+    }
+    return true;
   }
   return (
-    <section className="panel wizard">
+    <section className="panel wizard" aria-busy={busy}>
       <div className="section-top">
         <h2>{t.profile}</h2>
         <span>
           {step + 1} / 5 · {titles[step]}
         </span>
       </div>
-      <ol className="wizard-progress" aria-label="Profile steps">
+      <ol
+        className="wizard-progress"
+        aria-label={hi ? "प्रोफ़ाइल चरण" : "Profile steps"}
+      >
         {titles.map((title, i) => (
           <li key={title}>
             <button
@@ -105,148 +77,146 @@ export function ProfileWizard({
         ))}
       </ol>
       <form
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          const valid = ProfileSchema.safeParse(profile);
-          if (!valid.success) {
-            setError(
-              hi
-                ? "मान्य संख्या और विकल्प भरें।"
-                : "Please check all profile values. Numbers must stay within the displayed limits.",
-            );
-            return;
+          if (validate()) {
+            if (step < 4) setStep(step + 1);
+            else onGenerate();
           }
-          setError("");
-          if (step < 4) setStep(step + 1);
-          else onGenerate();
         }}
       >
+        {errors.length > 0 && (
+          <div ref={summary} tabIndex={-1} className="warning" role="status">
+            <h3>{hi ? "इन मानों की जाँच करें" : "Check these values"}</h3>
+            <ul>
+              {errors.map((e) => (
+                <li key={e.key}>
+                  <a
+                    href={`#${e.key}`}
+                    onClick={() => {
+                      const target = numbers.findIndex((group) =>
+                        group.some((f) => f.key === e.key),
+                      );
+                      if (target >= 0) setStep(target);
+                    }}
+                  >
+                    {e.key}: {e.message}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <fieldset>
           <legend>{titles[step]}</legend>
           <div className="form-grid">
-            {step === 0 && (
-              <>
-                {num("adults", hi ? "वयस्क" : "Adults", 1, 20)}
-                {num("children", hi ? "बच्चे" : "Children", 0, 15)}
-                {num("elders", hi ? "बुज़ुर्ग" : "Older adults", 0, 10)}
-                {check(
-                  "higherRisk",
+            {(numbers[step] ?? []).map((f) => (
+              <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
+                <input
+                  id={f.key}
+                  type="number"
+                  min={f.min}
+                  max={f.max}
+                  step={f.step ?? 1}
+                  required
+                  value={
+                    Number.isFinite(profile[f.key])
+                      ? String(profile[f.key])
+                      : ""
+                  }
+                  aria-invalid={errors.some((e) => e.key === f.key)}
+                  aria-describedby={`${f.key}-hint`}
+                  onChange={(e) =>
+                    change(
+                      f.key,
+                      e.target.value === "" ? NaN : Number(e.target.value),
+                    )
+                  }
+                />
+                <small id={`${f.key}-hint`}>
+                  {f.min}–{f.max}
+                </small>
+              </Field>
+            ))}
+            {(choices[step] ?? []).map((f) => (
+              <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
+                <select
+                  id={f.key}
+                  value={String(profile[f.key])}
+                  onChange={(e) =>
+                    change(f.key, e.target.value as Profile[keyof Profile])
+                  }
+                >
+                  {f.options.map((o) => (
+                    <option key={o} value={o}>
+                      {optionLabel(o, hi)}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            ))}
+            {(checks[step] ?? []).map((f) => (
+              <label className="check" key={f.key}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(profile[f.key])}
+                  onChange={(e) => change(f.key, e.target.checked)}
+                />
+                {hi ? f.hi : f.en}
+              </label>
+            ))}
+            {step === 0 && profile.children > 0 && (
+              <Field
+                id="childAges"
+                label={
                   hi
-                    ? "किसी को हृदय या साँस की बीमारी है"
-                    : "Someone has a heart or respiratory condition",
-                )}
-                {check(
-                  "pregnant",
-                  hi ? "गर्भावस्था" : "Pregnancy in household",
-                )}
-                {check("pets", hi ? "पालतू जानवर" : "Pets at home")}
-              </>
-            )}
-            {step === 1 && (
-              <>
-                {select("sealing", hi ? "घर की सीलिंग" : "Window sealing", [
-                  "sealed",
-                  "typical",
-                  "leaky",
-                ])}
-                {num(
-                  "roomArea",
-                  hi ? "कमरा क्षेत्र (m²)" : "Room floor area (m²)",
-                  5,
-                  150,
-                )}
-                {check("purifier", hi ? "फ़िल्टर है" : "I have a purifier")}
-                {num("cadr", "Purifier CADR (m³/h)", 0, 2000)}
-                {check(
-                  "exhaust",
-                  hi ? "रसोई एग्ज़ॉस्ट" : "Kitchen exhaust available",
-                )}
-                {select("cooking", hi ? "खाना पकाने का ईंधन" : "Cooking fuel", [
-                  "lpg",
-                  "induction",
-                  "biomass",
-                ])}
-                {select("heating", hi ? "हीटिंग" : "Heating", [
-                  "none",
-                  "electric",
-                  "coal_wood",
-                ])}
-              </>
-            )}
-            {step === 2 && (
-              <>
-                {select("mode", hi ? "मुख्य यात्रा" : "Main commute mode", [
-                  "car",
-                  "bus",
-                  "metro",
-                  "cycle",
-                  "walk",
-                  "ev",
-                  "motorcycle",
-                ])}
-                {num(
-                  "km",
-                  hi ? "दैनिक यात्रा (km)" : "Daily travel distance (km)",
-                  0,
-                  300,
-                )}
-                {num(
-                  "occupancy",
-                  hi ? "कार में यात्री" : "Car occupancy",
-                  1,
-                  8,
-                )}
-                {check(
-                  "transit",
-                  hi ? "बस या मेट्रो उपलब्ध" : "Bus or metro available",
-                )}
-                {check("schoolRun", hi ? "स्कूल यात्रा" : "School run")}
-              </>
-            )}
-            {step === 3 && (
-              <>
-                {num(
-                  "outdoorHours",
-                  hi ? "बाहर घंटे / दिन" : "Hours outdoors per day",
-                  0,
-                  24,
-                )}
-                {num(
-                  "wfhDays",
-                  hi
-                    ? "घर से काम के दिन / सप्ताह"
-                    : "Possible work-from-home days per week",
-                  0,
-                  7,
-                )}
-                {check("exercise", hi ? "बाहर कसरत" : "Outdoor exercise")}
-                {select("budget", hi ? "बजट" : "Budget", [
-                  "free",
-                  "low",
-                  "medium",
-                ])}
-              </>
+                    ? "बच्चों की उम्र (वर्ष, अल्पविराम से अलग; वैकल्पिक)"
+                    : "Children’s ages (years, comma-separated; optional)"
+                }
+              >
+                <input
+                  id="childAges"
+                  defaultValue={profile.childAges.join(", ")}
+                  inputMode="numeric"
+                  onBlur={(e) =>
+                    change(
+                      "childAges",
+                      e.target.value.trim()
+                        ? e.target.value
+                            .split(",")
+                            .slice(0, 15)
+                            .map((v) => Number(v.trim()))
+                        : [],
+                    )
+                  }
+                />
+                <small>
+                  {hi
+                    ? "दो वर्ष से छोटे बच्चे को मास्क न पहनाएँ।"
+                    : "Never put a mask on a child under two."}
+                </small>
+              </Field>
             )}
             {step === 4 && (
               <>
-                {select("lang", hi ? "भाषा" : "Language", ["en", "hi"])}
-                {check("simple", t.simple)}
                 <p>
-                  Only save if you want this household profile stored on this
-                  device. Otherwise it stays in this tab until you leave.
+                  {hi
+                    ? "प्रोफ़ाइल केवल आपकी अनुमति से इस डिवाइस पर सहेजी जाती है। इसमें स्वास्थ्य-संबंधी पसंद हो सकती हैं।"
+                    : "Only save if you want this household profile stored on this device. It may include health-risk preferences."}
                 </p>
-                <button type="button" onClick={save}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (validate()) save();
+                  }}
+                >
                   {t.save}
                 </button>
               </>
             )}
           </div>
         </fieldset>
-        {error && (
-          <p role="status" className="warning">
-            {error}
-          </p>
-        )}
         <div className="button-row">
           <button
             type="button"
@@ -262,10 +232,10 @@ export function ProfileWizard({
             <button
               type="button"
               onClick={() => {
-                setStep(4);
+                if (validate()) setStep(4);
               }}
             >
-              Review & build
+              {hi ? "जाँचें और बनाएँ" : "Review & build"}
             </button>
           )}
         </div>

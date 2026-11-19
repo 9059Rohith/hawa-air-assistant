@@ -1,0 +1,117 @@
+{
+  "boundary": "Operational CO2 only. Not CO2e, lifecycle emissions, a current Indian inventory or personal exposure.",
+  "transport": {
+    "petrol": {
+      "value": 0.14,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: dated small-hatchback reference; actual size, congestion and maintenance vary."
+    },
+    "diesel": {
+      "value": 0.126,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: dated small-hatchback reference, not a cleaner-air recommendation."
+    },
+    "cng": {
+      "value": 0.108,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: 2.692 kg CO2/kg fuel divided by assumed 25 km/kg."
+    },
+    "electric": {
+      "value": 0.114,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2024,
+      "source": "https://www.nredcap.in/PDFs/Downloads/R5NREDCAP-BOOKLET-Ver-II.pdf",
+      "uncertainty": "High: assumed 0.157 kWh/km times FY2023-24 grid 0.727 kg CO2/kWh; excludes charging/distribution losses."
+    },
+    "bus": {
+      "value": 0.015,
+      "unit": "kg CO2/passenger-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: dated intracity reference, excludes BRTS/intercity; do not divide by occupancy again."
+    },
+    "metro": {
+      "value": 0.035,
+      "unit": "kg CO2/passenger-km",
+      "year": 2026,
+      "source": "https://www.cea.nic.in/",
+      "uncertainty": "Uncalibrated illustrative assumption, not an operator-specific or India-wide measured factor."
+    },
+    "motorcycle": {
+      "value": 0.04,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: rounded reference; source classes span about 0.032-0.060."
+    },
+    "auto": {
+      "value": 0.108,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2015,
+      "source": "https://indiaghgp.org/sites/default/files/Road%20Transport%20Technical%20Paper.pdf",
+      "uncertainty": "High: CNG auto reference; divide by fare-paying passengers, excluding driver."
+    },
+    "erickshaw": {
+      "value": 0.056,
+      "unit": "kg CO2/vehicle-km",
+      "year": 2024,
+      "source": "https://wri-india.org/perspectives/busting-cost-barrier-why-electric-three-wheelers-make-business-sense",
+      "uncertainty": "High: 1/13 kWh/km assumption from 2020 times FY2023-24 grid 0.727 kg CO2/kWh; exclude driver from occupancy."
+    },
+    "walk": {
+      "value": 0,
+      "unit": "kg CO2/passenger-km",
+      "year": 2026,
+      "source": "https://www.ipcc.ch/report/ar6/wg3/",
+      "uncertainty": "Zero propulsion within this boundary; excludes food, infrastructure and lifecycle effects."
+    },
+    "cycle": {
+      "value": 0,
+      "unit": "kg CO2/passenger-km",
+      "year": 2026,
+      "source": "https://www.ipcc.ch/report/ar6/wg3/",
+      "uncertainty": "Zero propulsion within this boundary; excludes food, infrastructure and lifecycle effects."
+    }
+  },
+  "fuel": {
+    "lpg": {
+      "kgCo2PerGJ": 63.1,
+      "pmCategory": "cleaner combustion",
+      "year": 2006
+    },
+    "png": {
+      "kgCo2PerGJ": 56.1,
+      "pmCategory": "cleaner combustion",
+      "year": 2006
+    },
+    "kerosene": {
+      "kgCo2PerGJ": 71.9,
+      "pmCategory": "polluting combustion",
+      "year": 2006
+    },
+    "coal": {
+      "kgCo2PerGJ": 94.6,
+      "pmCategory": "polluting combustion",
+      "year": 2006
+    },
+    "wood": {
+      "kgCo2PerGJ": 112,
+      "pmCategory": "polluting combustion; gross biogenic CO2, not fossil or net climate impact",
+      "year": 2006
+    }
+  },
+  "fuelSource": "https://archive.ipcc-nggip.iges.or.jp/public/2006gl/pdf/2_Volume2/V2_2_Ch2_Stationary_Combustion.pdf",
+  "fuelUncertainty": "Default fuel-carbon coefficients exclude appliance efficiency, fuel quantities, upstream effects and household exposure. PM categories are ordinal descriptions, never ratios or additive savings.",
+  "grid": {
+    "kgCo2PerKWh": 0.727,
+    "year": "FY2023-24",
+    "source": "https://www.cea.nic.in/api/dashboardReports/download-pdf/en/f60d07cd-b057-42b7-9da8-19d5d559dc2a",
+    "uncertainty": "Generation boundary, not latest factor; excludes distribution/charging losses."
+  }
+}

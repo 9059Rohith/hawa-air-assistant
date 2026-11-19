@@ -19,7 +19,9 @@
     "scan-secrets": "node scripts/scan-secrets.mjs",
     "check-bundle": "node scripts/check-bundle.mjs",
     "doctor": "tsx scripts/doctor.ts",
-    "build:sites": "node scripts/build-sites.mjs"
+    "build:sites": "node scripts/build-sites.mjs",
+    "check-contrast": "node scripts/check-contrast.mjs",
+    "pretest:e2e": "npm run check-contrast"
   },
   "dependencies": {
     "next": "15.5.29",

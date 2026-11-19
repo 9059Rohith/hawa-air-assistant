@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Plan } from "@/domain/types";
 import { useHawa } from "./Provider";
+import { localChat } from "@/lib/chat-guidance";
 export default function ChatPanel({
   plan,
   offline,
@@ -9,7 +10,9 @@ export default function ChatPanel({
   plan: Plan;
   offline: boolean;
 }) {
-  const { t, profile } = useHawa();
+  const { t, profile, setNotice } = useHawa();
+  const hi = profile.lang === "hi";
+  const history = useRef<{ role: "user" | "assistant"; content: string }[]>([]);
   const [message, setMessage] = useState(""),
     [reply, setReply] = useState(""),
     [busy, setBusy] = useState(false),
@@ -23,7 +26,15 @@ export default function ChatPanel({
     setBusy(true);
     setReply("");
     setMode("");
+    let answer = "";
     try {
+      if (offline || !navigator.onLine) {
+        const local = localChat(message, profile);
+        setReply(local.text);
+        setMode(local.mode);
+        answer = local.text;
+        return;
+      }
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,6 +48,8 @@ export default function ChatPanel({
           manualPm: plan.air.pm25,
           message,
           offline,
+          messages: history.current.slice(-6),
+          actionIds: plan.actions.map((a) => a.id),
         }),
         signal: controller.signal,
       });
@@ -56,7 +69,10 @@ export default function ChatPanel({
             if (raw === "[DONE]") continue;
             const data = JSON.parse(raw) as { text?: string; mode?: string };
             if (data.mode) setMode(data.mode);
-            if (data.text) setReply((old) => old + data.text);
+            if (data.text) {
+              answer += data.text;
+              setReply(answer);
+            }
           }
         }
       } finally {
@@ -64,20 +80,29 @@ export default function ChatPanel({
         reader.releaseLock();
       }
     } catch {
-      if (!controller.signal.aborted)
-        setReply(
-          "The assistant is unavailable. Your plan and Learn library still work.",
-        );
+      if (!controller.signal.aborted) {
+        const local = localChat(message, profile);
+        setReply(local.text);
+        setMode(local.mode);
+        answer = local.text;
+      }
     } finally {
-      setBusy(false);
+      if (answer)
+        history.current = [
+          ...history.current,
+          { role: "user", content: message },
+          { role: "assistant", content: answer.slice(0, 800) },
+        ].slice(-6) as typeof history.current;
+      if (abort.current === controller) setBusy(false);
     }
   }
   return (
     <section className="panel chat" aria-labelledby="chat-title">
       <h2 id="chat-title">{t.ask}</h2>
       <p>
-        Grounded in the guidance library. Not a diagnosis. Responses are
-        validated before delivery.
+        {hi
+          ? "सलाह पुस्तकालय और आपकी योजना पर आधारित। निदान नहीं। हाल की बातचीत केवल इस टैब में रहती है।"
+          : "Grounded in the guidance library and your plan. Not a diagnosis. Recent conversation stays in this tab; online questions send bounded context to the model."}
       </p>
       <form
         onSubmit={(e) => {
@@ -94,11 +119,15 @@ export default function ChatPanel({
           onChange={(e) => setMessage(e.target.value)}
           required
           maxLength={800}
-          placeholder="How can I reduce smoke in my kitchen?"
+          placeholder={
+            hi
+              ? "रसोई का धुआँ कैसे कम करें?"
+              : "How can I reduce smoke in my kitchen?"
+          }
         />
         <div className="button-row">
           <button className="primary" disabled={busy}>
-            Send
+            {hi ? "भेजें" : "Send"}
           </button>
           <button
             type="button"
@@ -108,11 +137,31 @@ export default function ChatPanel({
               setBusy(false);
             }}
           >
-            Stop
+            {t.stop}
           </button>
         </div>
       </form>
-      <p className="fine">{mode && `Response mode: ${mode}`}</p>
+      <div className="button-row">
+        {(hi
+          ? [
+              "रसोई का धुआँ कैसे कम करें?",
+              "मास्क कैसे चुनें?",
+              "स्कूल में क्या करें?",
+            ]
+          : [
+              "How can I reduce cooking smoke?",
+              "How should a mask fit?",
+              "What can our school do?",
+            ]
+        ).map((q) => (
+          <button type="button" key={q} onClick={() => setMessage(q)}>
+            {q}
+          </button>
+        ))}
+      </div>
+      <p className="fine">
+        {mode && `${hi ? "उत्तर मोड" : "Response mode"}: ${mode}`}
+      </p>
       <div
         role={mode === "urgent" ? "alert" : "status"}
         aria-live={mode === "urgent" ? "assertive" : "polite"}
@@ -129,6 +178,23 @@ export default function ChatPanel({
           ),
         )}
       </div>
+      {reply && (
+        <button
+          onClick={() =>
+            void navigator.clipboard.writeText(reply).then(
+              () => setNotice(hi ? "उत्तर कॉपी हुआ।" : "Answer copied."),
+              () =>
+                setNotice(
+                  hi
+                    ? "उत्तर चुनकर कॉपी करें।"
+                    : "Select the answer to copy it.",
+                ),
+            )
+          }
+        >
+          {hi ? "उत्तर कॉपी करें" : "Copy answer"}
+        </button>
+      )}
     </section>
   );
 }

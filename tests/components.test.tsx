@@ -7,7 +7,7 @@ import {
   waitFor,
   cleanup,
 } from "@testing-library/react";
-import { afterEach, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, it, expect, vi } from "vitest";
 import { axe } from "jest-axe";
 import { Provider, useHawa } from "@/components/Provider";
 import { Header } from "@/components/Header";
@@ -21,6 +21,9 @@ import { AirCard } from "@/components/AirCard";
 import { Footer, Notice, ReadAloud } from "@/components/ui";
 import { LocationForm } from "@/components/LocationForm";
 import { PlanWorkspace } from "@/components/PlanWorkspace";
+import { Forecast } from "@/components/Forecast";
+import { SharedKit } from "@/components/SharedKit";
+import { shareFragment } from "@/lib/share";
 import About from "@/app/about/page";
 import { baseProfile, cities } from "@/data/personas";
 import { knowledge } from "@/data/knowledge";
@@ -83,6 +86,13 @@ function wrap(node: React.ReactNode) {
     </Provider>,
   );
 }
+beforeEach(() => {
+  vi.stubGlobal("matchMedia", () => ({
+    matches: false,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }));
+});
 afterEach(() => {
   cleanup();
   localStorage.clear();
@@ -194,8 +204,8 @@ it("searches a city and loads modelled air", async () => {
     target: { value: "Delhi" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Search" }));
-  await screen.findByRole("button", { name: "1. Delhi" });
-  fireEvent.click(screen.getByRole("button", { name: "1. Delhi" }));
+  await screen.findByRole("option", { name: "1. Delhi" });
+  fireEvent.click(screen.getByRole("option", { name: "1. Delhi" }));
   await screen.findByText(/not independently verified/);
   expect(screen.getByText(/Lower forecast window/)).toBeInTheDocument();
 });
@@ -271,7 +281,9 @@ it("plan scenario toggles and exports without overlapping sums", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Download JSON" }));
   fireEvent.click(screen.getByRole("button", { name: "Print" }));
   fireEvent.click(screen.getByRole("button", { name: "Share / copy" }));
-  await screen.findByText("Plan summary shared or copied.");
+  await screen.findByText(
+    "A link containing only action IDs was shared or copied.",
+  );
   fireEvent.click(screen.getByText("Hindi", { exact: true }));
   expect(screen.getAllByText(/सोने के कमरे/).length).toBeGreaterThan(0);
 });
@@ -297,7 +309,7 @@ it("community calculates scenarios and copies a notice", async () => {
   );
   fireEvent.click(screen.getByText("Hindi", { exact: true }));
   expect(screen.getByText("सात दिन की साफ हवा चुनौती")).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText("Households"), {
+  fireEvent.change(screen.getByLabelText("परिवार"), {
     target: { value: "0" },
   });
   expect(screen.getByText("Enter 1–10,000 households.")).toBeInTheDocument();
@@ -346,7 +358,7 @@ it("chat consumes validated SSE and renders citation links", async () => {
         ),
       ),
   );
-  wrap(<ChatPanel plan={fixture} offline />);
+  wrap(<ChatPanel plan={fixture} offline={false} />);
   fireEvent.change(screen.getByLabelText("Your question"), {
     target: { value: "How to filter air?" },
   });
@@ -366,14 +378,15 @@ it("chat escalates urgent responses and handles service failure", async () => {
       )
       .mockRejectedValueOnce(new Error()),
   );
-  wrap(<ChatPanel plan={fixture} offline />);
+  wrap(<ChatPanel plan={fixture} offline={false} />);
   fireEvent.change(screen.getByLabelText("Your question"), {
     target: { value: "chest pain" },
   });
   fireEvent.click(screen.getByText("Send"));
   await screen.findByRole("alert");
   fireEvent.click(screen.getByText("Send"));
-  await screen.findByText(/assistant is unavailable/);
+  await screen.findByRole("alert");
+  expect(screen.getByRole("alert")).toHaveTextContent(/urgent|medical/i);
 });
 it("workspace generates a plan and preserves it on retry failure", async () => {
   vi.stubGlobal(
@@ -391,8 +404,80 @@ it("workspace generates a plan and preserves it on retry failure", async () => {
     "Your rules-based plan is ready. All calculations are available.",
   );
   fireEvent.click(screen.getByRole("button", { name: "Ask HAWA" }));
-  expect(screen.getByText("Chat loaded")).toBeInTheDocument();
+  expect(screen.getByLabelText("Your question")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Build my daily plan" }));
-  await screen.findByText(/could not be generated/);
-  expect(screen.getByText("Your clean-air plan")).toBeInTheDocument();
+  await screen.findByText(/AI is unavailable/);
+  expect(
+    screen.getByRole("region", { name: "Generated plan" }),
+  ).toBeInTheDocument();
+});
+it("forecast points have keyboard text alternatives in both languages", () => {
+  const { rerender } = render(<Forecast air={fixture.air} hi={false} />);
+  const point = screen.getByLabelText(/2026-11-19T11:00, 120/);
+  fireEvent.focus(point);
+  expect(screen.getByRole("status")).toHaveTextContent("120");
+  fireEvent.blur(point);
+  expect(screen.getByRole("status")).toHaveTextContent("Asia/Kolkata");
+  rerender(<Forecast air={fixture.air} hi />);
+  expect(screen.getByText("आगे की हवा")).toBeInTheDocument();
+  rerender(<Forecast air={{ ...fixture.air, hourly: [] }} hi />);
+  expect(screen.queryByRole("img")).toBeNull();
+});
+it("shared kit restores only public curated steps", async () => {
+  history.replaceState(null, "", shareFragment([knowledge[0]!.id], "hi"));
+  wrap(<SharedKit />);
+  expect(await screen.findByText("साझा साफ हवा के कदम")).toBeInTheDocument();
+  history.replaceState(null, "", "#kit=%");
+  fireEvent(window, new Event("hashchange"));
+  await waitFor(() =>
+    expect(screen.queryByText("साझा साफ हवा के कदम")).toBeNull(),
+  );
+  history.replaceState(null, "", "/");
+});
+it("fuel inputs and ceiling height update their independent calculations", () => {
+  wrap(<Learn />);
+  fireEvent.change(screen.getByLabelText("Fuel"), {
+    target: { value: "electric" },
+  });
+  expect(screen.getByText(/1.454 kg/)).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Input energy per day (kWh)"), {
+    target: { value: "-1" },
+  });
+  expect(screen.getByText("Enter 0–1000 kWh.")).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Ceiling height (m)"), {
+    target: { value: "3" },
+  });
+  expect(screen.getByText(/240–300/)).toBeInTheDocument();
+  fireEvent.click(screen.getByText("Hindi", { exact: true }));
+  expect(screen.getByText("ईंधन के प्रभाव को समझें")).toBeInTheDocument();
+});
+it("local chat answers without fetch and copy reports success", async () => {
+  const network = vi.fn();
+  vi.stubGlobal("fetch", network);
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText: vi.fn().mockResolvedValue(undefined) },
+  });
+  wrap(<ChatPanel plan={fixture} offline />);
+  fireEvent.click(screen.getByText("How can I reduce cooking smoke?"));
+  fireEvent.click(screen.getByRole("button", { name: "Send" }));
+  expect(screen.getAllByRole("link").length).toBeGreaterThan(0);
+  expect(network).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByText("Copy answer"));
+  await screen.findByText("Answer copied.");
+  fireEvent.click(screen.getByText("Hindi", { exact: true }));
+  expect(screen.getByText("भेजें")).toBeInTheDocument();
+});
+it("profile rejects missing numeric input and focuses its error summary", async () => {
+  wrap(<ProfileWizard busy={false} onGenerate={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("Adults"), { target: { value: "" } });
+  fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+  expect(screen.getByText("Check these values")).toBeInTheDocument();
+  expect(screen.getByLabelText("Adults")).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+  fireEvent.change(screen.getByLabelText("Adults"), { target: { value: "2" } });
+  fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+  expect(screen.getByLabelText("Cooking fuel")).toBeInTheDocument();
 });

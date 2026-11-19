@@ -447,7 +447,25 @@ export const knowledge: Action[] = rows.map(
       category,
       title,
       summary,
-      hi: { title: hi.split("।")[0], summary: hi },
+      steps: summary.split(/(?<=[.!?])\s+/).filter(Boolean),
+      caveats: [
+        category === "Health"
+          ? "General protection guidance; follow your clinician's individual advice."
+          : "Adapt to local conditions, safe equipment instructions and what your household can afford.",
+      ],
+      tags: [id, category.toLowerCase()],
+      whoFor: [conditions[id] ?? "everyone"],
+      minutes: id === "clean-room" ? 15 : category === "Transport" ? 10 : 5,
+      hi: {
+        title: hi.split("।")[0],
+        summary: hi,
+        steps: hi.split("।").filter(Boolean),
+        caveats: [
+          category === "Health"
+            ? "सामान्य सुरक्षा सलाह; अपने डॉक्टर की व्यक्तिगत सलाह मानें।"
+            : "स्थानीय स्थिति, उपकरण के सुरक्षित निर्देश और अपने बजट के अनुसार कदम चुनें।",
+        ],
+      },
       cost: id === "clean-room" ? "medium" : id === "mask-fit" ? "low" : "free",
       effort: id === "clean-room" ? 2 : 1,
       group: id === "carpool" || id === "transit" ? "commute" : id,

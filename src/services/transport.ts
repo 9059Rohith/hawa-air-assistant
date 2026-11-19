@@ -1,19 +1,11 @@
 import { z } from "zod";
 import { createHash } from "node:crypto";
 import { AppError } from "@/lib/errors";
-const buckets = new Map<string, { at: number; count: number }>();
+import { MemoryRateLimiter } from "./rate-limit";
+import { env } from "@/config/env";
+const limiter = new MemoryRateLimiter(env().RATE_LIMIT_PER_MIN);
 export function rateLimit(key: string, now = Date.now()) {
-  const hash = createHash("sha256").update(key).digest("hex");
-  for (const [k, v] of buckets) if (now - v.at >= 60000) buckets.delete(k);
-  const value = buckets.get(hash) ?? { at: now, count: 0 };
-  if (value.count >= 12 || (!buckets.has(hash) && buckets.size >= 5000))
-    throw new AppError(
-      "RATE_LIMIT",
-      429,
-      "Please wait a minute before trying again.",
-    );
-  value.count++;
-  buckets.set(hash, value);
+  limiter.consume(createHash("sha256").update(key).digest("hex"), now);
 }
 export async function readBody<T>(
   request: Request,
@@ -25,15 +17,31 @@ export async function readBody<T>(
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     throw new AppError("CONTENT_TYPE", 415, "Send JSON content.");
   rateLimit(
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local",
+    request.headers.get("cf-connecting-ip") ??
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "local",
   );
   const reader = request.body?.getReader();
   if (!reader) throw new AppError("BODY", 400, "Request body is required.");
   let size = 0;
   const chunks: Uint8Array[] = [];
+  const deadline = AbortSignal.any([request.signal, AbortSignal.timeout(5000)]);
+  if (deadline.aborted) {
+    void reader.cancel().catch(() => {});
+    reader.releaseLock();
+    throw new AppError("BODY_TIMEOUT", 408, "Request body timed out.");
+  }
+  let abortRead: () => void = () => {};
+  const timeout = new Promise<never>((_, reject) => {
+    abortRead = () => {
+      reject(new AppError("BODY_TIMEOUT", 408, "Request body timed out."));
+      void reader.cancel().catch(() => {});
+    };
+    deadline.addEventListener("abort", abortRead, { once: true });
+  });
   try {
     while (true) {
-      const { done, value } = await reader.read();
+      const { done, value } = await Promise.race([reader.read(), timeout]);
       if (done) break;
       size += value.byteLength;
       if (size > 8192)
@@ -41,6 +49,7 @@ export async function readBody<T>(
       chunks.push(value);
     }
   } finally {
+    deadline.removeEventListener("abort", abortRead);
     await reader.cancel().catch(() => {});
     reader.releaseLock();
   }

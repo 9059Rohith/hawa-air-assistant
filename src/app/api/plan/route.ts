@@ -6,7 +6,7 @@ export const maxDuration = 40;
 export async function POST(request: Request) {
   try {
     return Response.json(
-      await buildPlan(await readBody(request, RequestSchema)),
+      await buildPlan(await readBody(request, RequestSchema), request.signal),
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (e) {

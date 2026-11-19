@@ -6,9 +6,23 @@ import { useHawa } from "./Provider";
 export function Header() {
   const { profile, setProfile, t, clear } = useHawa();
   const path = usePathname();
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("system");
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    try {
+      const saved = localStorage.getItem("hawa-theme");
+      if (saved && ["system", "light", "dark", "hc"].includes(saved))
+        setTheme(saved);
+    } catch {}
+  }, []);
+  useEffect(() => {
+    const system = matchMedia("(prefers-color-scheme: dark)");
+    const update = () => {
+      document.documentElement.dataset.theme =
+        theme === "system" ? (system.matches ? "dark" : "light") : theme;
+    };
+    update();
+    system.addEventListener("change", update);
+    return () => system.removeEventListener("change", update);
   }, [theme]);
   return (
     <>
@@ -55,11 +69,25 @@ export function Header() {
             <select
               id="theme"
               value={theme}
-              onChange={(e) => setTheme(e.target.value)}
+              onChange={(e) => {
+                setTheme(e.target.value);
+                try {
+                  localStorage.setItem("hawa-theme", e.target.value);
+                } catch {}
+              }}
             >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="hc">High contrast</option>
+              <option value="system">
+                {profile.lang === "hi" ? "सिस्टम" : "System"}
+              </option>
+              <option value="light">
+                {profile.lang === "hi" ? "हल्का" : "Light"}
+              </option>
+              <option value="dark">
+                {profile.lang === "hi" ? "गहरा" : "Dark"}
+              </option>
+              <option value="hc">
+                {profile.lang === "hi" ? "उच्च कंट्रास्ट" : "High contrast"}
+              </option>
             </select>
           </div>
         </div>

@@ -3,9 +3,16 @@ export function selectActions(items: Action[], p: Profile, pm: number) {
   const match = {
     always: true,
     smog: pm > 35.4,
-    coal: p.heating === "coal_wood",
-    biomass: p.cooking === "biomass",
-    car: p.mode === "car",
+    coal: p.heating === "coal_wood" || p.heating === "kerosene",
+    biomass:
+      p.cooking === "biomass" ||
+      p.cooking === "mixed" ||
+      p.cooking === "kerosene",
+    car:
+      p.mode === "car" ||
+      p.mode === "ev" ||
+      p.mode === "motorcycle" ||
+      p.mode === "auto",
     filter: p.purifier || p.budget === "medium",
     exercise: p.exercise && pm > 35.4,
     risk: p.higherRisk || p.children > 0 || p.elders > 0 || p.pregnant,
@@ -33,9 +40,13 @@ export function selectActions(items: Action[], p: Profile, pm: number) {
           ? 90
           : a.condition === "exercise"
             ? 80
-            : a.effect !== "none"
-              ? 70
-              : 40) - a.effort
+            : p.schoolRun && a.id.includes("school")
+              ? 85
+              : a.effect !== "none"
+                ? 70
+                : 40) -
+      a.effort -
+      (a.minutes > p.timeMinutes && a.condition !== "coal" ? 25 : 0)
     );
   }
 }

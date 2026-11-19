@@ -1,14 +1,12 @@
 "use client";
 import { useState } from "react";
-import dynamic from "next/dynamic";
+import ChatPanel from "./ChatPanel";
+import { localPlan } from "@/lib/rules-plan";
 import { useHawa } from "./Provider";
 import { ProfileWizard } from "./ProfileWizard";
 import { LocationForm } from "./LocationForm";
 import { PlanView } from "./PlanView";
 import type { Plan } from "@/domain/types";
-const ChatPanel = dynamic(() => import("./ChatPanel"), {
-  loading: () => <p role="status">Opening assistant…</p>,
-});
 export function PlanWorkspace() {
   const { t, profile, location, air, plan, setPlan, setNotice } = useHawa();
   const [busy, setBusy] = useState(false),
@@ -23,6 +21,15 @@ export function PlanWorkspace() {
     }
     setBusy(true);
     try {
+      if (offline || !navigator.onLine) {
+        setPlan(localPlan(profile, location, air));
+        setNotice(
+          profile.lang === "hi"
+            ? "इस डिवाइस पर नियम आधारित योजना तैयार है।"
+            : "Your local rules-based plan is ready. No network request was needed.",
+        );
+        return;
+      }
       const response = await fetch("/api/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,8 +55,11 @@ export function PlanWorkspace() {
           : "Your rules-based plan is ready. All calculations are available.",
       );
     } catch {
+      setPlan(localPlan(profile, location, air));
       setNotice(
-        "The plan could not be generated. Try rules mode or retry shortly.",
+        profile.lang === "hi"
+          ? "AI उपलब्ध नहीं है। स्थानीय नियम योजना तैयार है।"
+          : "AI is unavailable. A local rules-based plan is ready.",
       );
     } finally {
       setBusy(false);
@@ -73,11 +83,13 @@ export function PlanWorkspace() {
           checked={offline}
           onChange={(e) => setOffline(e.target.checked)}
         />
-        Use rules mode · no AI request
+        {profile.lang === "hi"
+          ? "स्थानीय नियम मोड · AI अनुरोध नहीं"
+          : "Use rules mode · no AI request"}
       </label>
       {plan && (
         <>
-          <PlanView plan={plan} />
+          <PlanView key={plan.createdAt} plan={plan} />
           <button
             className="primary"
             onClick={() => setChat(!chat)}

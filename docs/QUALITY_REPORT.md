@@ -1,64 +1,61 @@
 # Verified quality report — 19 November 2026
 
-This report separates observed software results from external account restrictions. It is not an evaluation score or ranking prediction.
+Observed software evidence, not an evaluation-score or ranking prediction.
 
-| Check                               | Observed result                                                        |
-| ----------------------------------- | ---------------------------------------------------------------------- |
-| Strict TypeScript                   | Pass                                                                   |
-| ESLint + Prettier                   | Pass                                                                   |
-| Unit/component/API tests            | 810 passed                                                             |
-| Complete production-source coverage | 92.17% lines, 91.47% statements, 86.87% branches, 87.00% functions     |
-| Domain coverage                     | 100% lines/statements/branches/functions, enforced                     |
-| Desktop/mobile Playwright           | 6 passed                                                               |
-| Browser axe                         | 15 route/theme states; zero detected violations                        |
-| Browser runtime/hydration errors    | Zero in recorded route audit                                           |
-| Contrast checks                     | All 12 tested text/surface pairs exceed 4.5:1                          |
-| Production build                    | Pass; Next.js 15.5.29                                                  |
-| Actual initial home scripts         | 117,335 gzip bytes; 9 modern-browser scripts; 133,120-byte gate passes |
-| Dependency audit                    | Zero vulnerabilities after patched PostCSS override                    |
-| Real OpenAI plan                    | HTTP 200; `generatedBy: llm`; 10 validated actions                     |
-| Rules fallback                      | API, component and browser tests pass                                  |
-| Public source repository            | Created and independently opened as public                             |
-| Credential-pattern scan             | No matches; `.env.local` ignored                                       |
-| GitHub hosted CI                    | Workflow active; no steps ran because account is locked for billing    |
-| Vercel production                   | Blocked before project creation by team fair-use restriction           |
+| Check                                        | Current release result                                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Strict TypeScript                            | Pass                                                                                                         |
+| ESLint + Prettier                            | Pass                                                                                                         |
+| Unit/component/API tests                     | **102 passed**                                                                                               |
+| Entire production source coverage            | **90.94% lines**, 89.45% statements, 84.31% branches, 85.34% functions                                       |
+| Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas |
+| Production build + OpenNext Worker packaging | Pass                                                                                                         |
+| Desktop/mobile end-to-end tests              | **14 passed**, including 320px keyboard/offline journey and script-size gate                                 |
+| axe                                          | **15 page/theme states, zero detected violations**                                                           |
+| Runtime errors in browser audit              | **0**                                                                                                        |
+| Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                            |
+| Modern home JavaScript                       | **120,196 gzip bytes (117.4 KiB)**; budget 133,120 bytes                                                     |
+| Dependency audit                             | **0 reported vulnerabilities**                                                                               |
+| Working-tree and Git-history secret patterns | **0 matches**; 206 historical blobs scanned before this release commit                                       |
+| Build artifact credential scan               | **0 matches across 44 files**                                                                                |
+| Submission source                            | Approximately **0.85 MB**, below 10 MB; source-size gate is stricter at 8 MB                                 |
+| Local .git directory                         | Approximately **1.15 MB**, including local verification helpers/logs                                         |
+| Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                          |
 
-Coverage includes all source files, including unexecuted route shells; the report does not exclude low-coverage UI files. The initial narrower result was replaced by this inclusive result. Build-script size reports exclude `nomodule` assets that modern browsers do not execute. Dynamically loaded validation is fetched when needed, not silently removed.
+Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
-Local mobile Lighthouse: **95 performance, 100 accessibility, 100 best practices, 100 SEO**. LCP 2.17 seconds; CLS 0. This is a local simulation, not a production latency guarantee. Real geocoding and air endpoints returned HTTP 200 with five search results and 31 forecast hours.
+## What changed in this release
 
-## Evidence
+Expanded profile inputs; structured steps/caveats for all 60 bilingual guidance items; forecast chart/table and retrieval age; per-action impact explanations; weekly/adult-commuter scenarios; private-by-design shared links; school/community source checklists; fuel input-energy calculator, DIY safety guide and glossary; persisted theme/language and read-aloud pause; keyboard combobox; local rules planning/chat; bounded chat history/plan/air context; stricter unsafe-prose guards; upload cancellation/deadline; configurable provider limits; sliding-window Retry-After responses; source and history secret scans.
 
-Public Sites release verification: all ten desktop/mobile end-to-end tests pass. The production accessibility audit found zero axe violations and zero runtime errors across 15 route/theme states. A real production OpenAI request returned HTTP 200 with 10 validated actions. Public mobile Lighthouse measured **78 performance, 100 accessibility, 81 best practices, 100 SEO**, LCP 1.41 seconds and CLS 0. These measurements are separate from the local results above; they are not a universal load-time guarantee. Host-injected challenge scripts produced browser deprecation findings.
+The regression suite caught and fixed an upload-cancellation race. Offline browser tests build a plan, ask a grounded question and download JSON without network after the Plan route is loaded. Live-air success and HTTP 429 tests use controlled provider responses; real provider verification is reported separately.
 
-Production geocoding returned five results. After replacing the shared-host air request with a cached direct browser request and a specific CSP allowlist entry, the public site returned real Open-Meteo HTTP 200 data: Delhi PM2.5 115.9 µg/m³ at model time 2026-11-19T18:30 Asia/Kolkata, with 48 provider forecast hours (29 future hours displayed). The actual in-app browser also displayed this reading and forecast. Normal planning reuses the validated reading; the legacy server-only air endpoint may still encounter shared-host quotas. Separate browser regression tests use mock provider responses to reliably cover success and HTTP 429 recovery. No live reading is fabricated.
-
-[Public captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) records the local production build. Viewer access is enabled for anyone with the link. Submission source is approximately 0.8 MB, excluding generated media, dependencies and local build artifacts. The Git-history credential-pattern scan covered 130 unique blobs with no matches.
+## Reproducible evidence
 
 - `reports/coverage.json`
-- `reports/bundle.json`
+- `reports/local-e2e.json`
 - `reports/browser-accessibility.json`
+- `reports/bundle.json`
 - `reports/contrast.txt`
-- `reports/live-ai.json`
-- `reports/live-air.json`
-- `reports/lighthouse.json`
-- `reports/ci.json`
 - `reports/dependency-audit.json`
 - `reports/secret-scan.json`
-- `reports/deployment.json`
-- `reports/production-ai.json`
-- `reports/production-air.json`
-- `reports/production-accessibility.json`
-- `reports/production-lighthouse.json`
-- `reports/production-e2e.json`
+- `reports/ci.json`
 
-## Open items and limitations
+Production evidence is refreshed after publication in `reports/production-*.json` and `reports/deployment.json`. Reports retain their timestamps and source revision; earlier measurements are not relabelled as this release.
 
-- The application is now public on [Sites / Cloudflare Workers](https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site). Vercel and Railway account restrictions remain independent of this deployment. Local Lighthouse results above are not production measurements.
-- Resolve the GitHub billing lock to obtain an executed hosted CI run.
-- A relevant HAWA LinkedIn post URL is needed for the required submission field. A ready-to-publish draft is in `docs/LINKEDIN_DRAFT.md`; it has not been published. An unrelated earlier project post is not evidence for HAWA.
-- Independent screen-reader review, fully translated secondary UI, empirical India-specific emissions calibration and a service-worker offline shell remain future work.
-- No Docker runtime, full regulatory conformance or medical validation is claimed.
-- API key supplied in conversation should be rotated before public production use.
+## Previous production baseline
 
-The broad master prompt includes aspirational requirements beyond this implementation. This release is a tested application with transparent limits; it is not described as 100% complete or guaranteed top-ranked.
+The preceding release had 10 passing production browser tests, zero axe violations over 15 states, a real OpenAI plan with 10 actions, and real browser Open-Meteo Delhi data (115.9 µg/m³ at 2026-11-19T18:30 Asia/Kolkata). Its mobile Lighthouse result was 78 performance / 100 accessibility / 81 best practices / 100 SEO, LCP 1.41 seconds, CLS 0. Host challenge scripts contributed findings. These are historical measurements, not a universal loading-time guarantee or a new-release score.
+
+## External requirements and honest limits
+
+- The public application and repository use the existing links in README. Vercel/Railway account restrictions do not block this Sites deployment.
+- GitHub's billing lock must be resolved by the account owner before hosted CI can execute. Local checks are not presented as hosted CI success.
+- LinkedIn publication is excluded by the owner. The submission portal may require that field before the owner can submit.
+- The public captioned demo records the earlier local production build; its core journey remains representative, but it does not show every new feature.
+- Independent NVDA/VoiceOver and professional Hindi review are not claimed. Some source names and technical explanations remain English.
+- No medical validation, empirical local calibration, full regulatory certification, or Docker runtime verification is claimed.
+- Loaded-page offline use works; first visits and uncached page loads need internet. No service-worker installation claim is made.
+- A key pasted into conversation should be rotated through its provider account. No key value is in committed source or packaged artifacts.
+
+The core problem statement is implemented and locally verified. External account actions and the deliberately excluded social post prevent an unqualified claim that every submission prerequisite is complete. See [traceability](TRACEABILITY.md) for the detailed brief and justified design boundaries.

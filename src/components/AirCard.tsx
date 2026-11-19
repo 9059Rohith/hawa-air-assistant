@@ -1,15 +1,36 @@
 "use client";
 import { aqi, cpcb, bestWindow } from "@/domain/aqi";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+const Forecast = dynamic(() => import("./Forecast").then((m) => m.Forecast));
 import { useHawa } from "./Provider";
 export function AirCard() {
   const { air, location, t, profile } = useHawa();
   const band = air ? aqi(air.pm25) : null;
   const window = air ? bestWindow(air.hourly) : null;
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
   return (
     <section className="panel air-panel" aria-labelledby="air-title">
       <h2 id="air-title">{t.air}</h2>
       <div className="air-flex">
-        <div className="gauge">
+        <div
+          className="gauge"
+          data-level={band?.level}
+          role="img"
+          aria-label={
+            band
+              ? `${band.value}, ${profile.lang === "hi" ? band.hiLabel : band.label}, PM2.5`
+              : t.choose
+          }
+        >
+          <span aria-hidden="true">
+            {["○", "◇", "△", "!", "!!", "⚠"][band?.level ?? 0]}
+          </span>
           <strong>{band?.value ?? "—"}</strong>
           <span>
             {band
@@ -20,20 +41,48 @@ export function AirCard() {
           </span>
         </div>
         <div className="scale">
-          <p>US PM2.5 sub-index</p>
+          <p>
+            {profile.lang === "hi"
+              ? "US PM2.5 उप-सूचकांक"
+              : "US PM2.5 sub-index"}
+          </p>
           <strong>{air ? `${air.pm25.toFixed(1)} µg/m³` : "PM2.5"}</strong>
-          <p>{location?.name ?? "Location not set"}</p>
-          {air && <p>India PM2.5 band: {cpcb(air.pm25)}</p>}
+          <p>
+            {location?.name ??
+              (profile.lang === "hi" ? "स्थान नहीं चुना" : "Location not set")}
+          </p>
+          {air && (
+            <p>
+              {profile.lang === "hi" ? "भारत PM2.5 श्रेणी" : "India PM2.5 band"}
+              : {cpcb(air.pm25)}
+            </p>
+          )}
         </div>
       </div>
       {air && (
         <>
+          {now !== null && (
+            <p className="fine">
+              {profile.lang === "hi" ? "प्राप्त किए" : "Retrieved"}{" "}
+              {Math.max(
+                0,
+                Math.floor((now - Date.parse(air.fetchedAt)) / 60000),
+              )}{" "}
+              {profile.lang === "hi"
+                ? "मिनट पहले; स्रोत का समय नीचे है।"
+                : "min ago; source timestamp below."}
+            </p>
+          )}
           <p className="fine">
             {air.source === "manual"
-              ? "Your manual reading · no forecast"
+              ? profile.lang === "hi"
+                ? "आपकी दर्ज रीडिंग · पूर्वानुमान नहीं"
+                : "Your manual reading · no forecast"
               : air.source === "demo"
-                ? "Illustrative demo data"
-                : `Model timestamp: ${air.observedAt} (${air.timezone})`}
+                ? profile.lang === "hi"
+                  ? "उदाहरण डेटा"
+                  : "Illustrative demo data"
+                : `${profile.lang === "hi" ? "मॉडल का समय" : "Model timestamp"}: ${air.observedAt} (${air.timezone})`}
           </p>
           {air.source === "open-meteo-browser" && (
             <p className="fine">
@@ -43,7 +92,9 @@ export function AirCard() {
           )}
           {air.stale && (
             <p className="notice">
-              Cached data: live refresh failed. Check a local monitor.
+              {profile.lang === "hi"
+                ? "कैश डेटा: लाइव अपडेट विफल। स्थानीय मॉनिटर जाँचें।"
+                : "Cached data: live refresh failed. Check a local monitor."}
             </p>
           )}
           {band && band.level >= 4 && (
@@ -55,34 +106,16 @@ export function AirCard() {
           )}
           {window && (
             <p>
-              Lower forecast window: {window.time.slice(11, 16)} · about{" "}
-              {window.mean.toFixed(1)} µg/m³. Lower does not mean safe.
+              {profile.lang === "hi"
+                ? "कम प्रदूषण का अनुमानित समय"
+                : "Lower forecast window"}
+              : {window.time.slice(11, 16)} · {window.mean.toFixed(1)} µg/m³.{" "}
+              {profile.lang === "hi"
+                ? "कम का अर्थ सुरक्षित नहीं।"
+                : "Lower does not mean safe."}
             </p>
           )}
-          {air.hourly.length > 0 && (
-            <details>
-              <summary>Hourly forecast · table</summary>
-              <div className="table-scroll">
-                <table>
-                  <caption>Modelled PM2.5, µg/m³ · {air.timezone}</caption>
-                  <thead>
-                    <tr>
-                      <th>Time</th>
-                      <th>PM2.5</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {air.hourly.map((h) => (
-                      <tr key={h.time}>
-                        <td>{h.time.replace("T", " ")}</td>
-                        <td>{h.pm25.toFixed(1)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </details>
-          )}
+          <Forecast air={air} hi={profile.lang === "hi"} />
         </>
       )}
       <p className="fine attribution">

@@ -3,6 +3,7 @@ export class AppError extends Error {
     public code: string,
     public status: number,
     message: string,
+    public retryAfter?: number,
   ) {
     super(message);
   }
@@ -20,7 +21,12 @@ export function errorResponse(error: unknown) {
     },
     {
       status: known ? error.status : 502,
-      headers: { "Cache-Control": "no-store" },
+      headers: {
+        "Cache-Control": "no-store",
+        ...(known && error.retryAfter
+          ? { "Retry-After": String(error.retryAfter) }
+          : {}),
+      },
     },
   );
 }

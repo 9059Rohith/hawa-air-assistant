@@ -2,25 +2,40 @@
 import { useMemo, useState } from "react";
 import { planImpact } from "@/domain/impact";
 import type { Plan } from "@/domain/types";
-import { sources } from "@/data/sources";
 import { useHawa } from "./Provider";
 import { ReadAloud } from "./ui";
+import { ActionCard } from "./ActionCard";
+import { WeeklyProjection } from "./WeeklyProjection";
+import { shareFragment } from "@/lib/share";
 export function PlanView({ plan }: { plan: Plan }) {
   const { t, profile, setNotice } = useHawa();
-  const [excluded, setExcluded] = useState<string[]>([]);
   const hi = profile.lang === "hi";
-  const selected = plan.actions.filter((a) => !excluded.includes(a.id));
+  const [excluded, setExcluded] = useState<string[]>([]);
+  const [commuters, setCommuters] = useState(1);
+  const selected = useMemo(
+    () => plan.actions.filter((a) => !excluded.includes(a.id)),
+    [plan.actions, excluded],
+  );
   const totals = useMemo(
     () => planImpact(selected, plan.profile, plan.air.pm25),
     [selected, plan],
   );
-  const summary = `${plan.headline}\n${plan.summary}\n${selected.map((a) => (hi ? a.hi.title : a.title)).join("\n")}\nIllustrative ambient exposure change: ${totals.percent.toFixed(1)}%. Travel CO2e change: ${(totals.co2KgDay * 7).toFixed(2)} kg/week. Not a measured health outcome.`;
+  const text = selected.map((a) => (hi ? a.hi.title : a.title)).join("\n");
+  const summary = `${plan.headline}\n${text}\n${totals.percent.toFixed(1)}% · ${(totals.co2KgDay * 7).toFixed(2)} kg CO₂/week`;
+  const notify = (en: string, hin: string) => setNotice(hi ? hin : en);
   function download() {
-    const blob = new Blob(
-      [JSON.stringify({ ...plan, impact: totals, actions: selected }, null, 2)],
-      { type: "application/json" },
+    const url = URL.createObjectURL(
+      new Blob(
+        [
+          JSON.stringify(
+            { ...plan, impact: totals, actions: selected },
+            null,
+            2,
+          ),
+        ],
+        { type: "application/json" },
+      ),
     );
-    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "hawa-plan.json";
@@ -28,18 +43,35 @@ export function PlanView({ plan }: { plan: Plan }) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   async function share() {
+    const url =
+      location.origin +
+      "/community" +
+      shareFragment(
+        selected.map((a) => a.id),
+        profile.lang,
+      );
     try {
-      if (navigator.share)
-        await navigator.share({
-          title: "HAWA clean-air steps",
-          text: selected.map((a) => (hi ? a.hi.title : a.title)).join("\n"),
-          url: location.origin,
-        });
-      else await navigator.clipboard.writeText(summary);
-      setNotice("Plan summary shared or copied.");
+      if (navigator.share) await navigator.share({ title: "HAWA", text, url });
+      else await navigator.clipboard.writeText(url);
+      notify(
+        "A link containing only action IDs was shared or copied.",
+        "केवल कदमों की पहचान वाला लिंक साझा या कॉपी हुआ।",
+      );
     } catch {
-      setNotice(
-        "Sharing was cancelled or unavailable. You can download or print instead.",
+      notify(
+        "Sharing cancelled or unavailable. Print or download instead.",
+        "साझा करना रद्द हुआ या उपलब्ध नहीं है। प्रिंट या डाउनलोड करें।",
+      );
+    }
+  }
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(summary);
+      notify("Summary copied.", "सारांश कॉपी हुआ।");
+    } catch {
+      notify(
+        "Clipboard unavailable. Select the summary text instead.",
+        "क्लिपबोर्ड उपलब्ध नहीं है। सारांश चुनकर कॉपी करें।",
       );
     }
   }
@@ -50,44 +82,73 @@ export function PlanView({ plan }: { plan: Plan }) {
           <p className="mode">
             {plan.generatedBy === "llm" ? t.ai : t.rules} ·{" "}
             {plan.air.source === "demo"
-              ? "Demo data"
+              ? hi
+                ? "उदाहरण डेटा"
+                : "Demo data"
               : plan.air.source === "manual"
-                ? "Manual data"
-                : "Modelled air"}
+                ? hi
+                  ? "हाथ से भरा डेटा"
+                  : "Manual data"
+                : hi
+                  ? "अनुमानित हवा"
+                  : "Modelled air"}
           </p>
-          <h2>{plan.headline}</h2>
-          <p>{plan.summary}</p>
+          <h2>
+            {plan.profile.lang === profile.lang
+              ? plan.headline
+              : hi
+                ? "आज की साफ हवा योजना"
+                : "Your smog game plan"}
+          </h2>
+          <p>
+            {plan.profile.lang === profile.lang
+              ? plan.summary
+              : hi
+                ? "घर, सफ़र और समुदाय के लिए चुने गए कदम।"
+                : "Selected steps for your home, journey and community."}
+          </p>
+          <p className="fine">
+            {hi ? "बनाया गया" : "Generated"}:{" "}
+            {plan.createdAt.slice(0, 16).replace("T", " ")} UTC
+          </p>
         </div>
       </div>
       <div className="metrics">
         <div>
           <strong>{totals.percent.toFixed(1)}%</strong>
-          <span>Illustrative exposure reduction</span>
+          <span>
+            {hi ? "अनुमानित एक्सपोज़र कमी" : "Illustrative exposure reduction"}
+          </span>
         </div>
         <div>
           <strong>{(totals.co2KgDay * 7).toFixed(2)} kg</strong>
-          <span>Travel CO₂e avoided / week</span>
+          <span>
+            {hi ? "यात्रा CO₂ बदलाव / सप्ताह" : "Travel CO₂ avoided / week"}
+          </span>
         </div>
         <div>
           <strong>{totals.cigaretteEq.toFixed(2)}</strong>
-          <span>Cigarette-equivalent change / day*</span>
+          <span>
+            {hi
+              ? "सिगरेट-समतुल्य बदलाव / दिन*"
+              : "Cigarette-equivalent change / day*"}
+          </span>
         </div>
       </div>
       <p className="fine">
-        *Communication aid, not smoking, a clinical measure or a health
-        prediction. Ambient-only model, constant PM2.5, adult scenario,
-        uncertain mask fit and infiltration. Travel factors are illustrative
-        assumptions, not a verified Indian emissions inventory. No numerical
-        cooking or waste claims.
+        {hi
+          ? "*समझाने का उदाहरण, धूम्रपान या स्वास्थ्य की भविष्यवाणी नहीं। वयस्क परिदृश्य; मास्क फिट, गतिविधि और इमारत के कारण परिणाम बदलते हैं। यात्रा के पुराने संदर्भ गुणांक हैं, मापा गया निजी उत्सर्जन नहीं।"
+          : "*Communication aid, not smoking, a clinical measure or a health prediction. Adult scenario with uncertain mask fit, activity and infiltration. Travel uses dated reference factors, not a current fleet inventory or measured personal emissions."}
       </p>
       <details className="panel">
         <summary>{t.whatif}</summary>
         <p>
-          Toggle actions to recompute one combined scenario. Overlapping effects
-          are applied only once.
+          {hi
+            ? "एक ही प्रभाव दो बार नहीं गिना जाता। कदम बदलकर कुल परिदृश्य देखें।"
+            : "Toggle actions to recompute one combined scenario. Overlapping effects are applied only once."}
         </p>
         {plan.actions.map((a) => (
-          <label key={a.id} className="check">
+          <label className="check" key={a.id}>
             <input
               type="checkbox"
               checked={!excluded.includes(a.id)}
@@ -103,101 +164,72 @@ export function PlanView({ plan }: { plan: Plan }) {
           </label>
         ))}
         <p role="status">
-          Selected scenario: {totals.percent.toFixed(1)}% exposure reduction,{" "}
-          {(totals.co2KgDay * 7).toFixed(2)} kg CO₂e/week.
+          {hi ? "चुना गया परिदृश्य" : "Selected scenario"}:{" "}
+          {totals.percent.toFixed(1)}%, {(totals.co2KgDay * 7).toFixed(2)} kg
+          CO₂/{hi ? "सप्ताह" : "week"}.
         </p>
       </details>
       <ol className="action-list">
-        {plan.actions.map((a, i) => {
-          const impact = planImpact([a], plan.profile, plan.air.pm25);
-          return (
-            <li key={a.id}>
-              <div className="action-index">
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <article>
-                <small>
-                  {a.category} · {a.cost} · effort {a.effort}/3
-                </small>
-                <h3>{hi ? a.hi.title : a.title}</h3>
-                <p>
-                  {plan.profile.lang === profile.lang
-                    ? a.why
-                    : hi
-                      ? a.hi.summary
-                      : a.summary}
-                </p>
-                <details>
-                  <summary>{t.calculate}</summary>
-                  <p>
-                    {a.effect === "none"
-                      ? "Qualitative guidance; no numerical savings assigned."
-                      : `Standalone illustration: ${impact.percent.toFixed(1)}% ambient-exposure reduction; ${(impact.co2KgDay * 7).toFixed(2)} kg CO₂e/week avoided. Combined totals are recomputed, not summed.`}
-                  </p>
-                  <p>
-                    PM2.5: {plan.air.pm25} µg/m³; outdoor time:{" "}
-                    {plan.profile.outdoorHours} h/day; room:{" "}
-                    {plan.profile.roomArea} m² × 2.7 m. Indoor concentration =
-                    outdoor × infiltration × 0.5 / (0.5 + CADR / volume). N95
-                    penetration assumption: 0.2; real fit varies. Confidence:
-                    low.
-                  </p>
-                  <p>
-                    {a.sources.map((s) => {
-                      const source = sources[s as keyof typeof sources];
-                      return source ? (
-                        <a key={s} href={source.url}>
-                          {source.title} ↗{" "}
-                        </a>
-                      ) : null;
-                    })}
-                  </p>
-                </details>
-              </article>
-            </li>
-          );
-        })}
+        {plan.actions.map((a, i) => (
+          <ActionCard key={a.id} action={a} plan={plan} index={i} hi={hi} />
+        ))}
       </ol>
       <section className="panel">
         <h2>{t.indoor}</h2>
-        {[
-          "Bedroom: keep smoke out; size and maintain filtration.",
-          "Kitchen: avoid charring; use outdoor-vented exhaust.",
-          "Living room: damp-dust, avoid incense and mosquito coils.",
-          "Vehicle: avoid idling; maintain cabin filters.",
-        ].map((s) => (
+        {(hi
+          ? [
+              "सोने का कमरा: धुआँ बाहर रखें; सही फ़िल्टर और रखरखाव।",
+              "रसोई: खाना न जलाएँ; बाहर जाने वाला एग्ज़ॉस्ट चलाएँ।",
+              "बैठक: गीले कपड़े से सफ़ाई; अगरबत्ती और धुएँ से बचें।",
+              "वाहन: बेवजह इंजन बंद; केबिन फ़िल्टर की देखभाल।",
+            ]
+          : [
+              "Bedroom: keep smoke out; size and maintain filtration.",
+              "Kitchen: avoid charring; use outdoor-vented exhaust.",
+              "Living room: damp-dust, avoid incense and mosquito coils.",
+              "Vehicle: avoid idling; maintain cabin filters.",
+            ]
+        ).map((s) => (
           <label className="check" key={s}>
             <input type="checkbox" />
             {s}
           </label>
         ))}
       </section>
-      <details>
-        <summary>Seven-day projection table</summary>
-        <table>
-          <caption>
-            Same chosen actions repeated each day · per commuting person
-          </caption>
-          <thead>
-            <tr>
-              <th>Day</th>
-              <th>Cumulative CO₂e avoided (kg)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 7 }, (_, i) => (
-              <tr key={i}>
-                <td>{i + 1}</td>
-                <td>{(totals.co2KgDay * (i + 1)).toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </details>
+      <label>
+        {hi
+          ? "इसी यात्रा वाले वयस्क यात्रियों की संख्या"
+          : "Adults repeating this same commute scenario"}
+        <input
+          type="number"
+          min={1}
+          max={plan.profile.adults}
+          value={commuters}
+          onChange={(e) =>
+            setCommuters(
+              Math.max(
+                1,
+                Math.min(plan.profile.adults, Number(e.target.value) || 1),
+              ),
+            )
+          }
+        />
+      </label>
+      <p className="fine">
+        {hi
+          ? "केवल यात्रा की कुल गणना बदलती है; बच्चों या स्वास्थ्य प्रभाव को गुणा नहीं किया जाता।"
+          : "Only travel totals scale; child or household health effects are never multiplied."}
+      </p>
+      <WeeklyProjection kg={totals.co2KgDay * commuters} hi={hi} />
       <div className="button-row">
         <button onClick={() => window.print()}>{t.print}</button>
         <button onClick={download}>{t.download}</button>
-        <button onClick={() => void share()}>Share / copy</button>
+        <button onClick={() => void share()}>
+          {hi ? "लिंक साझा / कॉपी करें" : "Share / copy"}
+        </button>
+        <button onClick={() => void copy()}>
+          {hi ? "सारांश कॉपी करें" : "Copy summary"}
+        </button>
       </div>
       <ReadAloud text={summary} />
     </section>

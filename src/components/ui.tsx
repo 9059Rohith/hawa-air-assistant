@@ -20,6 +20,7 @@ export function Field({
 export function ReadAloud({ text }: { text: string }) {
   const { t, profile } = useHawa();
   const [available, setAvailable] = useState(false);
+  const [paused, setPaused] = useState(false);
   useEffect(() => {
     setAvailable("speechSynthesis" in window);
     return () => {
@@ -31,6 +32,7 @@ export function ReadAloud({ text }: { text: string }) {
       <button
         onClick={() => {
           speechSynthesis.cancel();
+          setPaused(false);
           const utterance = new SpeechSynthesisUtterance(text);
           utterance.lang = profile.lang === "hi" ? "hi-IN" : "en-IN";
           speechSynthesis.speak(utterance);
@@ -38,7 +40,29 @@ export function ReadAloud({ text }: { text: string }) {
       >
         {t.read}
       </button>
-      <button onClick={() => speechSynthesis.cancel()}>{t.stop}</button>
+      <button
+        onClick={() => {
+          if (paused) speechSynthesis.resume();
+          else speechSynthesis.pause();
+          setPaused(!paused);
+        }}
+      >
+        {profile.lang === "hi"
+          ? paused
+            ? "जारी रखें"
+            : "रोकें"
+          : paused
+            ? "Resume"
+            : "Pause"}
+      </button>
+      <button
+        onClick={() => {
+          speechSynthesis.cancel();
+          setPaused(false);
+        }}
+      >
+        {t.stop}
+      </button>
     </div>
   ) : (
     <p>Read-aloud is unavailable in this browser.</p>

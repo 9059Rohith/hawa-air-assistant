@@ -1,15 +1,25 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { Location } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { Field } from "./ui";
 export function LocationForm() {
-  const { t, location, setLocation, setAir, setPlan, setNotice } = useHawa();
+  const { t, profile, location, setLocation, setAir, setPlan, setNotice } =
+    useHawa();
+  const hi = profile.lang === "hi";
   const [q, setQ] = useState(""),
+    [active, setActive] = useState(-1),
     [results, setResults] = useState<Location[]>([]),
     [busy, setBusy] = useState(false),
     [manual, setManual] = useState("");
+  const searchAbort = useRef<AbortController | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadId = useRef(0);
   async function load(l: Location) {
+    const id = ++loadId.current;
+    searchAbort.current?.abort();
+    setResults([]);
+    setActive(-1);
     setLocation(l);
     setAir(null);
     setPlan(null);
@@ -17,6 +27,7 @@ export function LocationForm() {
     try {
       const { loadBrowserAir } = await import("@/lib/browser-air");
       const reading = await loadBrowserAir(l);
+      if (id !== loadId.current) return;
       setAir(reading);
       setNotice(
         reading.stale
@@ -24,34 +35,55 @@ export function LocationForm() {
           : "Air data updated directly from Open-Meteo.",
       );
     } catch {
+      if (id !== loadId.current) return;
       setNotice(
         "Live data is unavailable. Retry or enter a PM2.5 reading below.",
       );
     } finally {
-      setBusy(false);
+      if (id === loadId.current) setBusy(false);
     }
   }
-  async function search() {
+  const search = useCallback(async () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    if (q.trim().length < 2) return;
+    searchAbort.current?.abort();
+    const controller = new AbortController();
+    searchAbort.current = controller;
     setBusy(true);
     try {
-      const response = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+      const response = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+        signal: controller.signal,
+      });
       if (!response.ok) throw new Error();
       const { LocationSchema } = await import("@/domain/types");
       const places = LocationSchema.array().parse(await response.json());
+      if (controller.signal.aborted) return;
       setResults(places);
+      setActive(-1);
       setNotice(
         places.length
           ? `${places.length} locations found. Choose one below.`
           : "No locations found. Try a nearby city.",
       );
     } catch {
+      if (controller.signal.aborted) return;
       setNotice(
         "Search is unavailable. Try a nearby city or enter PM2.5 manually.",
       );
     } finally {
-      setBusy(false);
+      if (searchAbort.current === controller) setBusy(false);
     }
-  }
+  }, [q, setNotice]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (q.trim().length >= 2) void search();
+    }, 250);
+    debounceTimer.current = timer;
+    return () => {
+      clearTimeout(timer);
+      searchAbort.current?.abort();
+    };
+  }, [q, search]);
   function locate() {
     if (!navigator.geolocation) {
       setNotice("Location access is unavailable. Search for your city.");
@@ -81,6 +113,31 @@ export function LocationForm() {
           <Field id="city" label={t.find}>
             <input
               id="city"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={results.length > 0}
+              aria-controls="city-results"
+              aria-activedescendant={
+                active >= 0 ? `city-option-${active}` : undefined
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setResults([]);
+                  setActive(-1);
+                }
+                if (e.key === "ArrowDown" && results.length) {
+                  e.preventDefault();
+                  setActive((i) => (i + 1) % results.length);
+                }
+                if (e.key === "ArrowUp" && results.length) {
+                  e.preventDefault();
+                  setActive((i) => (i - 1 + results.length) % results.length);
+                }
+                if (e.key === "Enter" && active >= 0 && results[active]) {
+                  e.preventDefault();
+                  void load(results[active]);
+                }
+              }}
               value={q}
               onChange={(e) => setQ(e.target.value)}
               minLength={2}
@@ -91,7 +148,7 @@ export function LocationForm() {
             />
           </Field>
           <button disabled={busy} type="submit">
-            {busy ? "…" : "Search"}
+            {busy ? "…" : hi ? "खोजें" : "Search"}
           </button>
         </div>
       </form>
@@ -102,14 +159,23 @@ export function LocationForm() {
         {location && <span>{location.name}</span>}
       </div>
       <p className="fine">
-        Live readings are requested from Open-Meteo by your browser using
-        rounded coordinates. No account or API key is needed.
+        {hi
+          ? "ब्राउज़र गोल किए निर्देशांक से Open-Meteo डेटा लेता है। खाते या API कुंजी की ज़रूरत नहीं।"
+          : "Live readings are requested from Open-Meteo by your browser using rounded coordinates. No account or API key is needed."}
       </p>
       {results.length > 0 && (
-        <ul className="location-results" aria-label="Search results">
+        <ul
+          id="city-results"
+          role="listbox"
+          className="location-results"
+          aria-label="Search results"
+        >
           {results.map((l, i) => (
-            <li key={`${l.lat},${l.lon}`}>
+            <li role="presentation" key={`${l.lat},${l.lon}`}>
               <button
+                role="option"
+                id={`city-option-${i}`}
+                aria-selected={i === active}
                 onClick={() => {
                   setResults([]);
                   void load(l);
@@ -166,7 +232,7 @@ export function LocationForm() {
           />
         </Field>
         <button disabled={busy} type="submit">
-          Use reading
+          {hi ? "रीडिंग इस्तेमाल करें" : "Use reading"}
         </button>
       </form>
     </section>

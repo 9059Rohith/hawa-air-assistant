@@ -1,6 +1,8 @@
 import { AppError } from "@/lib/errors";
 const hosts = new Set([
   "api.openai.com",
+  "openrouter.ai",
+  "api.groq.com",
   "air-quality-api.open-meteo.com",
   "geocoding-api.open-meteo.com",
 ]);

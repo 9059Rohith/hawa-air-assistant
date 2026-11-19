@@ -1,15 +1,30 @@
-# Problem-to-evidence traceability
+# Build-brief traceability
 
-| Clause                   | Feature                                                           | Code                                              | Verification                                                 |
-| ------------------------ | ----------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
-| GenAI assistant          | Validated OpenAI explanations and cited chat                      | `services/llm.ts`, `app/api/chat`                 | Live AI report + provider/fallback contracts                 |
-| Families                 | Profiles, risk flags and three presets                            | `ProfileWizard.tsx`, `data/personas.ts`           | Component wizard and selection tests                         |
-| Communities              | Seven-day notice/checklist and scenario calculator                | `Community.tsx`                                   | Component + desktop/mobile browser tests                     |
-| Severe winter smog       | Timestamped model data, updated indices, urgent banner            | `services/air.ts`, `domain/aqi.ts`, `AirCard.tsx` | Boundaries, stale upstream, alert tests                      |
-| Low-emission routines    | Feasible commute and safe routine alternatives                    | `domain/select.ts`, `data/knowledge.ts`           | Persona selection and transport invariants                   |
-| Indoor hacks             | Source control, filtration, purifier sizing, myths                | `Learn.tsx`, `domain/impact.ts`                   | Sizing examples and library validation                       |
-| Sustainable alternatives | Transit, carpool, clean fuel, no waste burning                    | `data/knowledge.ts`                               | All sixty entries schema-checked                             |
-| Location and lifestyle   | Search, approximate geolocation, manual values, budget            | `LocationForm.tsx`, `ProfileWizard.tsx`           | Search, failure and complete journey tests                   |
-| Direct impact            | Combined scenario, expandable assumptions, weekly/community table | `PlanView.tsx`, `domain/impact.ts`                | Worked example, no-double-counting and property-style checks |
+Core problem statement: GenAI guidance for families and communities facing winter smog, with low-emission routines, indoor measures, sustainable alternatives and explained impacts.
 
-Demo narrative follows this order. The recorded demonstration uses a local production build and labels demo/manual readings; it must not be represented as a live production recording.
+| Requirement          | Implemented behavior                                                                                                                               | Evidence                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Location-aware air   | Debounced keyboard combobox, opt-in rounded geolocation, live browser Open-Meteo, manual fallback, stale/cooldown labels                           | LocationForm, browser-air tests, production-air report                    |
+| Severe smog          | EPA 2024 indicative index, independent CPCB concentration band, severity symbol/pattern and urgent guidance                                        | domain boundary tests; AirCard                                            |
+| Forecast             | Accessible SVG points, full table, lowest future window, source timestamps and retrieval age                                                       | Forecast tests; browser journey                                           |
+| Family/lifestyle     | Five steps, child ages, risk flags, housing/ventilation/height, cooking/heating duration, fuel, commute, mask/activity, budget/time and presets    | ProfileWizard, profile-fields, schema/component tests                     |
+| Curated guidance     | 60 bilingual entries with steps, caveats, tags, audience, timing, cost and source IDs                                                              | Complete schema/reference validation                                      |
+| GenAI plans          | Bounded provider call, candidate IDs, compact profile/context, guarded language and transparent rules fallback                                     | services tests; separate real production AI check                         |
+| Chat                 | Bounded recent history and selected-plan/air context, top-four retrieval, citations, unknown-answer response, urgent bypass, stop/copy/suggestions | API and component tests                                                   |
+| Local fallback       | Loaded Plan route builds and chats without fetch; calculations, print/JSON remain local                                                            | Offline desktop/mobile browser journey                                    |
+| Direct impact        | Combined exposure calculation, per-action explanation, CO₂ and communication-aid boundaries, what-if toggles                                       | 100% domain coverage gate; worked methodology                             |
+| Emission inputs      | Dated source JSON, vehicle/passenger units, India-oriented factors, separate fuel-input-energy calculator                                          | emissions tests; About/Methodology                                        |
+| Family/weekly totals | Explicit adult commuter count, cumulative SVG/table, no multiplied health outcomes                                                                 | PlanView, WeeklyProjection tests                                          |
+| Indoor tools         | Room checklist, interactive ceiling/area purifier sizing, myths/mask guidance, DIY safety and glossary                                             | Learn/component tests, EPA-linked source                                  |
+| Community            | School/RWA/neighbourhood, local-source checklist, seven-day kit, copy/print notice, bounded collective scenario                                    | Community tests; browser journey                                          |
+| Export/sharing       | JSON and print; separate copy summary; Web Share/clipboard URL with only curated IDs and language                                                  | Component tests, share parser adversarial tests                           |
+| Accessibility        | Semantic forms, error summary, keyboard combobox, focusable chart/table, three themes/system theme, Hindi, read-aloud/pause                        | axe/contrast and keyboard/reflow tests; human-review limitation disclosed |
+| Security             | Strict bodies/origins, upload cancellation/deadline, allowlisted HTTPS, no redirects, output guard, sliding rate limits/Retry-After, CSP           | adversarial/API tests; source/history/artifact secret scans               |
+| Efficiency           | Bounded cache/dedupe/cooldown, bounded model tokens/deadline/concurrency, SVGs, no heavy chart library, JS budget gate                             | bundle/browser tests; provider tests                                      |
+| Submission           | Public MIT repository, same public live URL, public captioned demo, README/rubric map and quality evidence                                         | links in README; repository/production reports                            |
+
+## Explicit deviations and external requirements
+
+[ADR 5](adr/0005-evidence-boundaries.md) explains current AQI breakpoints, operational CO₂ rather than unsupported CO₂e, input-energy fuel comparisons, the retained framework/hosting, and loaded-page offline scope. These are deliberate boundaries, not fabricated feature claims.
+
+Hosted CI execution remains blocked by the GitHub account billing restriction. Independent NVDA/VoiceOver and professional Hindi review are not claimed. Docker is supplied but not runtime-tested here. LinkedIn publication is excluded by the owner; the portal may still require that field before submission. The owner performs final submission. A top-percentile rank or 100% evaluation score cannot be certified by this repository.
