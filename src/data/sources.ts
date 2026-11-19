@@ -1,1 +1,35 @@
-export const sources={epa:{title:"US EPA · Air cleaners in the home",url:"https://www.epa.gov/indoor-air-quality-iaq/guide-air-cleaners-home"},aqi:{title:"US EPA · Current AQI breakpoints",url:"https://aqs.epa.gov/aqsweb/documents/codetables/aqi_breakpoints.html"},cpcb:{title:"CPCB · National AQI",url:"https://airquality.cpcb.gov.in/AQI_India/"},co:{title:"CDC · Prevent carbon monoxide poisoning",url:"https://www.cdc.gov/natural-disasters/psa-toolkit/avoiding-carbon-monoxide-poisoning.html"},smoke:{title:"US EPA · Emergencies and indoor air quality",url:"https://www.epa.gov/emergencies-iaq/emergencies-and-indoor-air-quality-iaq"},climate:{title:"UK DESNZ · 2025 conversion-factor methodology (context; HAWA uses illustrative rounded scenarios)",url:"https://assets.publishing.service.gov.uk/media/6846b0870392ed9b784c0187/2025-GHG-CF-methodology-paper.pdf"},berkeley:{title:"Berkeley Earth · Illustrative cigarette equivalence",url:"https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/"},meteo:{title:"Open-Meteo · CAMS air-quality model data, CC BY 4.0",url:"https://open-meteo.com/en/docs/air-quality-api"}};
+export const sources = {
+  epa: {
+    title: "US EPA · Air cleaners in the home",
+    url: "https://www.epa.gov/indoor-air-quality-iaq/guide-air-cleaners-home",
+  },
+  aqi: {
+    title: "US EPA · Current AQI breakpoints",
+    url: "https://aqs.epa.gov/aqsweb/documents/codetables/aqi_breakpoints.html",
+  },
+  cpcb: {
+    title: "CPCB · National AQI",
+    url: "https://airquality.cpcb.gov.in/AQI_India/",
+  },
+  co: {
+    title: "CDC · Prevent carbon monoxide poisoning",
+    url: "https://www.cdc.gov/natural-disasters/psa-toolkit/avoiding-carbon-monoxide-poisoning.html",
+  },
+  smoke: {
+    title: "US EPA · Emergencies and indoor air quality",
+    url: "https://www.epa.gov/emergencies-iaq/emergencies-and-indoor-air-quality-iaq",
+  },
+  climate: {
+    title:
+      "UK DESNZ · 2025 conversion-factor methodology (context; HAWA uses illustrative rounded scenarios)",
+    url: "https://assets.publishing.service.gov.uk/media/6846b0870392ed9b784c0187/2025-GHG-CF-methodology-paper.pdf",
+  },
+  berkeley: {
+    title: "Berkeley Earth · Illustrative cigarette equivalence",
+    url: "https://berkeleyearth.org/air-pollution-and-cigarette-equivalence/",
+  },
+  meteo: {
+    title: "Open-Meteo · CAMS air-quality model data, CC BY 4.0",
+    url: "https://open-meteo.com/en/docs/air-quality-api",
+  },
+};

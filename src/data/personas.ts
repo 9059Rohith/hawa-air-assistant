@@ -1,4 +1,55 @@
-import type {Profile} from "@/domain/types";
-export const baseProfile:Profile={adults:2,children:0,elders:0,higherRisk:false,pregnant:false,pets:false,sealing:"typical",roomArea:20,purifier:false,cadr:250,exhaust:true,cooking:"lpg",heating:"none",mode:"car",km:12,occupancy:1,transit:true,schoolRun:false,outdoorHours:2,exercise:true,wfhDays:0,budget:"low",lang:"en",simple:false};
-export const personas={Meera:{...baseProfile,children:2,higherRisk:true,schoolRun:true},Ramesh:{...baseProfile,adults:2,elders:2,higherRisk:true,heating:"coal_wood",mode:"walk",km:0,lang:"hi",simple:true},Ananya:{...baseProfile,adults:1,mode:"cycle",sealing:"leaky",budget:"free",roomArea:12}} satisfies Record<string,Profile>;
-export const cities={Delhi:{name:"Delhi",lat:28.61,lon:77.21},Lucknow:{name:"Lucknow",lat:26.85,lon:80.95},Kolkata:{name:"Kolkata",lat:22.57,lon:88.36},Gurugram:{name:"Gurugram",lat:28.46,lon:77.03}};
+import type { Profile } from "@/domain/types";
+export const baseProfile: Profile = {
+  adults: 2,
+  children: 0,
+  elders: 0,
+  higherRisk: false,
+  pregnant: false,
+  pets: false,
+  sealing: "typical",
+  roomArea: 20,
+  purifier: false,
+  cadr: 250,
+  exhaust: true,
+  cooking: "lpg",
+  heating: "none",
+  mode: "car",
+  km: 12,
+  occupancy: 1,
+  transit: true,
+  schoolRun: false,
+  outdoorHours: 2,
+  exercise: true,
+  wfhDays: 0,
+  budget: "low",
+  lang: "en",
+  simple: false,
+};
+export const personas = {
+  Meera: { ...baseProfile, children: 2, higherRisk: true, schoolRun: true },
+  Ramesh: {
+    ...baseProfile,
+    adults: 2,
+    elders: 2,
+    higherRisk: true,
+    heating: "coal_wood",
+    mode: "walk",
+    km: 0,
+    lang: "hi",
+    simple: true,
+  },
+  Ananya: {
+    ...baseProfile,
+    adults: 1,
+    mode: "cycle",
+    sealing: "leaky",
+    budget: "free",
+    roomArea: 12,
+  },
+} satisfies Record<string, Profile>;
+export const cities = {
+  Delhi: { name: "Delhi", lat: 28.61, lon: 77.21 },
+  Lucknow: { name: "Lucknow", lat: 26.85, lon: 80.95 },
+  Kolkata: { name: "Kolkata", lat: 22.57, lon: 88.36 },
+  Gurugram: { name: "Gurugram", lat: 28.46, lon: 77.03 },
+};

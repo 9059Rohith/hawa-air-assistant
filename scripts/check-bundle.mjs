@@ -4,8 +4,9 @@ const base = process.env.AUDIT_ORIGIN ?? "http://localhost:3100";
 const html = await (await fetch(base)).text();
 const scripts = [
   ...new Set(
-    [...html.matchAll(/<script[^>]*src="([^"?]+)/g)]
-      .map((m) => m[1])
+    [...html.matchAll(/<script\b[^>]*>/g)]
+      .filter((m) => !/nomodule/i.test(m[0]))
+      .map((m) => m[0].match(/src="([^"?]+)/)?.[1])
       .filter((p) => p?.startsWith("/_next/")),
   ),
 ];

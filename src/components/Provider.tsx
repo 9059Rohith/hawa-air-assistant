@@ -4,16 +4,11 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   type ReactNode,
 } from "react";
 import { baseProfile } from "@/data/personas";
-import {
-  ProfileSchema,
-  type Profile,
-  type Location,
-  type Air,
-  type Plan,
-} from "@/domain/types";
+import type { Profile, Location, Air, Plan } from "@/domain/types";
 import { copy } from "@/i18n";
 type State = {
   profile: Profile;
@@ -32,20 +27,32 @@ type State = {
 };
 const Context = createContext<State | null>(null);
 export function Provider({ children }: { children: ReactNode }) {
+  const edited = useRef(false);
   const [profile, setProfile] = useState(baseProfile),
     [location, setLocation] = useState<Location | null>(null),
     [air, setAir] = useState<Air | null>(null),
     [plan, setPlan] = useState<Plan | null>(null),
     [notice, setNotice] = useState("");
   useEffect(() => {
-    try {
-      const value = localStorage.getItem("hawa-profile-v1");
-      if (value) setProfile(ProfileSchema.parse(JSON.parse(value)));
-    } catch {
-      setNotice(
-        "Saved preferences could not be read. You can continue without saving.",
-      );
+    let active = true;
+    async function restore() {
+      try {
+        const value = localStorage.getItem("hawa-profile-v1");
+        if (value) {
+          const { ProfileSchema } = await import("@/domain/types");
+          const parsed = ProfileSchema.parse(JSON.parse(value));
+          if (active && !edited.current) setProfile(parsed);
+        }
+      } catch {
+        setNotice(
+          "Saved preferences could not be read. You can continue without saving.",
+        );
+      }
     }
+    void restore();
+    return () => {
+      active = false;
+    };
   }, []);
   useEffect(() => {
     document.documentElement.lang = profile.lang;
@@ -63,6 +70,7 @@ export function Provider({ children }: { children: ReactNode }) {
     }
   }
   function clear() {
+    edited.current = true;
     try {
       localStorage.removeItem("hawa-profile-v1");
       setProfile(baseProfile);
@@ -80,7 +88,10 @@ export function Provider({ children }: { children: ReactNode }) {
     <Context.Provider
       value={{
         profile,
-        setProfile,
+        setProfile: (value) => {
+          edited.current = true;
+          setProfile(value);
+        },
         location,
         setLocation,
         air,

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { AirSchema, LocationSchema, type Location } from "@/domain/types";
+import type { Location } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { Field } from "./ui";
 export function LocationForm() {
@@ -15,6 +15,7 @@ export function LocationForm() {
     try {
       const response = await fetch(`/api/air?lat=${l.lat}&lon=${l.lon}`);
       if (!response.ok) throw new Error();
+      const { AirSchema } = await import("@/domain/types");
       setAir(AirSchema.parse(await response.json()));
       setNotice("Air data updated.");
     } catch {
@@ -30,6 +31,7 @@ export function LocationForm() {
     try {
       const response = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
       if (!response.ok) throw new Error();
+      const { LocationSchema } = await import("@/domain/types");
       const places = LocationSchema.array().parse(await response.json());
       setResults(places);
       setNotice(

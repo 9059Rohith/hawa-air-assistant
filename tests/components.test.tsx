@@ -121,10 +121,12 @@ it("profile persistence is opt-in and clearable", () => {
   fireEvent.click(screen.getByText("Clear", { exact: true }));
   expect(localStorage.length).toBe(0);
 });
-it("reports corrupt or blocked storage instead of claiming data saved", () => {
+it("reports corrupt or blocked storage instead of claiming data saved", async () => {
   localStorage.setItem("hawa-profile-v1", "bad");
   wrap(<Footer />);
-  expect(screen.getByRole("status")).toHaveTextContent("could not be read");
+  await waitFor(() =>
+    expect(screen.getByRole("status")).toHaveTextContent("could not be read"),
+  );
   vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
     throw new Error();
   });
@@ -136,13 +138,13 @@ it("reports corrupt or blocked storage instead of claiming data saved", () => {
   fireEvent.click(screen.getByText("Clear", { exact: true }));
   expect(screen.getByRole("status")).toHaveTextContent("Storage is blocked");
 });
-it("reads a valid saved profile", () => {
+it("reads a valid saved profile", async () => {
   localStorage.setItem(
     "hawa-profile-v1",
     JSON.stringify({ ...baseProfile, lang: "hi" }),
   );
   wrap(<Footer />);
-  expect(document.documentElement.lang).toBe("hi");
+  await waitFor(() => expect(document.documentElement.lang).toBe("hi"));
 });
 it("loads sample households without implying live data", () => {
   wrap(<Home />);
