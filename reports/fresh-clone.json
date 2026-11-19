@@ -1,0 +1,9 @@
+{
+  "verifiedAt": "2026-11-19T14:15:42.023Z",
+  "sourceCommit": "4acac19a5fa59fce0db07d6261e6a2f8504e77f6",
+  "install": "npm ci: 778 packages; zero reported vulnerabilities",
+  "tests": 103,
+  "failed": 0,
+  "typecheck": "passed on feature release; final production build also type-checked",
+  "developmentServer": "Fresh clone without environment returned health 200 and llm offline; stopped after check"
+}

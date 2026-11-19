@@ -1,16 +1,25 @@
 {
-  "verifiedAt": "2026-11-19T13:18:15.561Z",
-  "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
+  "verifiedAt": "2026-11-19T14:15:42.023Z",
+  "sourceCommit": "4acac19a5fa59fce0db07d6261e6a2f8504e77f6",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 10,
+  "passed": 14,
   "failed": 0,
+  "workers": 1,
   "projects": ["desktop", "mobile"],
   "flows": [
-    "mocked browser forecast to real rules plan without repeat upstream request",
-    "mocked HTTP 429 with manual recovery",
-    "manual input to plan, scenario, chat, Hindi",
-    "all-route navigation and mobile reflow",
-    "community and purifier calculators"
+    "Mocked browser air forecast reaches a plan without repeat provider requests",
+    "Mocked provider 429 preserves manual recovery",
+    "Manual reading, profile, rules plan, what-if, chat and Hindi",
+    "All routes reflow and expose navigation",
+    "Community, fuel and purifier calculators",
+    "Keyboard location selection and loaded-page offline planning/chat/export at 320px",
+    "Home JavaScript stays below 130 KiB gzip"
   ],
-  "note": "Live provider verification is recorded separately in production-air.json."
+  "priorReleaseObservation": {
+    "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
+    "passed": 13,
+    "failed": 1,
+    "description": "First mobile air-to-plan test lost state during navigation in one full run. Cause not established. Targeted test then passed three consecutive repetitions. Final release passed all fourteen with one worker; intermittent risk is not claimed eliminated."
+  },
+  "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately."
 }

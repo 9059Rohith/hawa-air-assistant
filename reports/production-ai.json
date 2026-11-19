@@ -1,18 +1,13 @@
 {
-  "verifiedAt": "2026-11-19T12:55:43.570Z",
-  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "status": 200,
-  "generatedBy": "llm",
-  "actionCount": 10,
-  "elapsedMs": 7608,
-  "latestUiVerification": {
-    "verifiedAt": "2026-11-19T13:19:18.468Z",
-    "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
-    "method": "In-app browser: real Delhi search and air load, default profile, AI enabled",
-    "notice": "Your AI-personalized plan is ready.",
-    "headline": "Air Quality Guidance for Your Safety",
-    "actions": 10,
-    "pm25": 115.9,
-    "airSource": "open-meteo-browser"
-  }
+  "verifiedAt": "2026-11-19T14:15:42.023Z",
+  "sourceCommit": "4acac19a5fa59fce0db07d6261e6a2f8504e77f6",
+  "method": "Browser UI on public release, no API mocks",
+  "input": "Manually labelled 120 ug/m3, default household, English",
+  "mode": "AI-personalized guidance",
+  "actions": 10,
+  "headline": "Air Quality Guidance for Unhealthy Conditions",
+  "transportExplanation": "Compare a feasible transit journey with driving. Avoid long roadside waits; exposure and carbon savings are different questions.",
+  "transportGuidanceMatchesCuratedSource": true,
+  "quantitiesCalculatedBy": "deterministic TypeScript",
+  "note": "One live provider plan, not a comprehensive medical/model evaluation."
 }

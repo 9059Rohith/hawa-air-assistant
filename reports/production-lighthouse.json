@@ -1,16 +1,17 @@
 {
   "origin": "public Sites production",
-  "measuredAt": "2026-11-19T13:55:52.017Z",
+  "measuredAt": "2026-11-19T14:11:58.279Z",
   "categories": {
-    "performance": 99,
+    "performance": 85,
     "accessibility": 100,
     "best-practices": 81,
     "seo": 100
   },
   "metrics": {
-    "first-contentful-paint": 1035.6979999999999,
-    "largest-contentful-paint": 1690.6979999999999,
-    "total-blocking-time": 124,
+    "first-contentful-paint": 1375.243,
+    "largest-contentful-paint": 1469.243,
+    "total-blocking-time": 563,
     "cumulative-layout-shift": 0
-  }
+  },
+  "sourceCommit": "4acac19a5fa59fce0db07d6261e6a2f8504e77f6"
 }

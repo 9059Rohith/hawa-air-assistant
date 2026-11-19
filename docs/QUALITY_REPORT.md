@@ -16,7 +16,7 @@ Observed software evidence, not an evaluation-score or ranking prediction.
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                            |
 | Modern home JavaScript                       | **120,196 gzip bytes (117.4 KiB)**; budget 133,120 bytes                                                     |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                               |
-| Working-tree and Git-history secret patterns | **0 matches**; 206 historical blobs scanned before this release commit                                       |
+| Working-tree and Git-history secret patterns | **0 matches**; 291 historical blobs scanned before this release commit                                       |
 | Build artifact credential scan               | **0 matches across 44 files**                                                                                |
 | Submission source                            | Approximately **0.85 MB**, below 10 MB; source-size gate is stricter at 8 MB                                 |
 | Local .git directory                         | Approximately **1.15 MB**, including local verification helpers/logs                                         |
@@ -40,19 +40,29 @@ The regression suite caught and fixed an upload-cancellation race. Live AI revie
 - `reports/dependency-audit.json`
 - `reports/secret-scan.json`
 - `reports/ci.json`
+- `reports/production-ai.json`
+- `reports/production-e2e.json`
+- `reports/fresh-clone.json`
+- `reports/demo.json`
 
 Production evidence is refreshed after publication in `reports/production-*.json` and `reports/deployment.json`. Reports retain their timestamps and source revision; earlier measurements are not relabelled as this release.
 
-## Previous production baseline
+## Public release verification
 
-The preceding release had 10 passing production browser tests, zero axe violations over 15 states, a real OpenAI plan with 10 actions, and real browser Open-Meteo Delhi data (115.9 µg/m³ at 2026-11-19T18:30 Asia/Kolkata). Its mobile Lighthouse result was 78 performance / 100 accessibility / 81 best practices / 100 SEO, LCP 1.41 seconds, CLS 0. Host challenge scripts contributed findings. These are historical measurements, not a universal loading-time guarantee or a new-release score.
+Final release version 8, source `4acac19`, passed all **14 production browser tests** and **15 axe page/theme checks** with zero detected violations or runtime errors. A real OpenAI plan returned ten actions and retained curated transport explanations. A fresh public-repository checkout passed all 103 tests.
+
+The final mobile Lighthouse run measured **85 performance / 100 accessibility / 81 best practices / 100 SEO**, FCP **1.38 s**, LCP **1.47 s**, TBT **563 ms**, CLS **0**. An earlier version-6 run measured 99 performance and LCP 1.69 s. These are individual lab runs, not a guaranteed loading time. The best-practices deprecation finding comes from the hosting platform’s `/cdn-cgi/challenge-platform/scripts/jsd/main.js`; platform security controls were retained.
+
+One version-7 full browser run passed 13/14 after the mobile air-to-plan journey lost state during navigation; its cause was not established. That test passed three targeted repetitions, then the final release passed the full 14-test suite with one worker. This history is retained in `reports/production-e2e.json`; it is not proof that intermittent failures are impossible.
+
+Real browser Open-Meteo Delhi data was separately observed at 115.9 µg/m³ (source time 2026-11-19T18:30 Asia/Kolkata). Its dated report identifies the version tested.
 
 ## External requirements and honest limits
 
 - The public application and repository use the existing links in README. Vercel/Railway account restrictions do not block this Sites deployment.
 - GitHub's billing lock must be resolved by the account owner before hosted CI can execute. Local checks are not presented as hosted CI success.
 - LinkedIn publication is excluded by the owner. The submission portal may require that field before the owner can submit.
-- The public captioned demo records the earlier local production build; its core journey remains representative, but it does not show every new feature.
+- The public captioned demo was refreshed from the deployed application (3 minutes 8 seconds), including loaded-page offline planning, community tools and calculators. It uses labelled manual data and rules mode; real AI is verified separately.
 - Independent NVDA/VoiceOver and professional Hindi review are not claimed. Some source names and technical explanations remain English.
 - No medical validation, empirical local calibration, full regulatory certification, or Docker runtime verification is claimed.
 - Loaded-page offline use works; first visits and uncached page loads need internet. No service-worker installation claim is made.

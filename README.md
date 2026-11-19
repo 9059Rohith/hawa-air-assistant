@@ -10,7 +10,7 @@
 
 **[Open HAWA — public application](https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site)**
 
-The three-minute demo records the local production build with labelled example air data. Drive access is set to **Anyone with the link — Viewer**.
+The 3-minute 8-second demo records the public application with labelled example air data, loaded-page offline planning, community tools and calculators. Captions and synthetic narration explain its boundaries. Drive access is set to **Anyone with the link — Viewer**.
 
 **Deployment:** hosted on Sites / Cloudflare Workers using OpenNext. No sign-in is required. The original Vercel team and the Railway workspace have account restrictions, so this release uses a separate supported hosting service. See [portable hosting](docs/HOSTING.md) and [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
 
