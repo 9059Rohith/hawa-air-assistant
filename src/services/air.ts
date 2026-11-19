@@ -4,29 +4,33 @@ import { safeFetch } from "./http";
 import type { Air, Location } from "@/domain/types";
 import { AppError } from "@/lib/errors";
 import { airUrl, parseAir } from "@/lib/air-data";
+import { SingleFlight } from "./single-flight";
 const cache = new Cache<Air>();
+const airFlight = new SingleFlight<Air>();
 export async function getAir(location: Location): Promise<Air> {
   const lat = location.lat.toFixed(2),
     lon = location.lon.toFixed(2),
     key = `${lat},${lon}`;
   const fresh = cache.get(key, 900000);
   if (fresh) return fresh;
-  try {
-    const response = await safeFetch(airUrl(location));
-    if (!response.ok)
-      throw new AppError(
-        "AIR_PROVIDER",
-        502,
-        `Air data is temporarily unavailable (provider ${response.status}). Enter a manual reading or retry shortly.`,
-      );
-    const air = parseAir(await response.json(), "open-meteo");
-    cache.set(key, air);
-    return air;
-  } catch (error) {
-    const stale = cache.get(key, 10800000);
-    if (stale) return { ...stale, stale: true };
-    throw error;
-  }
+  return airFlight.run(key, async () => {
+    try {
+      const response = await safeFetch(airUrl(location));
+      if (!response.ok)
+        throw new AppError(
+          "AIR_PROVIDER",
+          502,
+          `Air data is temporarily unavailable (provider ${response.status}). Enter a manual reading or retry shortly.`,
+        );
+      const air = parseAir(await response.json(), "open-meteo");
+      cache.set(key, air);
+      return air;
+    } catch (error) {
+      const stale = cache.get(key, 10800000);
+      if (stale) return { ...stale, stale: true };
+      throw error;
+    }
+  });
 }
 export function manualAir(pm25: number): Air {
   return {
@@ -53,22 +57,26 @@ const geo = z.object({
     .optional(),
 });
 const geocache = new Cache<Location[]>();
+const geoFlight = new SingleFlight<Location[]>();
 export async function geocode(q: string) {
-  const cached = geocache.get(q.toLowerCase(), 86400000);
+  const key = q.trim().normalize("NFKC").toLowerCase();
+  const cached = geocache.get(key, 86400000);
   if (cached) return cached;
-  const response = await safeFetch(
-    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=en&format=json`,
-  );
-  if (!response.ok) throw new Error("Geocoding unavailable");
-  const data = geo.parse(await response.json());
-  const results = (data.results ?? []).map((r) => ({
-    name: [r.name, r.admin1, r.country]
-      .filter(Boolean)
-      .join(", ")
-      .slice(0, 100),
-    lat: r.latitude,
-    lon: r.longitude,
-  }));
-  geocache.set(q.toLowerCase(), results);
-  return results;
+  return geoFlight.run(key, async () => {
+    const response = await safeFetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(key)}&count=5&language=en&format=json`,
+    );
+    if (!response.ok) throw new Error("Geocoding unavailable");
+    const data = geo.parse(await response.json());
+    const results = (data.results ?? []).map((r) => ({
+      name: [r.name, r.admin1, r.country]
+        .filter(Boolean)
+        .join(", ")
+        .slice(0, 100),
+      lat: r.latitude,
+      lon: r.longitude,
+    }));
+    geocache.set(key, results);
+    return results;
+  });
 }

@@ -1,0 +1,182 @@
+import { test, expect, type Page } from "@playwright/test";
+
+async function prepare(page: Page) {
+  await page.goto("/");
+  await page.getByLabel(/Have a PM2.5/).fill("120");
+  await page.getByRole("button", { name: "Use reading", exact: true }).click();
+  await expect(page.getByText(/Your manual reading/)).toBeVisible();
+  await page.getByRole("link", { name: /Build my daily plan/ }).click();
+  await page.getByRole("button", { name: "Review & build" }).click();
+}
+async function buildLocal(page: Page) {
+  await prepare(page);
+  await page.getByLabel(/Use rules mode/).check();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+}
+test("invalid household input focuses a useful error and can be corrected", async ({
+  page,
+}) => {
+  await page.goto("/plan");
+  await page.locator("#adults").fill("0");
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Check these values" }),
+  ).toBeVisible();
+  await expect(page.locator(".wizard .warning")).toBeFocused();
+  await expect(page.locator("#adults")).toHaveAttribute("aria-invalid", "true");
+  await page.locator("#adults").fill("2");
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await expect(
+    page.getByRole("button", { name: "Build my daily plan", exact: true }),
+  ).toBeVisible();
+});
+test("theme and language persist across reload; clear removes household preferences", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Theme", { exact: true }).selectOption("hc");
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "hc");
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Clear my data", exact: true })
+    .click();
+  expect(
+    await page.evaluate(() => localStorage.getItem("hawa-profile-v1")),
+  ).toBeNull();
+  expect(
+    await page.evaluate(() => localStorage.getItem("hawa-language")),
+  ).toBeNull();
+  await expect(page.getByRole("status")).toContainText("cleared");
+});
+test("storage denied still supports manual local planning", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Storage.prototype.getItem = () => {
+      throw new DOMException("Blocked", "SecurityError");
+    };
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Blocked", "SecurityError");
+    };
+  });
+  await buildLocal(page);
+  await page
+    .getByRole("button", { name: "Save profile on this device" })
+    .click();
+  await expect(page.getByRole("status")).toContainText(
+    "Storage is unavailable",
+  );
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+});
+test("public shared steps contain only action IDs and reject unknown kits", async ({
+  page,
+}) => {
+  const kit = { v: 1, lang: "en", ids: ["mask-fit"] };
+  await page.goto("/community#kit=" + encodeURIComponent(JSON.stringify(kit)));
+  await expect(
+    page.getByRole("heading", { name: "Shared clean-air steps" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("This link contains no household details.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await page.evaluate(() => {
+    location.hash =
+      "kit=" +
+      encodeURIComponent(
+        JSON.stringify({ v: 1, lang: "en", ids: ["fake-cure"] }),
+      );
+  });
+  await expect(
+    page.getByRole("heading", { name: "Shared clean-air steps" }),
+  ).toHaveCount(0);
+});
+test("download exports the selected actions and matching impact", async ({
+  page,
+}) => {
+  await buildLocal(page);
+  const selectedBefore = await page.locator(".action-list > li").count();
+  await page.getByText("What if you made these changes?").click();
+  await page.locator(".plan-results details.panel input").first().uncheck();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download JSON" }).click();
+  const download = await downloadPromise;
+  const stream = await download.createReadStream();
+  const parts: Buffer[] = [];
+  for await (const part of stream!) parts.push(part);
+  const exported = JSON.parse(Buffer.concat(parts).toString());
+  expect(exported.actions).toHaveLength(selectedBefore - 1);
+  expect(exported.impact.selected.sort()).toEqual(
+    exported.actions.map((a: { id: string }) => a.id).sort(),
+  );
+  expect(exported.air.source).toBe("manual");
+  expect(exported.generatedBy).toBe("rules");
+  expect(exported.impact.after).toBeLessThanOrEqual(exported.impact.baseline);
+});
+test("provider failure produces a usable local plan with honest provenance", async ({
+  page,
+}) => {
+  await page.route("**/api/plan", (r) =>
+    r.fulfill({ status: 503, body: "Unavailable" }),
+  );
+  await prepare(page);
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("AI is unavailable");
+  await expect(page.locator(".mode")).toContainText("Rules-based guidance");
+});
+test("malformed successful API data falls back without a runtime crash", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.route("**/api/plan", (r) =>
+    r.fulfill({ json: { generatedBy: "llm", actions: null } }),
+  );
+  await prepare(page);
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("AI is unavailable");
+  expect(errors).toEqual([]);
+});
+test("keyboard skip and city Escape return control without selecting stale results", async ({
+  page,
+}) => {
+  await page.route("**/api/geocode?*", (r) =>
+    r.fulfill({ json: [{ name: "Delhi", lat: 28.61, lon: 77.21 }] }),
+  );
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  await expect(page.locator(".skip")).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("main")).toBeFocused();
+  const city = page.getByRole("combobox", { name: "Find your city" });
+  await city.fill("Delhi");
+  await expect(
+    page.getByRole("option", { name: "1. Delhi", exact: true }),
+  ).toBeVisible();
+  await city.press("ArrowDown");
+  await city.press("Escape");
+  await expect(city).toHaveAttribute("aria-expanded", "false");
+  await expect(city).not.toHaveAttribute("aria-activedescendant");
+  await expect(city).toBeFocused();
+});

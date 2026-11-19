@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TokenBudget, estimateReservation } from "./token-budget";
 import {
   scrubUserText,
   unsafeProse,
@@ -39,6 +40,7 @@ export function parseLanguage(raw: string, ids: string[]) {
     throw new Error("Invalid action set");
   return data;
 }
+const budget = new TokenBudget();
 let active = 0;
 export async function language(
   actions: Action[],
@@ -59,9 +61,61 @@ export async function language(
     AbortSignal.timeout(config.LLM_TIMEOUT_MS),
     ...(signal ? [signal] : []),
   ]);
+  const payload = {
+    model: config.LLM_MODEL,
+    temperature: 0.3,
+    max_tokens: config.LLM_MAX_OUTPUT_TOKENS,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: SYSTEM },
+      {
+        role: "user",
+        content: JSON.stringify({
+          user_data: {
+            question: question ? scrubUserText(question) : undefined,
+            context,
+            household: {
+              pregnant: profile.pregnant,
+              dwelling: profile.dwelling,
+              floor: profile.floor,
+              ventilation: profile.ventilation,
+              cookingHours: profile.cookingHours,
+              heatingHours: profile.heatingHours,
+              childAges: profile.childAges,
+              heating: profile.heating,
+              schoolRun: profile.schoolRun,
+              budget: profile.budget,
+              timeMinutes: profile.timeMinutes,
+            },
+            lang: profile.lang,
+            simple: profile.simple,
+            higherRisk: profile.higherRisk,
+            children: profile.children,
+            elders: profile.elders,
+            cooking: profile.cooking,
+            mode: profile.mode,
+            candidates: actions.map((a) => ({
+              id: a.id,
+              title: a.title,
+              guidance: a.summary,
+            })),
+          },
+        }),
+      },
+    ],
+  };
+  const reservation = estimateReservation(
+    payload.messages,
+    config.LLM_MAX_OUTPUT_TOKENS,
+  );
   active++;
   try {
     for (let attempt = 0; attempt < 2; attempt++) {
+      if (
+        deadline.aborted ||
+        !budget.reserve(reservation, config.LLM_TOKEN_BUDGET_PER_MIN)
+      )
+        return null;
       try {
         const response = await safeFetch(
           config.LLM_BASE_URL + "/chat/completions",
@@ -72,49 +126,7 @@ export async function language(
               Authorization: `Bearer ${config.LLM_API_KEY}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              model: config.LLM_MODEL,
-              temperature: 0.3,
-              max_tokens: config.LLM_MAX_OUTPUT_TOKENS,
-              response_format: { type: "json_object" },
-              messages: [
-                { role: "system", content: SYSTEM },
-                {
-                  role: "user",
-                  content: JSON.stringify({
-                    user_data: {
-                      question: question ? scrubUserText(question) : undefined,
-                      context,
-                      household: {
-                        pregnant: profile.pregnant,
-                        dwelling: profile.dwelling,
-                        floor: profile.floor,
-                        ventilation: profile.ventilation,
-                        cookingHours: profile.cookingHours,
-                        heatingHours: profile.heatingHours,
-                        childAges: profile.childAges,
-                        heating: profile.heating,
-                        schoolRun: profile.schoolRun,
-                        budget: profile.budget,
-                        timeMinutes: profile.timeMinutes,
-                      },
-                      lang: profile.lang,
-                      simple: profile.simple,
-                      higherRisk: profile.higherRisk,
-                      children: profile.children,
-                      elders: profile.elders,
-                      cooking: profile.cooking,
-                      mode: profile.mode,
-                      candidates: actions.map((a) => ({
-                        id: a.id,
-                        title: a.title,
-                        guidance: a.summary,
-                      })),
-                    },
-                  }),
-                },
-              ],
-            }),
+            body: JSON.stringify(payload),
           },
           12000,
         );

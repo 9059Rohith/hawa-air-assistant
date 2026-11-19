@@ -79,13 +79,14 @@ export function Provider({ children }: { children: ReactNode }) {
   }
   function clear() {
     edited.current = true;
+    // Clear live sensitive state even when browser persistence is blocked.
+    setProfile(baseProfile);
+    setPlan(null);
+    setLocation(null);
+    setAir(null);
     try {
       localStorage.removeItem("hawa-profile-v1");
       localStorage.removeItem("hawa-language");
-      setProfile(baseProfile);
-      setPlan(null);
-      setLocation(null);
-      setAir(null);
       setNotice("Local profile and current plan cleared.");
     } catch {
       setNotice(

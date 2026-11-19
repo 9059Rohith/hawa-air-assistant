@@ -1,17 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatPanel from "./ChatPanel";
 import { localPlan } from "@/lib/rules-plan";
 import { useHawa } from "./Provider";
 import { ProfileWizard } from "./ProfileWizard";
 import { LocationForm } from "./LocationForm";
 import { PlanView } from "./PlanView";
-import type { Plan } from "@/domain/types";
+import { PlanSchema } from "@/domain/types";
 export function PlanWorkspace() {
   const { t, profile, location, air, plan, setPlan, setNotice } = useHawa();
   const [busy, setBusy] = useState(false),
     [offline, setOffline] = useState(false),
     [chat, setChat] = useState(false);
+  const active = useRef<AbortController | null>(null);
+  useEffect(() => {
+    setBusy(false);
+    return () => active.current?.abort();
+  }, [profile, location, air]);
   async function generate() {
     if (!location || !air) {
       setNotice(
@@ -19,6 +24,11 @@ export function PlanWorkspace() {
       );
       return;
     }
+    active.current?.abort();
+    const controller = new AbortController();
+    active.current = controller;
+    const current = () =>
+      active.current === controller && !controller.signal.aborted;
     setBusy(true);
     try {
       if (offline || !navigator.onLine) {
@@ -43,10 +53,14 @@ export function PlanWorkspace() {
               ? { manualPm: air.pm25 }
               : {}),
         }),
-        signal: AbortSignal.timeout(35000),
+        signal: AbortSignal.any([
+          controller.signal,
+          AbortSignal.timeout(35000),
+        ]),
       });
       if (!response.ok) throw new Error();
-      const result = (await response.json()) as Plan;
+      const result = PlanSchema.parse(await response.json());
+      if (!current()) return;
       if (air.source === "demo") result.air.source = "demo";
       setPlan(result);
       setNotice(
@@ -55,6 +69,7 @@ export function PlanWorkspace() {
           : "Your rules-based plan is ready. All calculations are available.",
       );
     } catch {
+      if (!current()) return;
       setPlan(localPlan(profile, location, air));
       setNotice(
         profile.lang === "hi"
@@ -62,7 +77,7 @@ export function PlanWorkspace() {
           : "AI is unavailable. A local rules-based plan is ready.",
       );
     } finally {
-      setBusy(false);
+      if (current()) setBusy(false);
     }
   }
   return (

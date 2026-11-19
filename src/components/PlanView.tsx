@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { planImpact } from "@/domain/impact";
 import type { Plan } from "@/domain/types";
 import { useHawa } from "./Provider";
-import { ReadAloud } from "./ui";
+import { ReadAloud } from "./ReadAloud";
 import { ActionCard } from "./ActionCard";
 import { WeeklyProjection } from "./WeeklyProjection";
 import { shareFragment } from "@/lib/share";

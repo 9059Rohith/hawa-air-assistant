@@ -216,7 +216,7 @@ test("keyboard city selection and loaded-page offline planning at 320px", async 
   ).toBe(true);
   await context.setOffline(false);
 });
-test("home route stays inside the 130 KiB compressed JavaScript budget", async ({
+test("home route stays inside the 117,500-byte compressed JavaScript budget", async ({
   page,
   request,
 }) => {
@@ -237,5 +237,5 @@ test("home route stays inside the 130 KiB compressed JavaScript budget", async (
     expect(response.ok()).toBe(true);
     total += gzipSync(await response.body()).length;
   }
-  expect(total).toBeLessThanOrEqual(133120);
+  expect(total).toBeLessThanOrEqual(117500);
 });

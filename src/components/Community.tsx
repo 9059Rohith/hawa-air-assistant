@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { communityImpact } from "@/domain/impact";
 import { useHawa } from "./Provider";
-import { ReadAloud } from "./ui";
+import { ReadAloud } from "./ReadAloud";
 import { SharedKit } from "./SharedKit";
 export function Community() {
   const { t, profile, plan, setNotice } = useHawa();

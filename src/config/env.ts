@@ -16,6 +16,12 @@ const schema = z.object({
     .min(256)
     .max(1800)
     .default(1400),
+  LLM_TOKEN_BUDGET_PER_MIN: z.coerce
+    .number()
+    .int()
+    .min(256)
+    .max(200000)
+    .default(24000),
   RATE_LIMIT_PER_MIN: z.coerce.number().int().min(1).max(60).default(12),
   ENABLE_LLM: z.enum(["true", "false"]).default("true"),
   APP_ORIGIN: z.string().url().default("http://localhost:3100"),

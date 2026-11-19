@@ -181,3 +181,26 @@ export type Plan = {
   impact: Impact;
   createdAt: string;
 };
+
+/** Validate an untrusted HTTP plan before it can enter the rendered workspace. */
+export const PlanSchema = z.object({
+  headline: z.string().min(1).max(500),
+  summary: z.string().min(1).max(2000),
+  actions: z
+    .array(ActionSchema.extend({ why: z.string().max(2000) }))
+    .min(1)
+    .max(10),
+  generatedBy: z.enum(["llm", "rules"]),
+  air: AirSchema,
+  profile: ProfileSchema,
+  location: LocationSchema,
+  impact: z.object({
+    baseline: z.number().nonnegative(),
+    after: z.number().nonnegative(),
+    percent: z.number().min(0).max(100),
+    co2KgDay: z.number().nonnegative(),
+    cigaretteEq: z.number().nonnegative(),
+    selected: z.array(z.string()).max(10),
+  }),
+  createdAt: z.string().datetime(),
+});

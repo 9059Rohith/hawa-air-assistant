@@ -1,9 +1,10 @@
 {
-  "measuredAt": "2026-11-19T14:44:23.333Z",
-  "tests": 16,
-  "passed": 16,
+  "measuredAt": "2026-11-19T15:04:53.228Z",
+  "tests": 32,
+  "passed": 32,
   "failed": 0,
   "projects": ["desktop", "mobile"],
   "workers": 1,
-  "evidence": "npm run test:e2e -- --workers=1, including network-free urgent alerts and cited Hindi fallback"
+  "evidence": "npm run test:e2e -- --workers=1; resilience and smoke suites",
+  "initialVerification": "Two new selectors were corrected to match labelled UI. Complete script accounting revised the new budget to 117500 bytes, still below the 117650-byte Challenge 5 baseline."
 }

@@ -1,0 +1,38 @@
+{
+  "measuredAt": "2026-11-19T15:04:53.228Z",
+  "challenge5": {
+    "revision": "396e75dc03d614f4a7e6451ed733299458318ae8",
+    "unitComponentApiTests": 298,
+    "browserTests": 26,
+    "acceptanceCases": 46,
+    "overallLineCoverage": 82.96,
+    "homeGzipBytes": 117650,
+    "productionDependencies": 31
+  },
+  "hawa": {
+    "vitestCases": 403,
+    "unitComponentApiContractTests": 316,
+    "acceptanceCasesIncluded": 87,
+    "browserTests": 32,
+    "overallLineCoverage": 91.89,
+    "homeGzipBytes": 117312,
+    "homeBudget": 117500,
+    "previousHomeGzipBytes": 120196,
+    "productionDependencies": 4,
+    "burstTest": {
+      "concurrentSameLocationCalls": 50,
+      "providerCalls": 1
+    },
+    "modelBudget": {
+      "perMinute": 24000,
+      "scope": "process-local per Worker isolate",
+      "reservation": "UTF-8 message bytes + framing + maximum output, charged before every attempt including retries"
+    }
+  },
+  "limitations": [
+    "Different products; test count alone is not a quality ranking.",
+    "Bundle figures include modern HTML script tags, including global error handlers; not every later interaction chunk.",
+    "Concurrent upstream tests use controlled provider responses, not a provider load test.",
+    "No guarantee of ranking, universal load-time ceiling or account-wide token enforcement."
+  ]
+}

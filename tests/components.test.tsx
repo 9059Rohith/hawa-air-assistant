@@ -18,7 +18,8 @@ import { ProfileWizard } from "@/components/ProfileWizard";
 import { PlanView } from "@/components/PlanView";
 import ChatPanel from "@/components/ChatPanel";
 import { AirCard } from "@/components/AirCard";
-import { Footer, Notice, ReadAloud } from "@/components/ui";
+import { Footer, Notice } from "@/components/ui";
+import { ReadAloud } from "@/components/ReadAloud";
 import { LocationForm } from "@/components/LocationForm";
 import { PlanWorkspace } from "@/components/PlanWorkspace";
 import { Forecast } from "@/components/Forecast";
@@ -163,7 +164,7 @@ it("loads sample households without implying live data", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Example household");
   }
 });
-it("manual PM2.5 creates a labeled data path", () => {
+it("manual PM2.5 creates a labeled data path", async () => {
   wrap(
     <>
       <LocationForm />
@@ -174,7 +175,7 @@ it("manual PM2.5 creates a labeled data path", () => {
     target: { value: "150" },
   });
   fireEvent.click(screen.getByText("Use reading"));
-  expect(screen.getByText(/Your manual reading/)).toBeInTheDocument();
+  expect(await screen.findByText(/Your manual reading/)).toBeInTheDocument();
   expect(screen.getByRole("alert")).toHaveTextContent("Severe pollution");
   fireEvent.click(screen.getByText("Hindi", { exact: true }));
   expect(screen.getByRole("alert")).toHaveTextContent("गंभीर");
