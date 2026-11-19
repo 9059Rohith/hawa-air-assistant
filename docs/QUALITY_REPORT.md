@@ -6,26 +6,38 @@ Observed software evidence, not an evaluation-score or ranking prediction.
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **207 passed (120 unit/component/API + 87 acceptance cases)**                                                       |
-| Entire production source coverage            | **90.77% lines**, 89.34% statements, 84.73% branches, 85.46% functions                                              |
+| Unit/component/API tests                     | **403 passed (316 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **91.89% lines**, 90.61% statements, 84.64% branches, 86.86% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **16 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **32 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
-| Modern home JavaScript                       | **120,196 gzip bytes (117.4 KiB)**; budget 133,120 bytes                                                            |
+| Modern home JavaScript                       | **117,312 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 308 historical blobs scanned before this release commit                                              |
-| Build artifact credential scan               | **0 matches across 44 files**                                                                                       |
-| Submission source                            | Approximately **0.95 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Working-tree and Git-history secret patterns | **0 matches**; 343 historical blobs scanned before this release commit                                              |
+| Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
+| Submission source                            | Approximately **0.99 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 207 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 16/16. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 403 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 32/32. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+
+## Testing and efficiency release
+
+Version 10 is deployed from `0982144d016f3535b096765ee3ed5b04c71fda7b`. All **32 production desktop/mobile browser tests** pass. The **403 Vitest cases** comprise 316 unit/component/API/contract cases plus 87 independently recorded acceptance scenarios. Line coverage is **91.89%**, with 100% for the domain. Public axe checks report zero detected violations across 15 states and zero runtime errors.
+
+The home bundle is **117,312 gzip bytes**, down 2,884 bytes from the preceding HAWA release and 338 bytes below Challenge 5. This is a small initial-bundle improvement; the larger efficiency changes are coalescing 50 identical in-flight air requests into one provider call and reserving model cost before every attempt. The home budget is now 117,500 bytes. The measurement includes global error-handler chunks that are not listed in the home/layout build manifest alone.
+
+A real production AI request returned HTTP 200, `generatedBy: llm`, and ten actions in **6,329 ms**. This is one sample, not an under-two-second AI promise. Automated browser regressions use controlled provider responses; their durations cover entire multi-step journeys, not just page load.
+
+New recovery tests exposed and fixed malformed successful plan responses, late responses after Clear/preferences changes, and blocked storage preventing live-state cleanup. Initial new browser selectors were corrected after inspecting failures; no assertions for product behavior were removed. The tightened bundle gate was finalized from actual HTML script accounting.
+
+See `reports/efficiency-review.json`, `reports/production-e2e.json`, `reports/production-ai.json` and [ADR 0006](adr/0006-efficiency-and-recovery.md). Hosted CI remains blocked before any step by GitHub account billing.
 
 ## What changed in the preceding feature release
 
@@ -50,7 +62,7 @@ The regression suite caught and fixed an upload-cancellation race. Live AI revie
 
 Production evidence is refreshed after publication in `reports/production-*.json` and `reports/deployment.json`. Reports retain their timestamps and source revision; earlier measurements are not relabelled as this release.
 
-## Latest public verification
+## Previous version 9 public verification
 
 Version 9 is deployed from `26833dd139945eb176ea0f1e7d39c92d3b0c69c1`. All **16 production desktop/mobile browser tests** pass, including the new urgent/Hindi/failure-recovery journey. All **15 axe page/theme states** report zero detected violations and zero runtime errors. A real browser chat returned `mode: llm` with a curated citation for `mask?`; recognised urgent guidance appeared immediately. The public home bundle remains 120,196 gzip bytes.
 
