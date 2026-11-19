@@ -4,20 +4,25 @@ import type { Location } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { Field } from "./ui";
 export function LocationForm() {
-  const { t, location, setLocation, setAir, setNotice } = useHawa();
+  const { t, location, setLocation, setAir, setPlan, setNotice } = useHawa();
   const [q, setQ] = useState(""),
     [results, setResults] = useState<Location[]>([]),
     [busy, setBusy] = useState(false),
     [manual, setManual] = useState("");
   async function load(l: Location) {
     setLocation(l);
+    setAir(null);
+    setPlan(null);
     setBusy(true);
     try {
-      const response = await fetch(`/api/air?lat=${l.lat}&lon=${l.lon}`);
-      if (!response.ok) throw new Error();
-      const { AirSchema } = await import("@/domain/types");
-      setAir(AirSchema.parse(await response.json()));
-      setNotice("Air data updated.");
+      const { loadBrowserAir } = await import("@/lib/browser-air");
+      const reading = await loadBrowserAir(l);
+      setAir(reading);
+      setNotice(
+        reading.stale
+          ? "Cached air data shown. Live refresh is temporarily unavailable."
+          : "Air data updated directly from Open-Meteo.",
+      );
     } catch {
       setNotice(
         "Live data is unavailable. Retry or enter a PM2.5 reading below.",
@@ -91,9 +96,15 @@ export function LocationForm() {
         </div>
       </form>
       <div className="button-row">
-        <button onClick={locate}>{t.location}</button>
+        <button disabled={busy} onClick={locate}>
+          {t.location}
+        </button>
         {location && <span>{location.name}</span>}
       </div>
+      <p className="fine">
+        Live readings are requested from Open-Meteo by your browser using
+        rounded coordinates. No account or API key is needed.
+      </p>
       {results.length > 0 && (
         <ul className="location-results" aria-label="Search results">
           {results.map((l, i) => (
@@ -135,6 +146,7 @@ export function LocationForm() {
             fetchedAt: new Date().toISOString(),
             timezone: "UTC",
           });
+          setPlan(null);
           setNotice(
             "Using your manual reading. No live forecast is available.",
           );
@@ -153,7 +165,9 @@ export function LocationForm() {
             required
           />
         </Field>
-        <button type="submit">Use reading</button>
+        <button disabled={busy} type="submit">
+          Use reading
+        </button>
       </form>
     </section>
   );

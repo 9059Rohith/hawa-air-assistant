@@ -56,8 +56,12 @@ export default function Page() {
           preferences can contain health-risk flags; clear them on shared
           devices. To generate a plan, inputs go to our server. AI receives only
           a compact household summary and curated guidance, not coordinates. Air
-          providers receive coordinates rounded to two decimals. Serverless
-          memory caches expire and are not shared storage.
+          providers receive coordinates rounded to two decimals. Live air is
+          requested directly by your browser without credentials; Open-Meteo
+          sees the request&apos;s IP address. Readings are cached only in tab
+          memory and sent to our server as bounded, client-supplied model
+          estimates. They are not independently verified observations.
+          Serverless memory caches expire and are not shared storage.
         </p>
         <h2>Data and safety</h2>
         <p>

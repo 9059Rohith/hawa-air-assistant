@@ -1,8 +1,8 @@
 {
-  "url": "https://github.com/9059Rohith/hawa-air-assistant/actions/runs/44518238152",
+  "url": "https://github.com/9059Rohith/hawa-air-assistant/actions/runs/44529754373",
   "status": "completed",
   "conclusion": "failure",
-  "sha": "43eea8254e62678df25ba710a28dff6bd790dfff",
+  "sha": "7043bca562fabebd5dd7f2d6afa878a3f37ecb8e",
   "steps": [],
   "annotations": [
     "The job was not started because your account is locked due to a billing issue."

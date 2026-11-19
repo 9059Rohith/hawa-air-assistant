@@ -145,7 +145,7 @@ The multi-stage non-root Dockerfile is an alternative packaging route. Docker ex
 
 ## Roadmap and known limits
 
-The public release currently receives Open-Meteo HTTP 429 responses for air retrieval. Use manual PM2.5 input from a local monitor while the provider limit persists. Production AI personalization, location search and the manual-input planning flow have been verified. See the [quality report](docs/QUALITY_REPORT.md) for separate local and public performance measurements.
+Live air retrieval uses Open-Meteo's keyless public endpoint directly from your browser, with a 15-minute cache, duplicate-request suppression and provider cooldowns. Plans reuse the validated browser reading rather than requesting it again through shared hosting. Source labels distinguish browser-fetched estimates from server readings and manual inputs. Provider outages still offer clearly labelled stale data or manual entry; no universal uptime guarantee is claimed. See the [quality report](docs/QUALITY_REPORT.md) for verification and separate local/public performance measurements.
 
 Distributed rate limits, independent emissions-factor validation for Indian modes/fuels, full Hindi interface review, assistive-technology testing, school curriculum kits and optional community integrations. Rules mode works without an AI key but still requires access to the application server. Already displayed guidance remains readable after connectivity loss; HAWA does not currently provide an installable service-worker offline shell.
 

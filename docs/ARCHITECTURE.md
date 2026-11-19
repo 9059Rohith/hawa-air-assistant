@@ -1,6 +1,10 @@
 # Architecture
 
-Next.js route shells render semantic pages; small client components own interaction. `domain/` contains pure functions and contracts; `services/` contains network IO, validation, caches and model access. API handlers remain thin. External browser requests go through same-origin handlers.
+Next.js route shells render semantic pages; small client components own interaction. `domain/` contains pure functions and contracts; `services/` contains server network IO, validation, caches and model access. API handlers remain thin. AI and geocoding use same-origin handlers. Keyless air retrieval uses Open-Meteo's public CORS endpoint directly from the visitor's browser, avoiding a shared server egress bottleneck without using a proxy or rotating identities.
+
+`lib/browser-air.ts` caches up to 20 rounded locations in tab memory for 15 minutes, deduplicates concurrent requests and honors `Retry-After` with a minimum one-minute cooldown. It makes no automatic retries. Failed refreshes may return explicitly stale data up to three hours old; older data is rejected. The shared parser validates concentration ranges, timestamps and matching forecast arrays. Browser requests omit credentials and referrers.
+
+Plan requests may contain a bounded `browserAir` snapshot. The server validates its schema, location match and fetch age, rejects conflicting manual inputs, recomputes staleness, and preserves the `open-meteo-browser` provenance. It does not claim independent verification of client input. The existing server air endpoint remains available for API clients but may encounter its upstream provider quota. No API key or AI secret reaches browser code.
 
 The home route defers schema-validation code until a user searches, loads air or restores saved preferences. Chat is dynamically loaded when opened. No chart/UI framework is bundled. System fonts provide local Latin/Devanagari coverage without remote font calls; glyph appearance depends on the device.
 

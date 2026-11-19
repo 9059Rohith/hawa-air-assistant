@@ -30,7 +30,11 @@ export function PlanWorkspace() {
           profile,
           location,
           offline,
-          ...(air.source !== "open-meteo" ? { manualPm: air.pm25 } : {}),
+          ...(air.source === "open-meteo-browser"
+            ? { browserAir: { location, air } }
+            : air.source !== "open-meteo"
+              ? { manualPm: air.pm25 }
+              : {}),
         }),
         signal: AbortSignal.timeout(35000),
       });

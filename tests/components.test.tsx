@@ -174,7 +174,14 @@ it("searches a city and loads modelled air", async () => {
     .fn()
     .mockResolvedValueOnce(Response.json([cities.Delhi]))
     .mockResolvedValueOnce(
-      Response.json({ ...fixture.air, source: "open-meteo", stale: true }),
+      Response.json({
+        current: { pm2_5: 120, time: "2026-11-19T10:00" },
+        hourly: {
+          time: ["2026-11-19T10:00", "2026-11-19T11:00", "2026-11-19T12:00"],
+          pm2_5: [120, 110, 100],
+        },
+        timezone: "Asia/Kolkata",
+      }),
     );
   vi.stubGlobal("fetch", fetcher);
   wrap(
@@ -189,7 +196,7 @@ it("searches a city and loads modelled air", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Search" }));
   await screen.findByRole("button", { name: "1. Delhi" });
   fireEvent.click(screen.getByRole("button", { name: "1. Delhi" }));
-  await screen.findByText(/Cached data/);
+  await screen.findByText(/not independently verified/);
   expect(screen.getByText(/Lower forecast window/)).toBeInTheDocument();
 });
 it("handles empty search and upstream errors", async () => {

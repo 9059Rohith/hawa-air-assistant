@@ -6,12 +6,35 @@ import { planImpact } from "@/domain/impact";
 import { getAir, manualAir } from "./air";
 import { language, PROMPT_VERSION } from "./llm";
 import { Cache } from "./cache";
+import { AppError } from "@/lib/errors";
 const cache = new Cache<Plan>();
 export async function buildPlan(input: unknown) {
   const request = RequestSchema.parse(input);
   const { profile, location } = request;
-  const air =
-    request.manualPm === undefined
+  const snapshot = request.browserAir;
+  if (snapshot) {
+    const age = Date.now() - Date.parse(snapshot.air.fetchedAt);
+    if (
+      request.manualPm !== undefined ||
+      age < -60000 ||
+      age > 10800000 ||
+      snapshot.location.lat.toFixed(2) !== location.lat.toFixed(2) ||
+      snapshot.location.lon.toFixed(2) !== location.lon.toFixed(2)
+    )
+      throw new AppError(
+        "AIR_SNAPSHOT",
+        400,
+        "Refresh air data for the selected location before building a plan.",
+      );
+  }
+  const air = snapshot
+    ? {
+        ...snapshot.air,
+        stale:
+          snapshot.air.stale ||
+          Date.now() - Date.parse(snapshot.air.fetchedAt) >= 900000,
+      }
+    : request.manualPm === undefined
       ? await getAir(location)
       : manualAir(request.manualPm);
   const key = createHash("sha256")

@@ -19,6 +19,8 @@ OpenNext ordinarily reads local dotenv files into its output. The build wrapper 
 
 No database, bucket or durable object is required. Plans are dynamic and responses use `no-store`; application caches and rate limits are bounded but local to each process/isolate. Hashed static assets receive immutable caching. The existing Dockerfile remains an alternative Node deployment path.
 
+The public UI fetches keyless air data directly from Open-Meteo in the visitor's browser. This avoids aggregating all visitors behind the hosting runtime's shared outbound address. The client's bounded cache, deduplication and cooldown respect provider quotas; it does not retry through alternate proxies. Browser-fetched model data is distinctly labelled and validated again when submitted for planning. The server-only `/api/air` endpoint may still return an upstream quota error; the normal UI does not depend on that endpoint.
+
 The deployment workflow pushes the exact source commit to the Site repository, packages `dist`, saves that version and publishes it. Public access is required for anonymous competition reviewers. Never substitute a local preview or an expected URL for a verified production deployment.
 
 Vercel and Railway rejected deployment under restrictions on the existing accounts. This hosting target uses the separate Sites service; it does not alter or bypass either account restriction. GitHub Actions remains subject to the owner's independent billing lock.

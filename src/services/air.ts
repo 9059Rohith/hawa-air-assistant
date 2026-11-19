@@ -3,15 +3,8 @@ import { Cache } from "./cache";
 import { safeFetch } from "./http";
 import type { Air, Location } from "@/domain/types";
 import { AppError } from "@/lib/errors";
+import { airUrl, parseAir } from "@/lib/air-data";
 const cache = new Cache<Air>();
-const payload = z.object({
-  current: z.object({ pm2_5: z.number().min(0), time: z.string() }),
-  hourly: z.object({
-    time: z.array(z.string()),
-    pm2_5: z.array(z.number().nullable()),
-  }),
-  timezone: z.string(),
-});
 export async function getAir(location: Location): Promise<Air> {
   const lat = location.lat.toFixed(2),
     lon = location.lon.toFixed(2),
@@ -19,43 +12,14 @@ export async function getAir(location: Location): Promise<Air> {
   const fresh = cache.get(key, 900000);
   if (fresh) return fresh;
   try {
-    const response = await safeFetch(
-      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&hourly=pm2_5&forecast_days=2&timezone=auto`,
-    );
+    const response = await safeFetch(airUrl(location));
     if (!response.ok)
       throw new AppError(
         "AIR_PROVIDER",
         502,
         `Air data is temporarily unavailable (provider ${response.status}). Enter a manual reading or retry shortly.`,
       );
-    const parsed = payload.safeParse(await response.json());
-    if (!parsed.success)
-      throw new AppError(
-        "AIR_DATA",
-        502,
-        "The air provider returned incomplete readings. Enter a manual reading or retry shortly.",
-      );
-    const data = parsed.data;
-    const hourly = data.hourly.time
-      .flatMap((time, i) => {
-        const pm25 = data.hourly.pm2_5[i];
-        return pm25 !== null &&
-          pm25 !== undefined &&
-          pm25 >= 0 &&
-          time >= data.current.time
-          ? [{ time, pm25 }]
-          : [];
-      })
-      .slice(0, 48);
-    const air: Air = {
-      pm25: data.current.pm2_5,
-      hourly,
-      fetchedAt: new Date().toISOString(),
-      observedAt: data.current.time,
-      timezone: data.timezone,
-      source: "open-meteo",
-      stale: false,
-    };
+    const air = parseAir(await response.json(), "open-meteo");
     cache.set(key, air);
     return air;
   } catch (error) {

@@ -36,24 +36,47 @@ export const LocationSchema = z
   })
   .strict();
 export type Location = z.infer<typeof LocationSchema>;
+export const AirSchema = z.object({
+  pm25: z.number().min(0).max(10000),
+  hourly: z.array(z.object({ time: z.string(), pm25: z.number().min(0) })),
+  fetchedAt: z.string(),
+  observedAt: z.string(),
+  source: z.enum(["open-meteo", "open-meteo-browser", "manual", "demo"]),
+  stale: z.boolean(),
+  timezone: z.string(),
+});
+export type Air = z.infer<typeof AirSchema>;
 export const RequestSchema = z
   .object({
     profile: ProfileSchema,
     location: LocationSchema,
     manualPm: z.number().min(0).max(1000).optional(),
     offline: z.boolean().optional(),
+    browserAir: z
+      .object({
+        location: LocationSchema,
+        air: AirSchema.extend({
+          source: z.literal("open-meteo-browser"),
+          fetchedAt: z.string().datetime(),
+          observedAt: z.string().min(1).max(40),
+          timezone: z.string().min(1).max(80),
+          hourly: z
+            .array(
+              z
+                .object({
+                  time: z.string().max(40),
+                  pm25: z.number().min(0).max(10000),
+                })
+                .strict(),
+            )
+            .max(48),
+        }).strict(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
-export const AirSchema = z.object({
-  pm25: z.number().min(0).max(10000),
-  hourly: z.array(z.object({ time: z.string(), pm25: z.number().min(0) })),
-  fetchedAt: z.string(),
-  observedAt: z.string(),
-  source: z.enum(["open-meteo", "manual", "demo"]),
-  stale: z.boolean(),
-  timezone: z.string(),
-});
-export type Air = z.infer<typeof AirSchema>;
+
 export const ActionSchema = z.object({
   id: z.string(),
   category: z.enum([

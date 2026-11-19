@@ -35,6 +35,12 @@ export function AirCard() {
                 ? "Illustrative demo data"
                 : `Model timestamp: ${air.observedAt} (${air.timezone})`}
           </p>
+          {air.source === "open-meteo-browser" && (
+            <p className="fine">
+              Open-Meteo model data fetched by your browser; not independently
+              verified by HAWA&apos;s server.
+            </p>
+          )}
           {air.stale && (
             <p className="notice">
               Cached data: live refresh failed. Check a local monitor.

@@ -16,7 +16,7 @@ type State = {
   location: Location | null;
   setLocation: (l: Location) => void;
   air: Air | null;
-  setAir: (a: Air) => void;
+  setAir: (a: Air | null) => void;
   plan: Plan | null;
   setPlan: (p: Plan | null) => void;
   notice: string;
