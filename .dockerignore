@@ -6,3 +6,7 @@ node_modules
 artifacts
 coverage
 test-results
+.open-next
+.wrangler
+dist
+.dev.vars*

@@ -7,3 +7,6 @@ test-results
 playwright-report
 package-lock.json
 next-env.d.ts
+.open-next
+.wrangler
+dist

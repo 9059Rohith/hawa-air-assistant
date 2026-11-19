@@ -18,7 +18,8 @@
     "check-repo-size": "node scripts/check-repo-size.mjs",
     "scan-secrets": "node scripts/scan-secrets.mjs",
     "check-bundle": "node scripts/check-bundle.mjs",
-    "doctor": "tsx scripts/doctor.ts"
+    "doctor": "tsx scripts/doctor.ts",
+    "build:sites": "node scripts/build-sites.mjs"
   },
   "dependencies": {
     "next": "15.5.29",
@@ -27,28 +28,33 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "typescript": "5.9.3",
+    "@eslint/eslintrc": "3.3.1",
+    "@opennextjs/cloudflare": "1.20.17",
+    "@playwright/test": "1.64.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/jest-axe": "3.5.9",
     "@types/node": "22.19.7",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "4.1.12",
+    "autoprefixer": "10.4.23",
     "eslint": "9.39.5",
     "eslint-config-next": "15.5.29",
-    "@eslint/eslintrc": "3.3.1",
-    "prettier": "3.9.10",
-    "vitest": "4.1.12",
-    "@vitest/coverage-v8": "4.1.12",
-    "@testing-library/react": "16.3.3",
-    "@testing-library/jest-dom": "7.0.1",
-    "jsdom": "26.1.0",
     "jest-axe": "11.0.0",
-    "@types/jest-axe": "3.5.9",
-    "@playwright/test": "1.64.1",
-    "tsx": "4.23.15",
-    "tailwindcss": "3.4.19",
+    "jsdom": "26.1.0",
     "postcss": "8.5.31",
-    "autoprefixer": "10.4.23"
+    "prettier": "3.9.10",
+    "tailwindcss": "3.4.19",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12",
+    "wrangler": "4.165.0"
   },
   "overrides": {
-    "postcss": "8.5.31"
+    "postcss": "8.5.31",
+    "@opennextjs/cloudflare": {
+      "glob": "14.0.6"
+    }
   }
 }
