@@ -4,5 +4,15 @@
   "status": 200,
   "generatedBy": "llm",
   "actionCount": 10,
-  "elapsedMs": 7608
+  "elapsedMs": 7608,
+  "latestUiVerification": {
+    "verifiedAt": "2026-11-19T13:19:18.468Z",
+    "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
+    "method": "In-app browser: real Delhi search and air load, default profile, AI enabled",
+    "notice": "Your AI-personalized plan is ready.",
+    "headline": "Air Quality Guidance for Your Safety",
+    "actions": 10,
+    "pm25": 115.9,
+    "airSource": "open-meteo-browser"
+  }
 }

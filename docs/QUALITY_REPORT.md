@@ -6,7 +6,7 @@ This report separates observed software results from external account restrictio
 | ----------------------------------- | ---------------------------------------------------------------------- |
 | Strict TypeScript                   | Pass                                                                   |
 | ESLint + Prettier                   | Pass                                                                   |
-| Unit/component/API tests            | 86 passed                                                              |
+| Unit/component/API tests            | 810 passed                                                             |
 | Complete production-source coverage | 92.17% lines, 91.47% statements, 86.87% branches, 87.00% functions     |
 | Domain coverage                     | 100% lines/statements/branches/functions, enforced                     |
 | Desktop/mobile Playwright           | 6 passed                                                               |
@@ -29,11 +29,11 @@ Local mobile Lighthouse: **95 performance, 100 accessibility, 100 best practices
 
 ## Evidence
 
-Public Sites release verification: all six desktop/mobile end-to-end tests pass. The production accessibility audit found zero axe violations and zero runtime errors across 15 route/theme states. A real production OpenAI request returned HTTP 200 with 10 validated actions. Public mobile Lighthouse measured **78 performance, 100 accessibility, 81 best practices, 100 SEO**, LCP 1.41 seconds and CLS 0. These measurements are separate from the local results above; they are not a universal load-time guarantee. Host-injected challenge scripts produced browser deprecation findings.
+Public Sites release verification: all ten desktop/mobile end-to-end tests pass. The production accessibility audit found zero axe violations and zero runtime errors across 15 route/theme states. A real production OpenAI request returned HTTP 200 with 10 validated actions. Public mobile Lighthouse measured **78 performance, 100 accessibility, 81 best practices, 100 SEO**, LCP 1.41 seconds and CLS 0. These measurements are separate from the local results above; they are not a universal load-time guarantee. Host-injected challenge scripts produced browser deprecation findings.
 
-Production geocoding returned five results. Production air retrieval currently receives HTTP 429 from Open-Meteo; HAWA displays a provider-unavailable message and offers manual PM2.5 entry. It does not fabricate a live reading. The same upstream request succeeded locally, so local air verification must not be read as production availability.
+Production geocoding returned five results. After replacing the shared-host air request with a cached direct browser request and a specific CSP allowlist entry, the public site returned real Open-Meteo HTTP 200 data: Delhi PM2.5 115.9 µg/m³ at model time 2026-11-19T18:30 Asia/Kolkata, with 48 provider forecast hours (29 future hours displayed). The actual in-app browser also displayed this reading and forecast. Normal planning reuses the validated reading; the legacy server-only air endpoint may still encounter shared-host quotas. Separate browser regression tests use mock provider responses to reliably cover success and HTTP 429 recovery. No live reading is fabricated.
 
-[Public captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) records the local production build. Viewer access is enabled for anyone with the link. Submission source is approximately 0.6 MB, excluding generated media, dependencies and local build artifacts. The Git-history credential-pattern scan covered 130 unique blobs with no matches.
+[Public captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) records the local production build. Viewer access is enabled for anyone with the link. Submission source is approximately 0.8 MB, excluding generated media, dependencies and local build artifacts. The Git-history credential-pattern scan covered 130 unique blobs with no matches.
 
 - `reports/coverage.json`
 - `reports/bundle.json`

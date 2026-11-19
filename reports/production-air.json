@@ -1,18 +1,16 @@
 {
-  "verifiedAt": "2026-11-19T13:03:04.059Z",
-  "results": [
-    {
-      "path": "/api/geocode?q=Delhi",
-      "status": 200,
-      "resultCount": 5
-    },
-    {
-      "path": "/api/air?lat=28.61&lon=77.21",
-      "status": 502,
-      "error": {
-        "code": "AIR_PROVIDER",
-        "message": "Open-Meteo returned HTTP 429; manual input remains available."
-      }
-    }
-  ]
+  "verifiedAt": "2026-11-19T13:18:15.559Z",
+  "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
+  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "method": "Real browser UI on public deployment; no route mocks",
+  "providerStatus": 200,
+  "location": "Delhi, India",
+  "pm25": 115.9,
+  "observedAt": "2026-11-19T18:30",
+  "timezone": "Asia/Kolkata",
+  "providerForecastHours": 48,
+  "displayedFutureHours": 29,
+  "notice": "Air data updated directly from Open-Meteo.",
+  "source": "open-meteo-browser",
+  "serverAirEndpoint": "Legacy server route can still encounter shared-host provider quotas; UI no longer uses it."
 }

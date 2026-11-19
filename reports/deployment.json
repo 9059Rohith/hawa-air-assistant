@@ -4,12 +4,12 @@
   "state": "succeeded",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
   "publicAccess": true,
-  "version": 3,
-  "sourceCommit": "a2517c6a47cdba8827bf8bc688055fd0a026099e",
+  "version": 5,
+  "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
   "observedDate": "2026-11-19",
   "priorPlatformRestrictions": {
     "vercel": "Team fair-use restriction prevented project creation",
     "railway": "Workspace restricted after unusual activity; no upgrade or payment made"
   },
-  "deploymentId": "appgdep_6afef34591508191a498b9708076c034"
+  "deploymentId": "appgdep_6afef6bc96688191b122dd6575163c71"
 }

@@ -1,13 +1,16 @@
 {
-  "verifiedAt": "2026-11-19T13:03:04.060Z",
+  "verifiedAt": "2026-11-19T13:18:15.561Z",
+  "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "sourceCommit": "a2517c6a47cdba8827bf8bc688055fd0a026099e",
-  "passed": 6,
+  "passed": 10,
   "failed": 0,
   "projects": ["desktop", "mobile"],
   "flows": [
-    "manual input, profile, rules plan, scenarios, chat, Hindi",
-    "route reflow and navigation",
-    "community and purifier calculations"
-  ]
+    "mocked browser forecast to real rules plan without repeat upstream request",
+    "mocked HTTP 429 with manual recovery",
+    "manual input to plan, scenario, chat, Hindi",
+    "all-route navigation and mobile reflow",
+    "community and purifier calculators"
+  ],
+  "note": "Live provider verification is recorded separately in production-air.json."
 }
