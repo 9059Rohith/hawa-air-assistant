@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-19T15:08:34.913Z",
-  "sourceCommit": "0982144d016f3535b096765ee3ed5b04c71fda7b",
+  "verifiedAt": "2026-11-19T15:34:38.306Z",
+  "sourceCommit": "eeded0cadf4a5f49c7eb3612002a6a441e735517",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 32,
+  "passed": 34,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
@@ -15,7 +15,8 @@
     "Community, fuel and purifier calculators",
     "Keyboard location selection and loaded-page offline planning/chat/export at 320px",
     "Home JavaScript stays below 117,500 bytes gzip",
-    "Validation focus/correction, persisted theme/language, blocked-storage planning, public shared-kit validation, exported actions/impact, provider failure, malformed successful plan response, keyboard skip/Escape"
+    "Validation focus/correction, persisted theme/language, blocked-storage planning, public shared-kit validation, exported actions/impact, provider failure, malformed successful plan response, keyboard skip/Escape",
+    "Truncated AI stream replaces partial text with cited local guidance and re-enables Send"
   ],
   "priorReleaseObservation": {
     "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
@@ -23,5 +24,8 @@
     "failed": 1,
     "description": "First mobile air-to-plan test lost state during navigation in one full run. Cause not established. Targeted test then passed three consecutive repetitions. Final release passed all fourteen with one worker; intermittent risk is not claimed eliminated."
   },
-  "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately."
+  "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
+  "skipped": 0,
+  "flaky": 0,
+  "durationMs": 100118.946
 }

@@ -10,13 +10,13 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | Entire production source coverage            | **93.05% lines**, 91.25% statements, 85.74% branches, 88.99% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **32 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **34 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
-| Modern home JavaScript                       | **117,312 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
+| Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 386 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 424 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
 | Submission source                            | Approximately **1.02 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
@@ -25,13 +25,17 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 456 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 32/32. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 456 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 34/34. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
 ## Maintainability follow-up
 
 The source update separates chat lifecycle from rendering, strictly decodes completed SSE messages, bounds upstream response bodies, shares local/server plan assembly and derives the Plan type from its runtime schema. Cache identity now includes source, stale state and forecast context. Exact JSON media types, empty coordinates and child-age/count consistency have regression checks.
 
 The same static audit found 13 functions above complexity 15 before the update and 8 afterwards. Core services/libraries now enforce complexity 15, nesting 3 and 100-line functions; presentation-code exceptions remain visible in `reports/maintainability.json`. The new AST architecture gate checks 67 modules and 22 client roots for local import cycles and forbidden client/server or domain dependencies.
+
+All **34 production browser tests passed** on desktop and mobile with zero failed, skipped or flaky cases.
+
+Version **11** is deployed from `eeded0cadf4a5f49c7eb3612002a6a441e735517` at the unchanged public URL. The real production OpenAI check returned ten actions with `generatedBy: llm` in **6,080 ms**. This is one end-to-end sample, not a guaranteed response time. The home JavaScript payload measured **117,314 gzip bytes** and the public 15-state axe audit found zero violations and runtime errors.
 
 ## Previous version 10 testing and efficiency release
 
