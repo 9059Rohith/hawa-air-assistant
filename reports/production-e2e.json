@@ -1,0 +1,13 @@
+{
+  "verifiedAt": "2026-11-19T13:03:04.060Z",
+  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "sourceCommit": "a2517c6a47cdba8827bf8bc688055fd0a026099e",
+  "passed": 6,
+  "failed": 0,
+  "projects": ["desktop", "mobile"],
+  "flows": [
+    "manual input, profile, rules plan, scenarios, chat, Hindi",
+    "route reflow and navigation",
+    "community and purifier calculations"
+  ]
+}

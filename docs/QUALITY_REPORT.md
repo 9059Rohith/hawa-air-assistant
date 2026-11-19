@@ -6,8 +6,8 @@ This report separates observed software results from external account restrictio
 | ----------------------------------- | ---------------------------------------------------------------------- |
 | Strict TypeScript                   | Pass                                                                   |
 | ESLint + Prettier                   | Pass                                                                   |
-| Unit/component/API tests            | 76 passed                                                              |
-| Complete production-source coverage | 91.49% lines, 90.74% statements, 86.25% branches, 87.05% functions     |
+| Unit/component/API tests            | 77 passed                                                              |
+| Complete production-source coverage | 91.55% lines, 90.63% statements, 86.30% branches, 86.47% functions     |
 | Domain coverage                     | 100% lines/statements/branches/functions, enforced                     |
 | Desktop/mobile Playwright           | 6 passed                                                               |
 | Browser axe                         | 15 route/theme states; zero detected violations                        |
@@ -29,6 +29,10 @@ Local mobile Lighthouse: **95 performance, 100 accessibility, 100 best practices
 
 ## Evidence
 
+Public Sites release verification: all six desktop/mobile end-to-end tests pass. The production accessibility audit found zero axe violations and zero runtime errors across 15 route/theme states. A real production OpenAI request returned HTTP 200 with 10 validated actions. Public mobile Lighthouse measured **78 performance, 100 accessibility, 81 best practices, 100 SEO**, LCP 1.41 seconds and CLS 0. These measurements are separate from the local results above; they are not a universal load-time guarantee. Host-injected challenge scripts produced browser deprecation findings.
+
+Production geocoding returned five results. Production air retrieval currently receives HTTP 429 from Open-Meteo; HAWA displays a provider-unavailable message and offers manual PM2.5 entry. It does not fabricate a live reading. The same upstream request succeeded locally, so local air verification must not be read as production availability.
+
 [Public captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) records the local production build. Viewer access is enabled for anyone with the link. Submission source is approximately 0.6 MB, excluding generated media, dependencies and local build artifacts. The Git-history credential-pattern scan covered 130 unique blobs with no matches.
 
 - `reports/coverage.json`
@@ -42,6 +46,11 @@ Local mobile Lighthouse: **95 performance, 100 accessibility, 100 best practices
 - `reports/dependency-audit.json`
 - `reports/secret-scan.json`
 - `reports/deployment.json`
+- `reports/production-ai.json`
+- `reports/production-air.json`
+- `reports/production-accessibility.json`
+- `reports/production-lighthouse.json`
+- `reports/production-e2e.json`
 
 ## Open items and limitations
 

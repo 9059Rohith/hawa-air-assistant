@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-19T12:55:45.663Z",
+  "verifiedAt": "2026-11-19T13:03:04.059Z",
   "results": [
     {
       "path": "/api/geocode?q=Delhi",
@@ -10,8 +10,8 @@
       "path": "/api/air?lat=28.61&lon=77.21",
       "status": 502,
       "error": {
-        "code": "UNAVAILABLE",
-        "message": "This service is unavailable. Please retry or enter PM2.5 manually."
+        "code": "AIR_PROVIDER",
+        "message": "Open-Meteo returned HTTP 429; manual input remains available."
       }
     }
   ]
