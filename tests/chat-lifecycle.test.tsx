@@ -127,3 +127,45 @@ it("aborts outstanding work when chat unmounts", async () => {
   view.unmount();
   await waitFor(() => expect(cancel).toHaveBeenCalled());
 });
+
+it.each([
+  'data: {"text":"Truncated remote answer"}\n\n',
+  'data: {"text":17}\n\ndata: [DONE]\n\n',
+])(
+  "replaces an invalid or incomplete stream with cited local guidance",
+  async (wire) => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(wire)));
+    render(<ChatPanel plan={plan} offline={false} />);
+    send("How should a mask fit?");
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Send" })).toBeEnabled(),
+    );
+    expect(
+      screen.queryByText("Truncated remote answer"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen
+        .getAllByRole("link")
+        .some((link) => link.getAttribute("href")?.startsWith("/learn#")),
+    ).toBe(true);
+    expect(screen.getByText(/Response mode: rules/)).toBeInTheDocument();
+  },
+);
+it("clears prior conversation when a different plan is selected", async () => {
+  const network = vi.fn().mockResolvedValue(reply("First plan answer"));
+  vi.stubGlobal("fetch", network);
+  const view = render(<ChatPanel plan={plan} offline={false} />);
+  send("mask fitting");
+  await screen.findByText("First plan answer");
+  view.rerender(
+    <ChatPanel
+      plan={localPlan(baseProfile, cities.Delhi, manualAir(35))}
+      offline={false}
+    />,
+  );
+  expect(screen.queryByText("First plan answer")).not.toBeInTheDocument();
+  network.mockResolvedValue(reply("New plan answer"));
+  send("cooking smoke");
+  await screen.findByText("New plan answer");
+  expect(JSON.parse(network.mock.calls[1]![1].body).messages).toEqual([]);
+});

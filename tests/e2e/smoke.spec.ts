@@ -239,3 +239,47 @@ test("home route stays inside the 117,500-byte compressed JavaScript budget", as
   }
   expect(total).toBeLessThanOrEqual(117500);
 });
+
+test("truncated AI chat recovers to cited guidance and remains usable", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.route("**/api/chat", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/event-stream",
+      body: 'data: {"mode":"llm"}\n\ndata: {"text":"Incomplete provider output"}\n\n',
+    }),
+  );
+  await page.goto("/");
+  await page.getByLabel(/Have a PM2.5/).fill("150");
+  await page.getByRole("button", { name: "Use reading", exact: true }).click();
+  await page.getByRole("link", { name: /Build my daily plan/ }).click();
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await page.getByLabel(/Use rules mode/).check();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+  await page.getByLabel(/Use rules mode/).uncheck();
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("How should a mask fit?");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(
+    page.getByText("Response mode: rules", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".reply")).not.toContainText(
+    "Incomplete provider output",
+  );
+  await expect(page.locator(".reply a").first()).toHaveAttribute(
+    "href",
+    /^\/learn#/,
+  );
+  await expect(
+    page.getByRole("button", { name: "Send", exact: true }),
+  ).toBeEnabled();
+  expect(errors).toEqual([]);
+});

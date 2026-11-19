@@ -11,3 +11,13 @@ The home route defers schema-validation code until a user searches, loads air or
 Plans first choose feasible curated actions, then compute deterministic impacts, then optionally ask OpenAI to explain the allowed actions. Schema validation checks the exact set of IDs and limits generated text. Failed language calls use the same bilingual knowledge base. Chat retrieves four relevant entries, requests validated explanations grounded in the question, then delivers SSE chunks. **SSE delivery follows output validation; raw model tokens are not streamed to the user.** This deliberately trades some first-token speed for a guardable response.
 
 Air responses cache for fifteen minutes; a last-good response may be served for up to three hours with an explicit stale flag. All caches are bounded and process-local. No cross-user persistent database is used. Plan cache keys hash full relevant profile input and rounded location, concentration, date, offline flag and prompt version. Plans are never publicly HTTP cached.
+
+## Code quality and response boundaries
+
+`npm run lint` includes a TypeScript-AST dependency check: pure domain modules cannot reach UI/server infrastructure, client entry points cannot reach server services or environment secrets, and local import cycles fail the check. Core service and library functions also enforce cyclomatic complexity ≤15, nesting depth ≤3 and at most 100 nonblank, noncomment lines. Bilingual presentation components are outside those function-size gates; this is not a claim that every component is equally small.
+
+`lib/plan-assembly.ts` is the shared deterministic assembly boundary for online and local fallback plans. `Plan` is inferred from its runtime Zod schema. Household age/count consistency is validated at that boundary, not only in the form. Plan-cache identity also includes air provenance, staleness and the forecast window used by personalization.
+
+`services/llm-contract.ts` owns prompt construction, language parsing and grounding. The orchestration module owns retry, timeout and token reservations. `lib/streams.ts` bounds upstream JSON bodies to 256 KiB with an eight-second body deadline; request JSON is capped at 8 KiB with a five-second body deadline. These limits supplement the existing upstream request timeout.
+
+`hooks/useChat.ts` owns cancellation, transient history and a 30-second client deadline. `lib/chat-stream.ts` decodes fragmented UTF-8/SSE, validates event shapes, bounds event/answer/stream sizes and requires an explicit completion marker. Truncated or malformed streams switch to cited local guidance. Changing the plan or language preferences resets prior conversation context.

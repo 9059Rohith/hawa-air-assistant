@@ -63,7 +63,11 @@ export const ProfileSchema = z
     lang: z.enum(["en", "hi"]),
     simple: z.boolean(),
   })
-  .strict();
+  .strict()
+  .refine((profile) => profile.childAges.length <= profile.children, {
+    path: ["childAges"],
+    message: "More ages than children were entered.",
+  });
 export type Profile = z.infer<typeof ProfileSchema>;
 export const LocationSchema = z
   .object({
@@ -170,18 +174,6 @@ export type Impact = {
   cigaretteEq: number;
   selected: string[];
 };
-export type Plan = {
-  headline: string;
-  summary: string;
-  actions: (Action & { why: string })[];
-  generatedBy: "llm" | "rules";
-  air: Air;
-  profile: Profile;
-  location: Location;
-  impact: Impact;
-  createdAt: string;
-};
-
 /** Validate an untrusted HTTP plan before it can enter the rendered workspace. */
 export const PlanSchema = z.object({
   headline: z.string().min(1).max(500),
@@ -204,3 +196,5 @@ export const PlanSchema = z.object({
   }),
   createdAt: z.string().datetime(),
 });
+
+export type Plan = z.infer<typeof PlanSchema>;

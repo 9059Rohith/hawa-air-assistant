@@ -39,13 +39,6 @@ export function ProfileWizard({
             ? "दिखाई गई सीमा में मान भरें।"
             : "Enter a value within the displayed limits.",
         }));
-    if (profile.childAges.length > profile.children)
-      found.push({
-        key: "childAges",
-        message: hi
-          ? "उम्रों की संख्या बच्चों से अधिक है।"
-          : "More ages than children were entered.",
-      });
     setErrors(found);
     if (found.length) {
       requestAnimationFrame(() => summary.current?.focus());

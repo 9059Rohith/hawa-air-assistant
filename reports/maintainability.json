@@ -1,0 +1,100 @@
+{
+  "measuredAt": "2026-11-19T15:28:16.587Z",
+  "basis": "Same ESLint complexity threshold of 15 before and after this change",
+  "before": [
+    {
+      "file": "/src/components/About.tsx",
+      "message": "Function 'About' has a complexity of 25. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/ActionCard.tsx",
+      "message": "Function 'ActionCard' has a complexity of 31. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/AirReading.tsx",
+      "message": "Function 'AirReading' has a complexity of 37. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/ChatPanel.tsx",
+      "message": "Async function 'send' has a complexity of 22. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/Community.tsx",
+      "message": "Function 'Community' has a complexity of 33. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/Learn.tsx",
+      "message": "Function 'Learn' has a complexity of 26. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/PlanView.tsx",
+      "message": "Function 'PlanView' has a complexity of 24. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/PlanWorkspace.tsx",
+      "message": "Async function 'generate' has a complexity of 17. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/ProfileWizard.tsx",
+      "message": "Function 'ProfileWizard' has a complexity of 18. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/data/knowledge.ts",
+      "message": "Arrow function has a complexity of 17. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/services/llm.ts",
+      "message": "Async function 'language' has a complexity of 18. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/services/plan.ts",
+      "message": "Async function 'buildPlan' has a complexity of 19. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/services/transport.ts",
+      "message": "Async function 'readBody' has a complexity of 17. Maximum allowed is 15."
+    }
+  ],
+  "after": [
+    {
+      "file": "/src/components/About.tsx",
+      "message": "Function 'About' has a complexity of 25. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/ActionCard.tsx",
+      "message": "Function 'ActionCard' has a complexity of 16. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/Community.tsx",
+      "message": "Function 'Community' has a complexity of 33. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/Learn.tsx",
+      "message": "Function 'Learn' has a complexity of 26. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/PlanView.tsx",
+      "message": "Function 'PlanView' has a complexity of 24. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/PlanWorkspace.tsx",
+      "message": "Async function 'generate' has a complexity of 17. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/components/ProfileWizard.tsx",
+      "message": "Function 'ProfileWizard' has a complexity of 18. Maximum allowed is 15."
+    },
+    {
+      "file": "/src/data/knowledge.ts",
+      "message": "Arrow function has a complexity of 17. Maximum allowed is 15."
+    }
+  ],
+  "enforcedCoreRules": {
+    "complexity": 15,
+    "maxDepth": 3,
+    "maxFunctionLines": 100
+  },
+  "scope": "Core gates apply to src/services and src/lib; bilingual presentation functions can still exceed the advisory threshold.",
+  "unitCases": 456,
+  "acceptanceCasesIncluded": 87
+}

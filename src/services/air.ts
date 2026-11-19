@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readJsonResponse } from "@/lib/streams";
 import { Cache } from "./cache";
 import { safeFetch } from "./http";
 import type { Air, Location } from "@/domain/types";
@@ -22,7 +23,7 @@ export async function getAir(location: Location): Promise<Air> {
           502,
           `Air data is temporarily unavailable (provider ${response.status}). Enter a manual reading or retry shortly.`,
         );
-      const air = parseAir(await response.json(), "open-meteo");
+      const air = parseAir(await readJsonResponse(response), "open-meteo");
       cache.set(key, air);
       return air;
     } catch (error) {
@@ -67,7 +68,7 @@ export async function geocode(q: string) {
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(key)}&count=5&language=en&format=json`,
     );
     if (!response.ok) throw new Error("Geocoding unavailable");
-    const data = geo.parse(await response.json());
+    const data = geo.parse(await readJsonResponse(response));
     const results = (data.results ?? []).map((r) => ({
       name: [r.name, r.admin1, r.country]
         .filter(Boolean)

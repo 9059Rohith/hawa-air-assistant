@@ -6,8 +6,8 @@ export async function GET(request: Request) {
     const q = new URL(request.url).searchParams;
     const parsed = LocationSchema.safeParse({
       name: "Selected location",
-      lat: q.has("lat") ? Number(q.get("lat")) : NaN,
-      lon: q.has("lon") ? Number(q.get("lon")) : NaN,
+      lat: q.get("lat")?.trim() ? Number(q.get("lat")) : NaN,
+      lon: q.get("lon")?.trim() ? Number(q.get("lon")) : NaN,
     });
     if (!parsed.success)
       throw new AppError(

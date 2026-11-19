@@ -1,9 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import type { Plan } from "@/domain/types";
 import { useHawa } from "./Provider";
-import { localChat } from "@/lib/chat-guidance";
-import { urgent } from "@/domain/safety";
+import { useChat } from "@/hooks/useChat";
 export default function ChatPanel({
   plan,
   offline,
@@ -13,101 +11,11 @@ export default function ChatPanel({
 }) {
   const { t, profile, setNotice } = useHawa();
   const hi = profile.lang === "hi";
-  const history = useRef<{ role: "user" | "assistant"; content: string }[]>([]);
-  const [message, setMessage] = useState(""),
-    [reply, setReply] = useState(""),
-    [busy, setBusy] = useState(false),
-    [mode, setMode] = useState("");
-  const abort = useRef<AbortController | null>(null);
-  useEffect(() => () => abort.current?.abort(), []);
-  async function send() {
-    abort.current?.abort();
-    const controller = new AbortController();
-    abort.current = controller;
-    const current = () =>
-      abort.current === controller && !controller.signal.aborted;
-    setBusy(true);
-    setReply("");
-    setMode("");
-    let answer = "";
-    try {
-      if (urgent(message) || offline || !navigator.onLine) {
-        const local = localChat(message, profile);
-        setReply(local.text);
-        setMode(local.mode);
-        answer = local.text;
-        return;
-      }
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          profile: {
-            ...plan.profile,
-            lang: profile.lang,
-            simple: profile.simple,
-          },
-          location: plan.location,
-          manualPm: plan.air.pm25,
-          message,
-          offline,
-          messages: history.current.slice(-6),
-          actionIds: plan.actions.map((a) => a.id),
-        }),
-        signal: controller.signal,
-      });
-      if (!current()) {
-        void response.body?.cancel().catch(() => {});
-        return;
-      }
-      if (!response.ok || !response.body) throw new Error();
-      const reader = response.body.getReader(),
-        decoder = new TextDecoder();
-      let buffer = "";
-      const cancelReader = () => {
-        void reader.cancel().catch(() => {});
-      };
-      controller.signal.addEventListener("abort", cancelReader, { once: true });
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done || !current()) break;
-          buffer += decoder.decode(value, { stream: true });
-          const events = buffer.split("\n\n");
-          buffer = events.pop() ?? "";
-          for (const event of events) {
-            const raw = event.slice(6);
-            if (raw === "[DONE]") continue;
-            const data = JSON.parse(raw) as { text?: string; mode?: string };
-            if (data.mode) setMode(data.mode);
-            if (data.text) {
-              answer += data.text;
-              setReply(answer);
-            }
-          }
-        }
-      } finally {
-        controller.signal.removeEventListener("abort", cancelReader);
-        void reader.cancel().catch(() => {});
-        reader.releaseLock();
-      }
-    } catch {
-      if (current()) {
-        const local = localChat(message, profile);
-        setReply(local.text);
-        setMode(local.mode);
-        answer = local.text;
-      }
-    } finally {
-      if (answer && current())
-        history.current = [
-          ...history.current,
-          { role: "user", content: message },
-          { role: "assistant", content: answer.slice(0, 800) },
-        ].slice(-6) as typeof history.current;
-      if (abort.current === controller) setBusy(false);
-    }
-  }
+  const { message, setMessage, reply, busy, mode, send, stop } = useChat(
+    plan,
+    offline,
+    profile,
+  );
   return (
     <section className="panel chat" aria-labelledby="chat-title">
       <h2 id="chat-title">{t.ask}</h2>
@@ -141,14 +49,7 @@ export default function ChatPanel({
           <button className="primary" disabled={busy}>
             {hi ? "भेजें" : "Send"}
           </button>
-          <button
-            type="button"
-            disabled={!busy}
-            onClick={() => {
-              abort.current?.abort();
-              setBusy(false);
-            }}
-          >
+          <button type="button" disabled={!busy} onClick={stop}>
             {t.stop}
           </button>
         </div>
@@ -197,7 +98,10 @@ export default function ChatPanel({
       {reply && (
         <button
           onClick={() =>
-            void navigator.clipboard.writeText(reply).then(
+            void (
+              navigator.clipboard?.writeText(reply) ??
+              Promise.reject(new Error("Clipboard unavailable"))
+            ).then(
               () => setNotice(hi ? "उत्तर कॉपी हुआ।" : "Answer copied."),
               () =>
                 setNotice(

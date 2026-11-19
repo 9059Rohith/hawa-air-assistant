@@ -91,9 +91,13 @@ it.each([
   ["string", ["6"], false],
   ["too many", Array(16).fill(5), false],
 ])("child ages: %s", (_name, childAges, accepted) => {
-  expect(ProfileSchema.safeParse({ ...baseProfile, childAges }).success).toBe(
-    accepted,
-  );
+  expect(
+    ProfileSchema.safeParse({
+      ...baseProfile,
+      children: Math.min(15, childAges.length),
+      childAges,
+    }).success,
+  ).toBe(accepted);
 });
 it.each([
   ["north pole", 90, 180, true],
@@ -169,3 +173,15 @@ it.each(["en", "hi"] as const)(
     ).toEqual({ lang, ids: ["mask-fit"] });
   },
 );
+
+it("rejects more child ages than children at the shared input boundary", () => {
+  const profile = { ...baseProfile, children: 1, childAges: [6, 9] };
+  expect(ProfileSchema.safeParse(profile).success).toBe(false);
+  expect(
+    RequestSchema.safeParse({ profile, location: cities.Delhi, offline: true })
+      .success,
+  ).toBe(false);
+  expect(ProfileSchema.safeParse({ ...profile, children: 2 }).success).toBe(
+    true,
+  );
+});

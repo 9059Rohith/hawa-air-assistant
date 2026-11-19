@@ -413,3 +413,33 @@ it("chat passes bounded history, air tier and valid selected actions to the mode
   expect(sent!.context.history[0]!.content).toBe("kitchen smoke");
   expect(JSON.stringify(sent)).not.toContain('"lat"');
 });
+
+it.each(["application/jsonp", "application/json-malformed", "text/json"])(
+  "rejects misleading JSON media type %s",
+  async (mime) => {
+    const req = request({
+      profile: baseProfile,
+      location: cities.Delhi,
+      offline: true,
+    });
+    req.headers.set("content-type", mime);
+    await expect(readBody(req, RequestSchema)).rejects.toMatchObject({
+      code: "CONTENT_TYPE",
+      status: 415,
+    });
+  },
+);
+it("accepts JSON charset parameters and mixed-case MIME", async () => {
+  const body = { profile: baseProfile, location: cities.Delhi, offline: true };
+  const req = request(body);
+  req.headers.set("content-type", "Application/JSON; charset=utf-8");
+  await expect(readBody(req, RequestSchema)).resolves.toEqual(body);
+});
+it.each(["lat=&lon=77", "lat=28&lon=", "lat=%20&lon=77"])(
+  "rejects blank coordinates: %s",
+  async (query) => {
+    expect(
+      (await airGET(new Request(`https://hawa.test/api/air?${query}`))).status,
+    ).toBe(400);
+  },
+);

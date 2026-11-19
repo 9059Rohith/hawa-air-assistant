@@ -1,10 +1,12 @@
 {
-  "measuredAt": "2026-11-19T15:04:53.228Z",
-  "tests": 32,
-  "passed": 32,
+  "measuredAt": "2026-11-19T15:30:45.882Z",
+  "tests": 34,
+  "passed": 34,
   "failed": 0,
+  "skipped": 0,
+  "flaky": 0,
   "projects": ["desktop", "mobile"],
   "workers": 1,
-  "evidence": "npm run test:e2e -- --workers=1; resilience and smoke suites",
-  "initialVerification": "Two new selectors were corrected to match labelled UI. Complete script accounting revised the new budget to 117500 bytes, still below the 117650-byte Challenge 5 baseline."
+  "evidence": "npx playwright test --workers=1 --reporter=json",
+  "durationMs": 76161.367
 }

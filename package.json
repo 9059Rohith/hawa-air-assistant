@@ -9,7 +9,7 @@
     "dev": "next dev -p 3100",
     "build": "next build",
     "start": "next start -p 3100",
-    "lint": "eslint src tests evals && prettier --check .",
+    "lint": "npm run check-architecture && eslint src tests evals --max-warnings=0 && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -22,7 +22,8 @@
     "doctor": "tsx scripts/doctor.ts",
     "build:sites": "node scripts/build-sites.mjs",
     "check-contrast": "node scripts/check-contrast.mjs",
-    "pretest:e2e": "npm run check-contrast"
+    "pretest:e2e": "npm run check-contrast",
+    "check-architecture": "node scripts/check-architecture.mjs"
   },
   "dependencies": {
     "next": "15.5.29",

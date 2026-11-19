@@ -1,13 +1,13 @@
 # Verified quality report — 19 November 2026
 
-Observed software evidence, not an evaluation-score or ranking prediction.
+Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
 
 | Check                                        | Current release result                                                                                              |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **403 passed (316 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **91.89% lines**, 90.61% statements, 84.64% branches, 86.86% functions                                              |
+| Unit/component/API tests                     | **456 passed (369 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **93.05% lines**, 91.25% statements, 85.74% branches, 88.99% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
 | Desktop/mobile end-to-end tests              | **32 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
@@ -16,18 +16,24 @@ Observed software evidence, not an evaluation-score or ranking prediction.
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,312 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 343 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 386 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
-| Submission source                            | Approximately **0.99 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Submission source                            | Approximately **1.02 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 403 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 32/32. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 456 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 32/32. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Testing and efficiency release
+## Maintainability follow-up
+
+The source update separates chat lifecycle from rendering, strictly decodes completed SSE messages, bounds upstream response bodies, shares local/server plan assembly and derives the Plan type from its runtime schema. Cache identity now includes source, stale state and forecast context. Exact JSON media types, empty coordinates and child-age/count consistency have regression checks.
+
+The same static audit found 13 functions above complexity 15 before the update and 8 afterwards. Core services/libraries now enforce complexity 15, nesting 3 and 100-line functions; presentation-code exceptions remain visible in `reports/maintainability.json`. The new AST architecture gate checks 67 modules and 22 client roots for local import cycles and forbidden client/server or domain dependencies.
+
+## Previous version 10 testing and efficiency release
 
 Version 10 is deployed from `0982144d016f3535b096765ee3ed5b04c71fda7b`. All **32 production desktop/mobile browser tests** pass. The **403 Vitest cases** comprise 316 unit/component/API/contract cases plus 87 independently recorded acceptance scenarios. Line coverage is **91.89%**, with 100% for the domain. Public axe checks report zero detected violations across 15 states and zero runtime errors.
 
