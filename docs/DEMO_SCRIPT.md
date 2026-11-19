@@ -1,5 +1,7 @@
 # HAWA demonstration
 
+[Public narrated demo (3 minutes 6 seconds)](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view). Recorded 19 November 2026, with burned-in captions and synthetic narration. Google Drive confirms that anyone with the link can view without signing in. This demonstrates the local production build, not a publicly deployed site.
+
 Record a local production build while production deployment is blocked. State that clearly. Use labelled manual/example data; never present it as a live monitor. The real AI integration is separately verified in `reports/live-ai.json`.
 
 1. **Opening:** winter smog needs actionable choices, not just an index. Show the home interface and no default fabricated reading.

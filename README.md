@@ -6,6 +6,10 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
+[Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
+
+The three-minute demo records the local production build with labelled example air data. Drive access is set to **Anyone with the link — Viewer**.
+
 **Deployment status:** the production build works locally; Vercel rejected the new project because the owner's team is blocked under its fair-use policy. A production URL is not yet available. See [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
 
 ## Problem and our approach
@@ -125,7 +129,7 @@ Stack: Next.js 15.5.29 App Router, React 19, strict TypeScript, Zod, Tailwind/CS
 
 ## Deploy in five minutes
 
-1. Import this public repository into an unrestricted Vercel team; choose Next.js and Node 22.
+1. Resolve the owner's Vercel team restriction, then import this public repository; choose Next.js and Node 22.
 2. Add `LLM_API_KEY` as an encrypted Production variable, set `LLM_MODEL`, and set `APP_ORIGIN` to the assigned origin.
 3. Deploy. No database or paid storage service is required.
 4. Check `/api/health`, generate a real AI plan, then check the rules-mode toggle and citation chat.
@@ -135,7 +139,7 @@ The multi-stage non-root Dockerfile is an alternative packaging route. Docker ex
 
 ## Roadmap and known limits
 
-Distributed rate limits, independent emissions-factor validation for Indian modes/fuels, full Hindi interface review, assistive-technology testing, school curriculum kits and optional community integrations. Browser offline use means loaded rules guidance and manual inputs remain useful; HAWA does not currently provide an installable service-worker offline shell.
+Distributed rate limits, independent emissions-factor validation for Indian modes/fuels, full Hindi interface review, assistive-technology testing, school curriculum kits and optional community integrations. Rules mode works without an AI key but still requires access to the application server. Already displayed guidance remains readable after connectivity loss; HAWA does not currently provide an installable service-worker offline shell.
 
 ## Disclaimer, attribution and license
 

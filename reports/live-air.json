@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/api/geocode?q=Delhi",
+    "status": 200,
+    "resultCount": 5
+  },
+  {
+    "path": "/api/air?lat=28.61&lon=77.21",
+    "status": 200,
+    "source": "open-meteo",
+    "pm25": 64.3,
+    "forecastHours": 31
+  }
+]

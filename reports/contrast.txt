@@ -1,0 +1,12 @@
+light ink/bg: 11.66:1
+light ink/surface: 12.35:1
+light muted/bg: 6.07:1
+light muted/surface: 6.42:1
+dark ink/bg: 15.03:1
+dark ink/surface: 12.14:1
+dark muted/bg: 10.30:1
+dark muted/surface: 8.32:1
+hc ink/bg: 21.00:1
+hc ink/surface: 21.00:1
+hc muted/bg: 21.00:1
+hc muted/surface: 21.00:1

@@ -1,0 +1,12 @@
+{
+  "health": {
+    "ok": true,
+    "version": "1.0.0",
+    "llm": "enabled",
+    "time": "2026-11-19T11:46:49.645Z"
+  },
+  "status": 200,
+  "generatedBy": "llm",
+  "actionCount": 10,
+  "headline": "Air Quality Guidance for Families"
+}
