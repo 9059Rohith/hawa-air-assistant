@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-19T15:28:16.587Z",
+  "measuredAt": "2026-11-19T16:07:06.285Z",
   "basis": "Same ESLint complexity threshold of 15 before and after this change",
   "before": [
     {
@@ -55,46 +55,53 @@
       "message": "Async function 'readBody' has a complexity of 17. Maximum allowed is 15."
     }
   ],
-  "after": [
-    {
-      "file": "/src/components/About.tsx",
-      "message": "Function 'About' has a complexity of 25. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/ActionCard.tsx",
-      "message": "Function 'ActionCard' has a complexity of 16. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/Community.tsx",
-      "message": "Function 'Community' has a complexity of 33. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/Learn.tsx",
-      "message": "Function 'Learn' has a complexity of 26. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/PlanView.tsx",
-      "message": "Function 'PlanView' has a complexity of 24. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/PlanWorkspace.tsx",
-      "message": "Async function 'generate' has a complexity of 17. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/components/ProfileWizard.tsx",
-      "message": "Function 'ProfileWizard' has a complexity of 18. Maximum allowed is 15."
-    },
-    {
-      "file": "/src/data/knowledge.ts",
-      "message": "Arrow function has a complexity of 17. Maximum allowed is 15."
-    }
-  ],
+  "after": [],
   "enforcedCoreRules": {
     "complexity": 15,
     "maxDepth": 3,
     "maxFunctionLines": 100
   },
-  "scope": "Core gates apply to src/services and src/lib; bilingual presentation functions can still exceed the advisory threshold.",
-  "unitCases": 456,
-  "acceptanceCasesIncluded": 87
+  "scope": "Complexity <=15 enforced across all src TypeScript/TSX, without suppressions. Core services/lib retain nesting <=3 and <=100 nonblank/noncomment lines per function.",
+  "acceptanceCasesIncluded": 87,
+  "previousRelease": {
+    "sourceCommit": "eeded0cadf4a5f49c7eb3612002a6a441e735517",
+    "findings": [
+      {
+        "file": "/src/components/About.tsx",
+        "message": "Function 'About' has a complexity of 25. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/ActionCard.tsx",
+        "message": "Function 'ActionCard' has a complexity of 16. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/Community.tsx",
+        "message": "Function 'Community' has a complexity of 33. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/Learn.tsx",
+        "message": "Function 'Learn' has a complexity of 26. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/PlanView.tsx",
+        "message": "Function 'PlanView' has a complexity of 24. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/PlanWorkspace.tsx",
+        "message": "Async function 'generate' has a complexity of 17. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/components/ProfileWizard.tsx",
+        "message": "Function 'ProfileWizard' has a complexity of 18. Maximum allowed is 15."
+      },
+      {
+        "file": "/src/data/knowledge.ts",
+        "message": "Arrow function has a complexity of 17. Maximum allowed is 15."
+      }
+    ]
+  },
+  "enforcedApplicationRules": {
+    "complexity": 15
+  },
+  "vitestCases": 468
 }

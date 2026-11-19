@@ -1,85 +1,16 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { usePlanGeneration } from "@/hooks/usePlanGeneration";
 import ChatPanel from "./ChatPanel";
-import { localPlan } from "@/lib/rules-plan";
 import { useHawa } from "./Provider";
 import { ProfileWizard } from "./ProfileWizard";
 import { LocationForm } from "./LocationForm";
 import { PlanView } from "./PlanView";
-import { PlanSchema } from "@/domain/types";
 export function PlanWorkspace() {
-  const { t, profile, location, air, plan, setPlan, setNotice } = useHawa();
-  const [busy, setBusy] = useState(false),
-    [offline, setOffline] = useState(false),
+  const { t, profile, location, air, plan } = useHawa();
+  const [offline, setOffline] = useState(false),
     [chat, setChat] = useState(false);
-  const active = useRef<AbortController | null>(null);
-  useEffect(() => {
-    setBusy(false);
-    return () => active.current?.abort();
-  }, [profile, location, air]);
-  async function generate() {
-    if (!location || !air) {
-      setNotice(
-        "Choose a location and load air data, or enter a manual reading.",
-      );
-      return;
-    }
-    active.current?.abort();
-    const controller = new AbortController();
-    active.current = controller;
-    const current = () =>
-      active.current === controller && !controller.signal.aborted;
-    setBusy(true);
-    try {
-      if (offline || !navigator.onLine) {
-        setPlan(localPlan(profile, location, air));
-        setNotice(
-          profile.lang === "hi"
-            ? "इस डिवाइस पर नियम आधारित योजना तैयार है।"
-            : "Your local rules-based plan is ready. No network request was needed.",
-        );
-        return;
-      }
-      const response = await fetch("/api/plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          profile,
-          location,
-          offline,
-          ...(air.source === "open-meteo-browser"
-            ? { browserAir: { location, air } }
-            : air.source !== "open-meteo"
-              ? { manualPm: air.pm25 }
-              : {}),
-        }),
-        signal: AbortSignal.any([
-          controller.signal,
-          AbortSignal.timeout(35000),
-        ]),
-      });
-      if (!response.ok) throw new Error();
-      const result = PlanSchema.parse(await response.json());
-      if (!current()) return;
-      if (air.source === "demo") result.air.source = "demo";
-      setPlan(result);
-      setNotice(
-        result.generatedBy === "llm"
-          ? "Your AI-personalized plan is ready."
-          : "Your rules-based plan is ready. All calculations are available.",
-      );
-    } catch {
-      if (!current()) return;
-      setPlan(localPlan(profile, location, air));
-      setNotice(
-        profile.lang === "hi"
-          ? "AI उपलब्ध नहीं है। स्थानीय नियम योजना तैयार है।"
-          : "AI is unavailable. A local rules-based plan is ready.",
-      );
-    } finally {
-      if (current()) setBusy(false);
-    }
-  }
+  const { busy, generate } = usePlanGeneration(offline);
   return (
     <>
       <div className="hero compact">

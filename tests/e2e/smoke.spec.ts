@@ -283,3 +283,28 @@ test("truncated AI chat recovers to cited guidance and remains usable", async ({
   ).toBeEnabled();
   expect(errors).toEqual([]);
 });
+
+test("community notice reports unavailable clipboard access without crashing", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: undefined,
+    }),
+  );
+  await page.goto("/community");
+  await page.getByRole("button", { name: "Copy notice", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Clipboard unavailable");
+  expect(errors).toEqual([]);
+});
+test("child-age fields follow changes in household size", async ({ page }) => {
+  await page.goto("/plan");
+  await page.getByLabel("Children", { exact: true }).fill("2");
+  await page.getByLabel(/Children’s ages/).fill("5, 8");
+  await page.getByLabel(/Children’s ages/).blur();
+  await page.getByLabel("Children", { exact: true }).fill("1");
+  await expect(page.getByLabel(/Children’s ages/)).toHaveValue("5");
+});

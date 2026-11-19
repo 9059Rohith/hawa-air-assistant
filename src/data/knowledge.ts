@@ -471,14 +471,12 @@ export const knowledge: Action[] = rows.map(
       group: id === "carpool" || id === "transit" ? "commute" : id,
       effect: effects[id] ?? "none",
       condition: conditions[id] ?? "always",
-      sources: [
-        category === "Transport"
-          ? "climate"
-          : id === "coal-safety" || id === "generator"
-            ? "co"
-            : category === "Health"
-              ? "smoke"
-              : "epa",
-      ],
+      sources: [guidanceSource(id, category)],
     }),
 );
+
+function guidanceSource(id: string, category: string) {
+  if (category === "Transport") return "climate";
+  if (id === "coal-safety" || id === "generator") return "co";
+  return category === "Health" ? "smoke" : "epa";
+}

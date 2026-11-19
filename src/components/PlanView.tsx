@@ -77,42 +77,7 @@ export function PlanView({ plan }: { plan: Plan }) {
   }
   return (
     <section className="plan-results" aria-label="Generated plan">
-      <div className="section-top">
-        <div>
-          <p className="mode">
-            {plan.generatedBy === "llm" ? t.ai : t.rules} ·{" "}
-            {plan.air.source === "demo"
-              ? hi
-                ? "उदाहरण डेटा"
-                : "Demo data"
-              : plan.air.source === "manual"
-                ? hi
-                  ? "हाथ से भरा डेटा"
-                  : "Manual data"
-                : hi
-                  ? "अनुमानित हवा"
-                  : "Modelled air"}
-          </p>
-          <h2>
-            {plan.profile.lang === profile.lang
-              ? plan.headline
-              : hi
-                ? "आज की साफ हवा योजना"
-                : "Your smog game plan"}
-          </h2>
-          <p>
-            {plan.profile.lang === profile.lang
-              ? plan.summary
-              : hi
-                ? "घर, सफ़र और समुदाय के लिए चुने गए कदम।"
-                : "Selected steps for your home, journey and community."}
-          </p>
-          <p className="fine">
-            {hi ? "बनाया गया" : "Generated"}:{" "}
-            {plan.createdAt.slice(0, 16).replace("T", " ")} UTC
-          </p>
-        </div>
-      </div>
+      <PlanHeading plan={plan} />
       <div className="metrics">
         <div>
           <strong>{totals.percent.toFixed(1)}%</strong>
@@ -233,5 +198,51 @@ export function PlanView({ plan }: { plan: Plan }) {
       </div>
       <ReadAloud text={summary} />
     </section>
+  );
+}
+
+function PlanHeading({ plan }: { plan: Plan }) {
+  const { t, profile } = useHawa();
+  const hi = profile.lang === "hi";
+  return (
+    <>
+      {" "}
+      <div className="section-top">
+        <div>
+          <p className="mode">
+            {plan.generatedBy === "llm" ? t.ai : t.rules} ·{" "}
+            {plan.air.source === "demo"
+              ? hi
+                ? "उदाहरण डेटा"
+                : "Demo data"
+              : plan.air.source === "manual"
+                ? hi
+                  ? "हाथ से भरा डेटा"
+                  : "Manual data"
+                : hi
+                  ? "अनुमानित हवा"
+                  : "Modelled air"}
+          </p>
+          <h2>
+            {plan.profile.lang === profile.lang
+              ? plan.headline
+              : hi
+                ? "आज की साफ हवा योजना"
+                : "Your smog game plan"}
+          </h2>
+          <p>
+            {plan.profile.lang === profile.lang
+              ? plan.summary
+              : hi
+                ? "घर, सफ़र और समुदाय के लिए चुने गए कदम।"
+                : "Selected steps for your home, journey and community."}
+          </p>
+          <p className="fine">
+            {hi ? "बनाया गया" : "Generated"}:{" "}
+            {plan.createdAt.slice(0, 16).replace("T", " ")} UTC
+          </p>
+        </div>
+      </div>
+    </>
   );
 }

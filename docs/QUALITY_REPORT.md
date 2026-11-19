@@ -6,8 +6,8 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **456 passed (369 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **93.05% lines**, 91.25% statements, 85.74% branches, 88.99% functions                                              |
+| Unit/component/API tests                     | **468 passed (381 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **93.52% lines**, 91.65% statements, 86.45% branches, 90.11% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
 | Desktop/mobile end-to-end tests              | **34 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
@@ -16,18 +16,24 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 424 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 437 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
-| Submission source                            | Approximately **1.02 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Submission source                            | Approximately **1.03 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 456 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 34/34. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 468 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 34/34. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Maintainability follow-up
+## Application-wide code-quality pass
+
+All eight remaining functions above complexity 15 were separated into focused components and helpers. The current audit reports **zero functions over 15**, and lint enforces that limit across every application TypeScript/TSX file without suppressions. This extends the earlier service/library gate; those modules also retain nesting and function-length limits. The architecture gate covers 69 modules and 23 client entry points.
+
+Planning lifecycle and bounded response validation now have separate owners. Clipboard absence produces an actionable notice. Household age fields update when the number of children decreases, and blank age entries no longer become newborns. Library search trims surrounding spaces, and purifier feedback explains both room-area and ceiling-height bounds. These behaviors have regression tests.
+
+## Previous version 11 maintainability follow-up
 
 The source update separates chat lifecycle from rendering, strictly decodes completed SSE messages, bounds upstream response bodies, shares local/server plan assembly and derives the Plan type from its runtime schema. Cache identity now includes source, stale state and forecast context. Exact JSON media types, empty coordinates and child-age/count consistency have regression checks.
 

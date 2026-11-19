@@ -15,17 +15,7 @@ export function ActionCard({
   index: number;
   hi: boolean;
 }) {
-  const window = bestWindow(plan.air.hourly);
-  const when =
-    a.id === "forecast" && window
-      ? window.time.replace("T", " ")
-      : a.category === "Transport"
-        ? hi
-          ? "यात्रा से पहले"
-          : "Before travel"
-        : hi
-          ? "आज, सुविधानुसार"
-          : "Today, when practical";
+  const when = actionTiming(a, plan, hi);
   return (
     <li>
       <div className="action-index">{String(index + 1).padStart(2, "0")}</div>
@@ -161,4 +151,17 @@ function ActionCalculation({ action: a, plan, hi }: ActionDetails) {
       </a>
     </details>
   );
+}
+
+function actionTiming(a: Plan["actions"][number], plan: Plan, hi: boolean) {
+  const window = bestWindow(plan.air.hourly);
+  return a.id === "forecast" && window
+    ? window.time.replace("T", " ")
+    : a.category === "Transport"
+      ? hi
+        ? "यात्रा से पहले"
+        : "Before travel"
+      : hi
+        ? "आज, सुविधानुसार"
+        : "Today, when practical";
 }

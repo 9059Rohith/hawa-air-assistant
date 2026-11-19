@@ -482,3 +482,58 @@ it("profile rejects missing numeric input and focuses its error summary", async 
   fireEvent.click(screen.getByRole("button", { name: "Continue" }));
   expect(screen.getByLabelText("Cooking fuel")).toBeInTheDocument();
 });
+
+it("community copy degrades gracefully without Clipboard API support", async () => {
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: undefined,
+  });
+  wrap(<Community />);
+  fireEvent.click(screen.getByText("Copy notice"));
+  await waitFor(() =>
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Clipboard unavailable",
+    ),
+  );
+});
+it("library search ignores surrounding spaces", () => {
+  wrap(<Learn />);
+  fireEvent.change(screen.getByLabelText("Search guidance / सलाह खोजें"), {
+    target: { value: "  ozone  " },
+  });
+  expect(screen.getByText("Avoid ozone generators")).toBeInTheDocument();
+});
+it("purifier feedback identifies an invalid ceiling height", () => {
+  wrap(<Learn />);
+  fireEvent.change(screen.getByLabelText("Ceiling height (m)"), {
+    target: { value: "1" },
+  });
+  expect(
+    screen.getByText(/ceiling height between 2 and 6 m/),
+  ).toBeInTheDocument();
+});
+it("child ages stay synchronized when the number of children decreases", () => {
+  wrap(<ProfileWizard busy={false} onGenerate={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "2" },
+  });
+  fireEvent.blur(screen.getByLabelText(/Children’s ages/), {
+    target: { value: "5, 8" },
+  });
+  expect(screen.getByLabelText(/Children’s ages/)).toHaveValue("5, 8");
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "1" },
+  });
+  expect(screen.getByLabelText(/Children’s ages/)).toHaveValue("5");
+});
+it("empty child-age entries are rejected instead of silently becoming newborns", () => {
+  wrap(<ProfileWizard busy={false} onGenerate={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "3" },
+  });
+  fireEvent.blur(screen.getByLabelText(/Children’s ages/), {
+    target: { value: "5,,8" },
+  });
+  fireEvent.click(screen.getByText("Review & build"));
+  expect(screen.getByText("Check these values")).toBeInTheDocument();
+});

@@ -4,6 +4,10 @@ export default [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   { rules: { "@typescript-eslint/no-explicit-any": "error" } },
   {
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    rules: { complexity: ["error", 15] },
+  },
+  {
     files: ["src/services/**/*.ts", "src/lib/**/*.ts"],
     rules: {
       complexity: ["error", 15],

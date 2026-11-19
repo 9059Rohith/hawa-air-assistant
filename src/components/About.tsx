@@ -52,76 +52,91 @@ export function About() {
             ? "नीचे पुराने संदर्भ गुणांक हैं, वर्तमान वाहन बेड़े या जीवनचक्र का माप नहीं। वाहन-किमी को यात्रियों से बाँटते हैं; यात्री-किमी को दोबारा नहीं बाँटते। मेट्रो का मान अप्रमाणित परिदृश्य अनुमान है।"
             : "These dated reference factors estimate operational CO₂, not lifecycle CO₂e or a current fleet inventory. Vehicle-km factors are divided by occupancy; passenger-km factors are not divided again. Metro is explicitly an uncalibrated scenario assumption."}
         </p>
-        <div className="table-scroll">
-          <table>
-            <caption>
-              {hi ? "संदर्भ कार्बन गुणांक" : "Reference carbon factors"}
-            </caption>
-            <thead>
-              <tr>
-                <th>{hi ? "माध्यम" : "Mode"}</th>
-                <th>{hi ? "मान और इकाई" : "Value and unit"}</th>
-                <th>{hi ? "स्रोत और सीमा" : "Source and limit"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(factors.transport).map(([name, f]) => (
-                <tr key={name}>
-                  <th scope="row">{name}</th>
-                  <td>
-                    {f.value} {f.unit}
-                  </td>
-                  <td>
-                    <a href={f.source}>{f.year}</a> · {f.uncertainty}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ReferenceFactors hi={hi} />
         <p>
           {hi
             ? "समुदाय: एक यात्री की दैनिक बचत × 7 × परिवार × भागीदारी। स्वास्थ्य प्रभाव को गुणा नहीं करते। ईंधन के लिए Learn में अलग ऊर्जा कैलकुलेटर है।"
             : "Community = one commuter’s daily saving × seven × households × adoption. Health effects are never multiplied. Learn includes a separate input-energy fuel calculator; operating hours do not establish fuel consumption."}
         </p>
-        <h2>{hi ? "डेटा और सुरक्षा" : "Data and safety"}</h2>
-        <p>
-          {hi
-            ? "Open-Meteo / CAMS मॉडल अनुमान स्थानीय मॉनिटर से अलग हो सकते हैं। EPA 2024 PM2.5 पैमाना घंटेवार डेटा पर केवल संकेत है, आधिकारिक AQI या NowCast नहीं। भारत का PM2.5 बैंड भी समग्र CPCB AQI नहीं है।"
-            : "Open-Meteo / CAMS model estimates can differ from monitors. EPA 2024 PM2.5 breakpoints applied to hourly data are indicative, not official AQI or NowCast. The India PM2.5 band is not overall CPCB AQI."}
-        </p>
-        <p>
-          {hi
-            ? "साँस की गंभीर तकलीफ़ में तुरंत चिकित्सा मदद लें। घर में कोयला या बंद जगह में जनरेटर न चलाएँ। फ़िल्टर कार्बन मोनोऑक्साइड नहीं हटाते। दवा न बदलें।"
-            : "Urgent breathing symptoms need urgent medical care. Never burn charcoal indoors or run a generator in enclosed space. Particle filters do not remove carbon monoxide. Do not change medication based on HAWA."}
-        </p>
-        <h2>{hi ? "गोपनीयता और ऑफ़लाइन" : "Privacy and offline behavior"}</h2>
-        <p>
-          {hi
-            ? "कोई खाता या ऐप एनालिटिक्स नहीं। प्रोफ़ाइल केवल Save चुनने पर ब्राउज़र में रहती है; भाषा और थीम अलग सहेजे जाते हैं। स्थान दो दशमलव तक गोल किया जाता है। ब्राउज़र सीधे Open-Meteo से डेटा लेता है, इसलिए प्रदाता IP देखता है। AI को संक्षिप्त प्रोफ़ाइल, चुने कदम और हाल की बातचीत भेजी जाती है, निर्देशांक नहीं।"
-            : "No accounts or app analytics. Profiles persist only after Save; language and theme preferences are stored separately. Coordinates are rounded to two decimals. Your browser requests Open-Meteo directly, so the provider sees its IP. Online AI receives a compact household summary, selected guidance and recent conversation, not coordinates. Hosting providers may retain operational/security logs."}
-        </p>
-        <p>
-          {hi
-            ? "लोड होने के बाद नियम योजना, गणना, चैट, प्रिंट और JSON निर्यात बिना नेटवर्क चलते हैं। नए पेज या पहली बार ऐप खोलने के लिए इंटरनेट चाहिए। साझा लिंक में केवल सलाह ID और भाषा हैं।"
-            : "Once the relevant app features are loaded, local rules plans, calculations, grounded chat, printing and JSON export work without network. First visits and uncached page loads require internet. Share links contain only guidance IDs and language. Clear removes the saved profile and current plan; browser site-data controls remove all caches and preferences."}
-        </p>
-        <h2>{hi ? "सुलभता" : "Accessibility"}</h2>
-        <p>
-          {hi
-            ? "कीबोर्ड नेविगेशन, पाठ वाली तालिकाएँ, हिन्दी/English, उच्च कंट्रास्ट और ब्राउज़र पढ़कर सुनाने का समर्थन। स्वचालित जाँच मानव स्क्रीन-रीडर परीक्षण का विकल्प नहीं।"
-            : "Keyboard navigation, chart tables, Hindi/English, high contrast and browser read-aloud are supported. Automated checks supplement, but do not replace, human screen-reader testing."}
-        </p>
-        <p>
-          <Link href="/learn#sources">
-            {hi ? "मूल स्रोत" : "Original sources"}
-          </Link>{" "}
-          ·{" "}
-          <a href="https://github.com/9059Rohith/hawa-air-assistant">
-            GitHub · MIT
-          </a>
-        </p>
+        <SafetyAndPrivacy hi={hi} />
       </section>
     </>
+  );
+}
+
+function SafetyAndPrivacy({ hi }: { hi: boolean }) {
+  return (
+    <>
+      {" "}
+      <h2>{hi ? "डेटा और सुरक्षा" : "Data and safety"}</h2>
+      <p>
+        {hi
+          ? "Open-Meteo / CAMS मॉडल अनुमान स्थानीय मॉनिटर से अलग हो सकते हैं। EPA 2024 PM2.5 पैमाना घंटेवार डेटा पर केवल संकेत है, आधिकारिक AQI या NowCast नहीं। भारत का PM2.5 बैंड भी समग्र CPCB AQI नहीं है।"
+          : "Open-Meteo / CAMS model estimates can differ from monitors. EPA 2024 PM2.5 breakpoints applied to hourly data are indicative, not official AQI or NowCast. The India PM2.5 band is not overall CPCB AQI."}
+      </p>
+      <p>
+        {hi
+          ? "साँस की गंभीर तकलीफ़ में तुरंत चिकित्सा मदद लें। घर में कोयला या बंद जगह में जनरेटर न चलाएँ। फ़िल्टर कार्बन मोनोऑक्साइड नहीं हटाते। दवा न बदलें।"
+          : "Urgent breathing symptoms need urgent medical care. Never burn charcoal indoors or run a generator in enclosed space. Particle filters do not remove carbon monoxide. Do not change medication based on HAWA."}
+      </p>
+      <h2>{hi ? "गोपनीयता और ऑफ़लाइन" : "Privacy and offline behavior"}</h2>
+      <p>
+        {hi
+          ? "कोई खाता या ऐप एनालिटिक्स नहीं। प्रोफ़ाइल केवल Save चुनने पर ब्राउज़र में रहती है; भाषा और थीम अलग सहेजे जाते हैं। स्थान दो दशमलव तक गोल किया जाता है। ब्राउज़र सीधे Open-Meteo से डेटा लेता है, इसलिए प्रदाता IP देखता है। AI को संक्षिप्त प्रोफ़ाइल, चुने कदम और हाल की बातचीत भेजी जाती है, निर्देशांक नहीं।"
+          : "No accounts or app analytics. Profiles persist only after Save; language and theme preferences are stored separately. Coordinates are rounded to two decimals. Your browser requests Open-Meteo directly, so the provider sees its IP. Online AI receives a compact household summary, selected guidance and recent conversation, not coordinates. Hosting providers may retain operational/security logs."}
+      </p>
+      <p>
+        {hi
+          ? "लोड होने के बाद नियम योजना, गणना, चैट, प्रिंट और JSON निर्यात बिना नेटवर्क चलते हैं। नए पेज या पहली बार ऐप खोलने के लिए इंटरनेट चाहिए। साझा लिंक में केवल सलाह ID और भाषा हैं।"
+          : "Once the relevant app features are loaded, local rules plans, calculations, grounded chat, printing and JSON export work without network. First visits and uncached page loads require internet. Share links contain only guidance IDs and language. Clear removes the saved profile and current plan; browser site-data controls remove all caches and preferences."}
+      </p>
+      <h2>{hi ? "सुलभता" : "Accessibility"}</h2>
+      <p>
+        {hi
+          ? "कीबोर्ड नेविगेशन, पाठ वाली तालिकाएँ, हिन्दी/English, उच्च कंट्रास्ट और ब्राउज़र पढ़कर सुनाने का समर्थन। स्वचालित जाँच मानव स्क्रीन-रीडर परीक्षण का विकल्प नहीं।"
+          : "Keyboard navigation, chart tables, Hindi/English, high contrast and browser read-aloud are supported. Automated checks supplement, but do not replace, human screen-reader testing."}
+      </p>
+      <p>
+        <Link href="/learn#sources">
+          {hi ? "मूल स्रोत" : "Original sources"}
+        </Link>{" "}
+        ·{" "}
+        <a href="https://github.com/9059Rohith/hawa-air-assistant">
+          GitHub · MIT
+        </a>
+      </p>
+    </>
+  );
+}
+
+function ReferenceFactors({ hi }: { hi: boolean }) {
+  return (
+    <div className="table-scroll">
+      <table>
+        <caption>
+          {hi ? "संदर्भ कार्बन गुणांक" : "Reference carbon factors"}
+        </caption>
+        <thead>
+          <tr>
+            <th>{hi ? "माध्यम" : "Mode"}</th>
+            <th>{hi ? "मान और इकाई" : "Value and unit"}</th>
+            <th>{hi ? "स्रोत और सीमा" : "Source and limit"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(factors.transport).map(([name, f]) => (
+            <tr key={name}>
+              <th scope="row">{name}</th>
+              <td>
+                {f.value} {f.unit}
+              </td>
+              <td>
+                <a href={f.source}>{f.year}</a> · {f.uncertainty}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

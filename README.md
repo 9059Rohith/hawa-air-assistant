@@ -6,7 +6,7 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
-**Completion status:** the core application is implemented and deployed, with **456/456 Vitest cases and 34/34 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. The submission draft is filled, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969.** Code quality scored 89; this follow-up release targets that gap and has not yet been re-evaluated. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
+**Completion status:** the core application is implemented and deployed, with **468/468 Vitest cases and 34/34 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. The submission draft is filled, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969.** Code quality scored 89; this follow-up release targets that gap and has not yet been re-evaluated. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
@@ -44,7 +44,7 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 
 | Parameter     | Concrete proofs                                                                                                                           | Where to verify                                                                             |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Code quality  | Strict TypeScript and unchecked-index checks; Zod contracts; pure domain/service/UI separation                                            | `tsconfig.json`, `src/domain`, `npm run typecheck`                                          |
+| Code quality  | Strict TypeScript; Zod contracts; complexity ≤15 for all source; AST checks for client/server boundaries and cycles                       | `tsconfig.json`, `eslint.config.mjs`, `npm run check-architecture`, `npm run typecheck`     |
 | Security      | Server-only credentials; allowlisted HTTPS and no redirects; 8 KB strict bodies, rate/concurrency limits, nonce CSP                       | `src/services/{http,transport,llm}.ts`, `src/middleware.ts`, `npm run scan-secrets`         |
 | Efficiency    | Fifteen-minute air cache with bounded stale fallback; bounded plan cache; deferred forecast and validation code; local plan/chat fallback | `src/services/cache.ts`, `src/services/plan.ts`, `reports/bundle.json`                      |
 | Testing       | Boundary/invariant tests; hostile-output and API-failure tests; desktop/mobile browser journeys                                           | `tests/domain.test.ts`, `tests/services.test.ts`, `tests/e2e`                               |
@@ -120,7 +120,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Current verified release: **456 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 93.05% overall lines; 34 production desktop/mobile journeys passed; zero axe violations across 15 states; 114.6 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
+Current verified release: **468 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 93.52% overall lines; 34 production desktop/mobile journeys passed; zero axe violations across 15 states; 114.6 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
 
 ## Project structure and scripts
 

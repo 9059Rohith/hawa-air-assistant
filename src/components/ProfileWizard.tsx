@@ -104,61 +104,13 @@ export function ProfileWizard({
         <fieldset>
           <legend>{titles[step]}</legend>
           <div className="form-grid">
-            {(numbers[step] ?? []).map((f) => (
-              <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
-                <input
-                  id={f.key}
-                  type="number"
-                  min={f.min}
-                  max={f.max}
-                  step={f.step ?? 1}
-                  required
-                  value={
-                    Number.isFinite(profile[f.key])
-                      ? String(profile[f.key])
-                      : ""
-                  }
-                  aria-invalid={errors.some((e) => e.key === f.key)}
-                  aria-describedby={`${f.key}-hint`}
-                  onChange={(e) =>
-                    change(
-                      f.key,
-                      e.target.value === "" ? NaN : Number(e.target.value),
-                    )
-                  }
-                />
-                <small id={`${f.key}-hint`}>
-                  {f.min}–{f.max}
-                </small>
-              </Field>
-            ))}
-            {(choices[step] ?? []).map((f) => (
-              <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
-                <select
-                  id={f.key}
-                  value={String(profile[f.key])}
-                  onChange={(e) =>
-                    change(f.key, e.target.value as Profile[keyof Profile])
-                  }
-                >
-                  {f.options.map((o) => (
-                    <option key={o} value={o}>
-                      {optionLabel(o, hi)}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            ))}
-            {(checks[step] ?? []).map((f) => (
-              <label className="check" key={f.key}>
-                <input
-                  type="checkbox"
-                  checked={Boolean(profile[f.key])}
-                  onChange={(e) => change(f.key, e.target.checked)}
-                />
-                {hi ? f.hi : f.en}
-              </label>
-            ))}
+            <ProfileFields
+              step={step}
+              hi={hi}
+              profile={profile}
+              change={change}
+              errors={errors}
+            />
             {step === 0 && profile.children > 0 && (
               <Field
                 id="childAges"
@@ -170,6 +122,7 @@ export function ProfileWizard({
               >
                 <input
                   id="childAges"
+                  key={profile.childAges.join(",")}
                   defaultValue={profile.childAges.join(", ")}
                   inputMode="numeric"
                   onBlur={(e) =>
@@ -178,8 +131,7 @@ export function ProfileWizard({
                       e.target.value.trim()
                         ? e.target.value
                             .split(",")
-                            .slice(0, 15)
-                            .map((v) => Number(v.trim()))
+                            .map((v) => (v.trim() ? Number(v.trim()) : NaN))
                         : [],
                     )
                   }
@@ -234,5 +186,78 @@ export function ProfileWizard({
         </div>
       </form>
     </section>
+  );
+}
+
+function ProfileFields({
+  step,
+  hi,
+  profile,
+  change,
+  errors,
+}: {
+  step: number;
+  hi: boolean;
+  profile: Profile;
+  change: (key: keyof Profile, value: Profile[keyof Profile]) => void;
+  errors: { key: string; message: string }[];
+}) {
+  return (
+    <>
+      {" "}
+      {(numbers[step] ?? []).map((f) => (
+        <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
+          <input
+            id={f.key}
+            type="number"
+            min={f.min}
+            max={f.max}
+            step={f.step ?? 1}
+            required
+            value={
+              Number.isFinite(profile[f.key]) ? String(profile[f.key]) : ""
+            }
+            aria-invalid={errors.some((e) => e.key === f.key)}
+            aria-describedby={`${f.key}-hint`}
+            onChange={(e) =>
+              change(
+                f.key,
+                e.target.value === "" ? NaN : Number(e.target.value),
+              )
+            }
+          />
+          <small id={`${f.key}-hint`}>
+            {f.min}–{f.max}
+          </small>
+        </Field>
+      ))}
+      {(choices[step] ?? []).map((f) => (
+        <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
+          <select
+            id={f.key}
+            value={String(profile[f.key])}
+            onChange={(e) =>
+              change(f.key, e.target.value as Profile[keyof Profile])
+            }
+          >
+            {f.options.map((o) => (
+              <option key={o} value={o}>
+                {optionLabel(o, hi)}
+              </option>
+            ))}
+          </select>
+        </Field>
+      ))}
+      {(checks[step] ?? []).map((f) => (
+        <label className="check" key={f.key}>
+          <input
+            type="checkbox"
+            checked={Boolean(profile[f.key])}
+            onChange={(e) => change(f.key, e.target.checked)}
+          />
+          {hi ? f.hi : f.en}
+        </label>
+      ))}
+    </>
   );
 }

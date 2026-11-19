@@ -8,23 +8,7 @@ import { useHawa } from "./Provider";
 import { FuelCalculator } from "./FuelCalculator";
 export function Learn() {
   const { profile, t } = useHawa();
-  const [query, setQuery] = useState(""),
-    [area, setArea] = useState(20),
-    [height, setHeight] = useState(2.7);
-  const valid =
-    Number.isFinite(area) &&
-    area >= 5 &&
-    area <= 150 &&
-    Number.isFinite(height) &&
-    height >= 2 &&
-    height <= 6;
-  const size = valid ? purifierSize(area, height) : null;
   const hi = profile.lang === "hi";
-  const items = knowledge.filter((a) =>
-    `${a.title} ${a.summary} ${a.hi.summary}`
-      .toLowerCase()
-      .includes(query.toLowerCase()),
-  );
   return (
     <>
       <section className="hero compact">
@@ -35,43 +19,81 @@ export function Learn() {
             : "Understand the air. Choose a better next step."}
         </p>
       </section>
-      <section className="panel">
-        <h2>{hi ? "PM2.5 को समझें" : "PM2.5, explained"}</h2>
-        <p>
-          {hi
-            ? "बारीक कण फेफड़ों में गहराई तक जा सकते हैं। एक ही सांद्रता लोगों को अलग तरह प्रभावित कर सकती है। अकेली रीडिंग निदान नहीं है और कोई सूचकांक हर प्रदूषक नहीं दिखाता।"
-            : "Fine particles can enter deep into the lungs. The same concentration can affect people differently. A single reading is not a diagnosis, and no air index captures every pollutant."}
-        </p>
-        <details>
-          <summary>US EPA 2024 PM2.5 breakpoints</summary>
-          <table>
-            <caption>
-              24-hour concentration scale; HAWA labels hourly conversions as
-              indicative
-            </caption>
-            <thead>
-              <tr>
-                <th>{hi ? "श्रेणी" : "Category"}</th>
-                <th>PM2.5 (µg/m³)</th>
-                <th>{hi ? "AQI सीमा" : "AQI range"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {BANDS.map((b) => (
-                <tr key={b.label}>
-                  <td>{hi ? b.hiLabel : b.label}</td>
-                  <td>
-                    {b.lo}–{b.hi}
-                  </td>
-                  <td>
-                    {b.a}–{b.b}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </details>
+      <AirExplanation hi={hi} />
+      <PurifierSizing hi={hi} />
+      <FuelCalculator hi={hi} />
+      <FiltrationGlossary hi={hi} />
+      <GuidanceLibrary hi={hi} />
+      <section id="sources">
+        <h2>{t.sources}</h2>
+        <ul>
+          {Object.values(sources).map((s) => (
+            <li key={s.url}>
+              <a href={s.url}>{s.title}</a>
+            </li>
+          ))}
+        </ul>
       </section>
+    </>
+  );
+}
+
+function AirExplanation({ hi }: { hi: boolean }) {
+  return (
+    <section className="panel">
+      <h2>{hi ? "PM2.5 को समझें" : "PM2.5, explained"}</h2>
+      <p>
+        {hi
+          ? "बारीक कण फेफड़ों में गहराई तक जा सकते हैं। एक ही सांद्रता लोगों को अलग तरह प्रभावित कर सकती है। अकेली रीडिंग निदान नहीं है और कोई सूचकांक हर प्रदूषक नहीं दिखाता।"
+          : "Fine particles can enter deep into the lungs. The same concentration can affect people differently. A single reading is not a diagnosis, and no air index captures every pollutant."}
+      </p>
+      <details>
+        <summary>US EPA 2024 PM2.5 breakpoints</summary>
+        <table>
+          <caption>
+            24-hour concentration scale; HAWA labels hourly conversions as
+            indicative
+          </caption>
+          <thead>
+            <tr>
+              <th>{hi ? "श्रेणी" : "Category"}</th>
+              <th>PM2.5 (µg/m³)</th>
+              <th>{hi ? "AQI सीमा" : "AQI range"}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {BANDS.map((b) => (
+              <tr key={b.label}>
+                <td>{hi ? b.hiLabel : b.label}</td>
+                <td>
+                  {b.lo}–{b.hi}
+                </td>
+                <td>
+                  {b.a}–{b.b}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
+    </section>
+  );
+}
+
+function PurifierSizing({ hi }: { hi: boolean }) {
+  const [area, setArea] = useState(20),
+    [height, setHeight] = useState(2.7);
+  const valid =
+    Number.isFinite(area) &&
+    area >= 5 &&
+    area <= 150 &&
+    Number.isFinite(height) &&
+    height >= 2 &&
+    height <= 6;
+  const size = valid ? purifierSize(area, height) : null;
+  return (
+    <>
+      {" "}
       <section className="panel">
         <h2>
           {hi ? "कमरे के लिए फ़िल्टर का आकार" : "Size your room’s purifier"}
@@ -101,7 +123,7 @@ export function Learn() {
         <p role="status">
           {size
             ? `Illustrative CADR target: ${size.min}–${size.max} m³/h, assuming a ${height} m ceiling and 4–5 air changes per hour.`
-            : "Enter a room area between 5 and 150 m²."}
+            : "Enter a room area between 5 and 150 m² and a ceiling height between 2 and 6 m."}
         </p>
         <p>
           {hi
@@ -109,7 +131,14 @@ export function Learn() {
             : "Check the manufacturer’s smoke CADR, operating speed and noise. Filters do not remove carbon monoxide. This sizing target is a design assumption, not a medical standard."}
         </p>
       </section>
-      <FuelCalculator hi={hi} />
+    </>
+  );
+}
+
+function FiltrationGlossary({ hi }: { hi: boolean }) {
+  return (
+    <>
+      {" "}
       <section className="panel">
         <h2>
           {hi ? "DIY फ़िल्टर और शब्दावली" : "DIY filtration and glossary"}
@@ -154,6 +183,21 @@ export function Learn() {
           </dd>
         </dl>
       </section>
+    </>
+  );
+}
+
+function GuidanceLibrary({ hi }: { hi: boolean }) {
+  const [query, setQuery] = useState("");
+  const items = knowledge.filter((a) =>
+    [a.title, a.summary, a.hi.title, a.hi.summary]
+      .join(" ")
+      .toLocaleLowerCase()
+      .includes(query.trim().toLocaleLowerCase()),
+  );
+  return (
+    <>
+      {" "}
       <section>
         <h2>{hi ? "सलाह पुस्तकालय" : "The clean-air library"}</h2>
         <label htmlFor="knowledge-search">Search guidance / सलाह खोजें</label>
@@ -180,16 +224,6 @@ export function Learn() {
             ))}
           </details>
         ))}
-      </section>
-      <section id="sources">
-        <h2>{t.sources}</h2>
-        <ul>
-          {Object.values(sources).map((s) => (
-            <li key={s.url}>
-              <a href={s.url}>{s.title}</a>
-            </li>
-          ))}
-        </ul>
       </section>
     </>
   );
