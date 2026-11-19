@@ -193,3 +193,24 @@ it("sliding rate limits return retry advice and release expired capacity", () =>
   expect(() => limiter.consume("a", 1002)).toThrow();
   expect(() => limiter.consume("b", 2100)).not.toThrow();
 });
+it("transport and protection overclaims fall back to their cited guidance", async () => {
+  const { groundedWhy } = await import("@/lib/guard");
+  const a = knowledge.find((x) => x.category === "Transport")!;
+  expect(
+    groundedWhy(
+      a,
+      "Consider public transit to reduce exposure compared to driving.",
+      "en",
+    ),
+  ).toBe(a.summary);
+  expect(groundedWhy(a, "यात्रा में प्रदूषण का संपर्क कम करें।", "hi")).toBe(
+    a.hi.summary,
+  );
+  const health = knowledge.find((x) => x.category === "Health")!;
+  expect(groundedWhy(health, "Ensure maximum protection outside.", "en")).toBe(
+    health.summary,
+  );
+  expect(groundedWhy(a, "Compare a feasible shared commute.", "en")).toBe(
+    "Compare a feasible shared commute.",
+  );
+});

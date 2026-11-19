@@ -1,10 +1,12 @@
 import { chromium } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
-mkdirSync("artifacts/demo", { recursive: true });
+const demoDir = process.env.DEMO_DIRECTORY ?? "artifacts/demo";
+const origin = process.env.DEMO_ORIGIN ?? "http://localhost:3100";
+mkdirSync(demoDir, { recursive: true });
 const browser = await chromium.launch({ channel: "msedge" });
 const context = await browser.newContext({
   viewport: { width: 1280, height: 800 },
-  recordVideo: { dir: "artifacts/demo", size: { width: 1280, height: 800 } },
+  recordVideo: { dir: demoDir, size: { width: 1280, height: 800 } },
 });
 const page = await context.newPage();
 const captions = [];
@@ -16,8 +18,8 @@ async function scene(text, action, seconds = 10) {
 }
 try {
   await scene(
-    "HAWA: practical smog guidance for families and communities. This demonstration uses a local production build.",
-    () => page.goto("http://localhost:3100"),
+    `HAWA: practical smog guidance for families and communities. This records the ${origin.includes("localhost") ? "local production build" : "public deployed application"}.`,
+    () => page.goto(origin),
     12,
   );
   await scene(
@@ -53,9 +55,10 @@ try {
     11,
   );
   await scene(
-    "Rules mode is useful without an AI key. AI mode uses OpenAI to personalize language; all quantities still come from code.",
+    "With the Plan page loaded, we disconnect the network. Rules planning and grounded chat run locally. Online AI personalizes language; code owns every quantity.",
     async () => {
       await page.getByRole("button", { name: "Review & build" }).click();
+      await context.setOffline(true);
       await page.getByLabel(/Use rules mode/).check();
       await page.getByRole("button", { name: "Build my daily plan" }).click();
       await page.getByRole("region", { name: "Generated plan" }).waitFor();
@@ -100,18 +103,25 @@ try {
   await scene(
     "Community leaders get a seven-day kit and adjustable participation assumptions, plus a notice ready to copy or print.",
     async () => {
+      await context.setOffline(false);
       await page.getByRole("link", { name: "Community", exact: true }).click();
+      await page.getByLabel("Community type").selectOption("School");
+      await page.getByLabel("Waste burning", { exact: true }).check();
       await page.getByLabel("Households").fill("400");
       await page.locator(".community-kit").scrollIntoViewIfNeeded();
     },
     12,
   );
   await scene(
-    "The learning library contains sixty bilingual entries. Purifier sizing uses explicit room-volume assumptions.",
+    "The library has sixty bilingual entries. Purifier sizing uses room volume. A separate fuel calculator compares input-energy carbon, not equal useful heat or health effects.",
     async () => {
       await page.getByRole("link", { name: "Learn", exact: true }).click();
       await page.getByLabel("Room area (m²)").fill("10");
-      await page.getByLabel("Search guidance / सलाह खोजें").fill("plants");
+      await page.getByLabel("Ceiling height (m)").fill("3");
+      await page.getByLabel("Fuel", { exact: true }).selectOption("electric");
+      await page
+        .getByRole("heading", { name: "Compare fuel input energy" })
+        .scrollIntoViewIfNeeded();
     },
     12,
   );
@@ -134,10 +144,7 @@ try {
   );
 } finally {
   captions.push({ start: (Date.now() - start) / 1000, text: "" });
-  writeFileSync(
-    "artifacts/demo/captions.json",
-    JSON.stringify(captions, null, 2),
-  );
+  writeFileSync(`${demoDir}/captions.json`, JSON.stringify(captions, null, 2));
   await context.close();
   await browser.close();
 }

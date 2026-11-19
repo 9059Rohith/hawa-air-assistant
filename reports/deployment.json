@@ -1,15 +1,17 @@
 {
-  "provider": "Sites / Cloudflare Workers",
-  "project": "hawa-air-assistant",
-  "state": "succeeded",
+  "id": "appgdep_6afeff859af48191ba0aa9cc1009249e",
+  "project_id": "appgprj_6afeed85792081919589d29e4744d45b",
+  "title": "HAWA — Breathe smarter",
+  "version_id": "appgprj_6afeed85792081919589d29e4744d45b~appgver_f58caaeccc1081918df047dd01a13fd1",
+  "type": "publish",
+  "status": "succeeded",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "publicAccess": true,
-  "version": 5,
-  "sourceCommit": "cf1e0d8a9250f0b4ca108037de11bace5c5e6e82",
-  "observedDate": "2026-11-19",
-  "priorPlatformRestrictions": {
-    "vercel": "Team fair-use restriction prevented project creation",
-    "railway": "Workspace restricted after unusual activity; no upgrade or payment made"
-  },
-  "deploymentId": "appgdep_6afef6bc96688191b122dd6575163c71"
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "release---6afeef961d54819189abbf169183dfb5",
+  "failure_message": null,
+  "env_set_revision": 1,
+  "updated_at": "2026-11-19T13:54:21.132222+00:00",
+  "sourceCommit": "93253ff879b40cd97ced30edf9a0dc2972259340",
+  "versionNumber": 6
 }

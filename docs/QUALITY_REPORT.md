@@ -6,8 +6,8 @@ Observed software evidence, not an evaluation-score or ranking prediction.
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Strict TypeScript                            | Pass                                                                                                         |
 | ESLint + Prettier                            | Pass                                                                                                         |
-| Unit/component/API tests                     | **102 passed**                                                                                               |
-| Entire production source coverage            | **90.94% lines**, 89.45% statements, 84.31% branches, 85.34% functions                                       |
+| Unit/component/API tests                     | **103 passed**                                                                                               |
+| Entire production source coverage            | **91.00% lines**, 89.51% statements, 84.47% branches, 85.50% functions                                       |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas |
 | Production build + OpenNext Worker packaging | Pass                                                                                                         |
 | Desktop/mobile end-to-end tests              | **14 passed**, including 320px keyboard/offline journey and script-size gate                                 |

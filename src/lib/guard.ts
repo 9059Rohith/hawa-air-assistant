@@ -17,3 +17,24 @@ export function unsafeProse(text: string) {
     text,
   );
 }
+/** Transport carbon factors cannot establish an individual's inhaled exposure. */
+export function groundedWhy(
+  action: { category: string; summary: string; hi: { summary: string } },
+  proposed: string,
+  lang: "en" | "hi",
+) {
+  const overpromise =
+    /maximum protection|ensure.{0,15}(?:safety|protection)|पूर्ण सुरक्षा|पूरी सुरक्षा/i.test(
+      proposed,
+    );
+  const transportHealth =
+    action.category === "Transport" &&
+    /exposure|safer|cleaner air|health|breath|smoke|inhal|lungs|साँस|धुआँ|संपर्क|एक्सपोज़र|स्वास्थ्य|सुरक्षित|प्रदूषण/i.test(
+      proposed,
+    );
+  return overpromise || transportHealth
+    ? lang === "hi"
+      ? action.hi.summary
+      : action.summary
+    : proposed;
+}

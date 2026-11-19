@@ -63,35 +63,48 @@ export function ActionCard({
           ))}
         </details>
         <div className="impact-card">
-          <label>
-            {hi ? "अनुमानित एक्सपोज़र बदलाव" : "Illustrative exposure change"}:{" "}
-            {impact.percent.toFixed(1)}%
-            <meter
-              min={0}
-              max={100}
-              value={impact.percent}
-              aria-label={
-                hi
-                  ? "अनुमानित एक्सपोज़र कमी"
-                  : "Illustrative exposure reduction"
-              }
-            />
-          </label>
-          <p>
-            {(impact.baseline - impact.after).toFixed(1)} µg/m³·h ·{" "}
-            {(impact.co2KgDay * 7).toFixed(2)} kg CO₂/{hi ? "सप्ताह" : "week"}
-          </p>
-          <p>
-            {impact.cigaretteEq.toFixed(2)}{" "}
-            {hi
-              ? "सिगरेट-समतुल्य बदलाव/दिन; चिकित्सकीय माप नहीं"
-              : "cigarette-equivalent change/day; not a clinical measure"}
-          </p>
-          <small>
-            {hi
-              ? "विश्वास: कम — अनुमानित परिस्थितियाँ"
-              : "Confidence: low — scenario assumptions"}
-          </small>
+          {a.effect === "none" ? (
+            <p>
+              {hi
+                ? "गुणात्मक लाभ — इस कदम के लिए संख्यात्मक बचत निर्धारित नहीं है।"
+                : "Qualitative benefit — numerical savings have not been established for this action."}
+            </p>
+          ) : (
+            <>
+              <label>
+                {hi
+                  ? "अनुमानित एक्सपोज़र बदलाव"
+                  : "Illustrative exposure change"}
+                : {impact.percent.toFixed(1)}%
+                <meter
+                  min={0}
+                  max={100}
+                  value={impact.percent}
+                  aria-label={
+                    hi
+                      ? "अनुमानित एक्सपोज़र कमी"
+                      : "Illustrative exposure reduction"
+                  }
+                />
+              </label>
+              <p>
+                {(impact.baseline - impact.after).toFixed(1)} µg/m³·h ·{" "}
+                {(impact.co2KgDay * 7).toFixed(2)} kg CO₂/
+                {hi ? "सप्ताह" : "week"}
+              </p>
+              <p>
+                {impact.cigaretteEq.toFixed(2)}{" "}
+                {hi
+                  ? "सिगरेट-समतुल्य बदलाव/दिन; चिकित्सकीय माप नहीं"
+                  : "cigarette-equivalent change/day; not a clinical measure"}
+              </p>
+              <small>
+                {hi
+                  ? "विश्वास: कम — अनुमानित परिस्थितियाँ"
+                  : "Confidence: low — scenario assumptions"}
+              </small>
+            </>
+          )}
         </div>
         <details>
           <summary>

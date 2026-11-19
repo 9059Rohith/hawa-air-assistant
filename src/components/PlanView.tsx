@@ -224,7 +224,7 @@ export function PlanView({ plan }: { plan: Plan }) {
       <div className="button-row">
         <button onClick={() => window.print()}>{t.print}</button>
         <button onClick={download}>{t.download}</button>
-        <button onClick={() => void share()}>
+        <button disabled={!selected.length} onClick={() => void share()}>
           {hi ? "लिंक साझा / कॉपी करें" : "Share / copy"}
         </button>
         <button onClick={() => void copy()}>
