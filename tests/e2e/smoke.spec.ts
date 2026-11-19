@@ -19,7 +19,10 @@ test("browser air forecast reaches a plan without a second provider request", as
       },
     });
   });
-  await page.goto("/");
+  const document = await page.goto("/", { waitUntil: "networkidle" });
+  expect(document?.headers()["content-security-policy"]).toContain(
+    "connect-src 'self' https://air-quality-api.open-meteo.com;",
+  );
   await page.getByLabel("Find your city").fill("Delhi");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("button", { name: "1. Delhi", exact: true }).click();
