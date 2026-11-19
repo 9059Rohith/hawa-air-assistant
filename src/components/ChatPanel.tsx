@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Plan } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { localChat } from "@/lib/chat-guidance";
+import { urgent } from "@/domain/safety";
 export default function ChatPanel({
   plan,
   offline,
@@ -23,12 +24,14 @@ export default function ChatPanel({
     abort.current?.abort();
     const controller = new AbortController();
     abort.current = controller;
+    const current = () =>
+      abort.current === controller && !controller.signal.aborted;
     setBusy(true);
     setReply("");
     setMode("");
     let answer = "";
     try {
-      if (offline || !navigator.onLine) {
+      if (urgent(message) || offline || !navigator.onLine) {
         const local = localChat(message, profile);
         setReply(local.text);
         setMode(local.mode);
@@ -53,14 +56,22 @@ export default function ChatPanel({
         }),
         signal: controller.signal,
       });
+      if (!current()) {
+        void response.body?.cancel().catch(() => {});
+        return;
+      }
       if (!response.ok || !response.body) throw new Error();
       const reader = response.body.getReader(),
         decoder = new TextDecoder();
       let buffer = "";
+      const cancelReader = () => {
+        void reader.cancel().catch(() => {});
+      };
+      controller.signal.addEventListener("abort", cancelReader, { once: true });
       try {
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done || !current()) break;
           buffer += decoder.decode(value, { stream: true });
           const events = buffer.split("\n\n");
           buffer = events.pop() ?? "";
@@ -76,18 +87,19 @@ export default function ChatPanel({
           }
         }
       } finally {
-        await reader.cancel().catch(() => {});
+        controller.signal.removeEventListener("abort", cancelReader);
+        void reader.cancel().catch(() => {});
         reader.releaseLock();
       }
     } catch {
-      if (!controller.signal.aborted) {
+      if (current()) {
         const local = localChat(message, profile);
         setReply(local.text);
         setMode(local.mode);
         answer = local.text;
       }
     } finally {
-      if (answer)
+      if (answer && current())
         history.current = [
           ...history.current,
           { role: "user", content: message },
@@ -160,6 +172,10 @@ export default function ChatPanel({
         ))}
       </div>
       <p className="fine">
+        {busy &&
+          (hi
+            ? "स्रोतों से उत्तर तैयार हो रहा है…"
+            : "Preparing a source-grounded answer…")}
         {mode && `${hi ? "उत्तर मोड" : "Response mode"}: ${mode}`}
       </p>
       <div

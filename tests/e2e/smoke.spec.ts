@@ -1,4 +1,45 @@
 import { test, expect } from "@playwright/test";
+test("urgent chat bypasses the network and punctuated Hindi guidance stays cited", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  let calls = 0;
+  await page.route("**/api/chat", (route) => {
+    calls++;
+    return route.fulfill({ status: 503, body: "unavailable" });
+  });
+  await page.goto("/");
+  await page.getByLabel(/Have a PM2.5/).fill("150");
+  await page.getByRole("button", { name: "Use reading", exact: true }).click();
+  await page.getByRole("link", { name: /Build my daily plan/ }).click();
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await page.getByLabel(/Use rules mode/).check();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+  await page.getByLabel(/Use rules mode/).uncheck();
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("I can’t breathe");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply")).toHaveAttribute("role", "alert");
+  await expect(page.locator(".reply")).toContainText(
+    "Seek urgent medical care now",
+  );
+  expect(calls).toBe(0);
+  await page.getByLabel("Your question").fill("mask?");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply a").first()).toBeVisible();
+  expect(calls).toBe(1);
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await page.getByLabel("आपका सवाल").fill("मास्क?");
+  await page.getByRole("button", { name: "भेजें", exact: true }).click();
+  await expect(page.locator(".reply a").first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
 test("browser air forecast reaches a plan without a second provider request", async ({
   page,
 }) => {

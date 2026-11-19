@@ -1,8 +1,9 @@
 {
-  "measuredAt": "2026-11-19T14:06:25.267Z",
-  "tests": 14,
-  "passed": 14,
+  "measuredAt": "2026-11-19T14:44:23.333Z",
+  "tests": 16,
+  "passed": 16,
   "failed": 0,
   "projects": ["desktop", "mobile"],
-  "evidence": "npm run test:e2e; includes 320px keyboard/offline journey and 130 KiB gzip home-script budget"
+  "workers": 1,
+  "evidence": "npm run test:e2e -- --workers=1, including network-free urgent alerts and cited Hindi fallback"
 }

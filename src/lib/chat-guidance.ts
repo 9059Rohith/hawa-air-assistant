@@ -30,24 +30,32 @@ const ignored = new Set([
   "को",
 ]);
 export function retrieveGuidance(message: string) {
-  const words = scrubUserText(message)
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((w) => w.length > 2 && !ignored.has(w));
-  return knowledge
-    .map((item) => ({
+  const words = [
+    ...new Set(
+      scrubUserText(message)
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/[^\p{L}\p{M}\p{N}\s]/gu, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 2 && !ignored.has(w)),
+    ),
+  ];
+  return searchable
+    .map(({ item, text }) => ({
       item,
-      score: words.filter((w) =>
-        `${item.id} ${item.title} ${item.summary} ${item.hi.summary} ${item.tags.join(" ")}`
-          .toLowerCase()
-          .includes(w),
-      ).length,
+      score: words.filter((w) => text.includes(w)).length,
     }))
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
     .map((x) => x.item);
 }
+const searchable = knowledge.map((item) => ({
+  item,
+  text: `${item.id} ${item.title} ${item.summary} ${item.hi.title} ${item.hi.summary} ${item.tags.join(" ")}`
+    .normalize("NFKC")
+    .toLowerCase(),
+}));
 export function localChat(message: string, profile: Profile) {
   if (urgent(message))
     return { mode: "urgent", text: urgentMessage[profile.lang] };

@@ -1,7 +1,7 @@
 /** Conservative phrase triage, not a diagnostic or comprehensive symptom checker. */
 export function urgent(text: string) {
   return /chest pain|can(?:not|'t) breathe|difficulty breathing|breathing difficulty|severe wheez|blue lips|faint(?:ing|ed)|infant.{0,20}distress|सीने में दर्द|सांस लेने में (?:दिक्कत|तकलीफ)|साँस नहीं|बेहोश|नीले होंठ/i.test(
-    text,
+    text.normalize("NFKC").replace(/[’‘]/g, "'").replace(/\s+/g, " "),
   );
 }
 export const urgentMessage = {

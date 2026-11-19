@@ -6,7 +6,7 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
-**Completion status:** the core application is implemented and deployed, with **103/103 tests and 14/14 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. All submission fields are prepared, including the owner-provided LinkedIn link. **Official assessment: pending** — the portal currently shows no results and no analysis attempts. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
+**Completion status:** the core application is implemented and deployed, with **207/207 Vitest cases and 16/16 local browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. The submission draft is filled, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Official assessment: pending** — the portal currently shows no results and no analysis attempts. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
@@ -15,6 +15,8 @@
 The 3-minute 8-second demo records the public application with labelled example air data, loaded-page offline planning, community tools and calculators. Captions and synthetic narration explain its boundaries. Drive access is set to **Anyone with the link — Viewer**.
 
 **Deployment:** hosted on Sites / Cloudflare Workers using OpenNext. No sign-in is required. The original Vercel team and the Railway workspace have account restrictions, so this release uses a separate supported hosting service. See [portable hosting](docs/HOSTING.md) and [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
+
+[Six-criterion comparison with Challenge 5](docs/CHALLENGE_COMPARISON.md) · [87-case offline evaluation](reports/scenarios.json)
 
 ## Problem and our approach
 
@@ -63,7 +65,7 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 
 ## Current feature completion
 
-The core problem statement is implemented across family planning, indoor guidance, sustainable routines and community kits. The detailed build brief is mapped to working features, checks and explicit design deviations in [traceability](docs/TRACEABILITY.md). The owner supplied the [LinkedIn submission link](https://lnkd.in/p/gRcxW3pH), which is entered in the prepared form. Hosted CI execution still depends on the account billing restriction; local verification is reported separately.
+The core problem statement is implemented across family planning, indoor guidance, sustainable routines and community kits. The detailed build brief is mapped to working features, checks and explicit design deviations in [traceability](docs/TRACEABILITY.md). The supplied LinkedIn link was verified to describe CarbonWise and must be replaced with a HAWA post in the prepared form. Hosted CI execution still depends on the account billing restriction; local verification is reported separately.
 
 ## Quick start
 
@@ -118,7 +120,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Current local release: **103 tests passed; 100% domain coverage; 90.99% overall lines; 14 desktop/mobile journeys passed; zero axe violations across 15 states; 117.4 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
+Current local release: **207 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 90.77% overall lines; 16 local desktop/mobile journeys passed; zero axe violations across 15 states; 117.4 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
 
 ## Project structure and scripts
 

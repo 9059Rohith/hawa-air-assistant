@@ -23,6 +23,9 @@ export function selectActions(items: Action[], p: Profile, pm: number) {
     .filter(
       (a) =>
         match[a.condition] &&
+        (a.effect !== "transit" || p.transit) &&
+        (a.effect !== "remote" || p.wfhDays > 0) &&
+        (a.effect !== "carpool" || p.mode === "car") &&
         (a.condition === "coal" || budget[a.cost] <= budget[p.budget]),
     )
     .sort((a, b) => score(b) - score(a))
