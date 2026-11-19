@@ -8,9 +8,11 @@
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
+**[Open HAWA — public application](https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site)**
+
 The three-minute demo records the local production build with labelled example air data. Drive access is set to **Anyone with the link — Viewer**.
 
-**Deployment status:** the production build works locally; Vercel rejected the new project because the owner's team is blocked under its fair-use policy. A production URL is not yet available. See [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
+**Deployment:** hosted on Sites / Cloudflare Workers using OpenNext. No sign-in is required. The original Vercel team and the Railway workspace have account restrictions, so this release uses a separate supported hosting service. See [portable hosting](docs/HOSTING.md) and [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
 
 ## Problem and our approach
 
@@ -127,7 +129,11 @@ Every reported result comes from a command or browser run. [Quality report](docs
 
 Stack: Next.js 15.5.29 App Router, React 19, strict TypeScript, Zod, Tailwind/CSS, Vitest, Testing Library, axe-core and Playwright. React 19 follows the installed supported Next.js stack rather than pinning the older React 18 requested in the initial brief.
 
-## Deploy in five minutes
+## Deployment options
+
+The public release uses `npm run build:sites`, followed by the Sites source/version publication workflow. Runtime credentials are stored as host secrets, not in Git or generated assets. [Hosting instructions and artifact format](docs/HOSTING.md).
+
+For a future Vercel deployment after the existing restriction is resolved:
 
 1. Resolve the owner's Vercel team restriction, then import this public repository; choose Next.js and Node 22.
 2. Add `LLM_API_KEY` as an encrypted Production variable, set `LLM_MODEL`, and set `APP_ORIGIN` to the assigned origin.

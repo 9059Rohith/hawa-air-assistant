@@ -2,6 +2,10 @@
 
 HAWA retains its Next.js Node server and adds an OpenNext build for Cloudflare Workers, published through Sites. The same application and API code serves both targets.
 
+Public URL: **https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site**
+
+Cloudflare does not implement `fetch` with `redirect: "error"`. The shared transport uses `redirect: "manual"` and rejects all redirect responses before they can leave the allowlisted host. A regression test verifies that a redirect to a private address is never followed.
+
 ## Build
 
 ```sh

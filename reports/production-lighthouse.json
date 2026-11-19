@@ -1,0 +1,16 @@
+{
+  "origin": "public Sites production",
+  "measuredAt": "2026-11-19T12:51:56.765Z",
+  "categories": {
+    "performance": 78,
+    "accessibility": 100,
+    "best-practices": 81,
+    "seo": 100
+  },
+  "metrics": {
+    "first-contentful-paint": 1316.005,
+    "largest-contentful-paint": 1408.005,
+    "total-blocking-time": 586,
+    "cumulative-layout-shift": 0
+  }
+}

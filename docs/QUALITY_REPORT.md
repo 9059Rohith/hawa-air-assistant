@@ -7,7 +7,7 @@ This report separates observed software results from external account restrictio
 | Strict TypeScript                   | Pass                                                                   |
 | ESLint + Prettier                   | Pass                                                                   |
 | Unit/component/API tests            | 76 passed                                                              |
-| Complete production-source coverage | 91.43% lines, 90.68% statements, 86.14% branches, 87.05% functions     |
+| Complete production-source coverage | 91.49% lines, 90.74% statements, 86.25% branches, 87.05% functions     |
 | Domain coverage                     | 100% lines/statements/branches/functions, enforced                     |
 | Desktop/mobile Playwright           | 6 passed                                                               |
 | Browser axe                         | 15 route/theme states; zero detected violations                        |
@@ -45,7 +45,7 @@ Local mobile Lighthouse: **95 performance, 100 accessibility, 100 best practices
 
 ## Open items and limitations
 
-- Resolve the Vercel team restriction, deploy and independently measure the public site. No public latency or Lighthouse score is invented.
+- The application is now public on [Sites / Cloudflare Workers](https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site). Vercel and Railway account restrictions remain independent of this deployment. Local Lighthouse results above are not production measurements.
 - Resolve the GitHub billing lock to obtain an executed hosted CI run.
 - A relevant HAWA LinkedIn post URL is needed for the required submission field. An unrelated earlier project post is not evidence for HAWA.
 - Independent screen-reader review, fully translated secondary UI, empirical India-specific emissions calibration and a service-worker offline shell remain future work.

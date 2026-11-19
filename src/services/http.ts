@@ -18,12 +18,23 @@ export async function safeFetch(
     parsed.port
   )
     throw new AppError("DESTINATION", 400, "Unsupported data provider");
-  return fetch(url, {
+  // Workers supports manual redirects, but rejects redirect: "error".
+  // Inspect the response without ever following an untrusted Location URL.
+  const response = await fetch(url, {
     ...init,
-    redirect: "error",
+    redirect: "manual",
     signal: AbortSignal.any([
       AbortSignal.timeout(timeout),
       ...(init.signal ? [init.signal] : []),
     ]),
   });
+  if (response.status >= 300 && response.status < 400) {
+    await response.body?.cancel();
+    throw new AppError(
+      "UPSTREAM_REDIRECT",
+      502,
+      "The data provider redirected unexpectedly.",
+    );
+  }
+  return response;
 }

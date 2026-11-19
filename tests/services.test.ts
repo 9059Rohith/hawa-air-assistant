@@ -78,7 +78,17 @@ it("blocks SSRF and redirects", async () => {
   const fetchMock = vi.fn().mockResolvedValue(new Response("{}"));
   vi.stubGlobal("fetch", fetchMock);
   await safeFetch("https://api.openai.com/v1/chat/completions");
-  expect(fetchMock.mock.calls[0]?.[1].redirect).toBe("error");
+  expect(fetchMock.mock.calls[0]?.[1].redirect).toBe("manual");
+  fetchMock.mockResolvedValue(
+    new Response(null, {
+      status: 302,
+      headers: { Location: "http://127.0.0.1/private" },
+    }),
+  );
+  await expect(
+    safeFetch("https://api.openai.com/v1/chat/completions"),
+  ).rejects.toMatchObject({ code: "UPSTREAM_REDIRECT", status: 502 });
+  expect(fetchMock).toHaveBeenCalledTimes(2);
 });
 it("caps rate buckets", () => {
   for (let i = 0; i < 12; i++) rateLimit("unit", 100);

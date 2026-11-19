@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "route": "/",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "route": "/",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "route": "/",
+      "theme": "hc",
+      "violations": []
+    },
+    {
+      "route": "/plan",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "route": "/plan",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "route": "/plan",
+      "theme": "hc",
+      "violations": []
+    },
+    {
+      "route": "/community",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "route": "/community",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "route": "/community",
+      "theme": "hc",
+      "violations": []
+    },
+    {
+      "route": "/learn",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "route": "/learn",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "route": "/learn",
+      "theme": "hc",
+      "violations": []
+    },
+    {
+      "route": "/about",
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "route": "/about",
+      "theme": "dark",
+      "violations": []
+    },
+    {
+      "route": "/about",
+      "theme": "hc",
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "measuredAt": "2026-11-19T12:48:30.316Z"
+}
