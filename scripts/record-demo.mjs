@@ -118,7 +118,9 @@ try {
       await page.getByRole("link", { name: "Learn", exact: true }).click();
       await page.getByLabel("Room area (m²)").fill("10");
       await page.getByLabel("Ceiling height (m)").fill("3");
-      await page.getByLabel("Fuel", { exact: true }).selectOption("electric");
+      await page
+        .getByRole("combobox", { name: "Fuel", exact: true })
+        .selectOption("electric");
       await page
         .getByRole("heading", { name: "Compare fuel input energy" })
         .scrollIntoViewIfNeeded();

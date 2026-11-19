@@ -7,7 +7,7 @@ Observed software evidence, not an evaluation-score or ranking prediction.
 | Strict TypeScript                            | Pass                                                                                                         |
 | ESLint + Prettier                            | Pass                                                                                                         |
 | Unit/component/API tests                     | **103 passed**                                                                                               |
-| Entire production source coverage            | **91.00% lines**, 89.51% statements, 84.47% branches, 85.50% functions                                       |
+| Entire production source coverage            | **90.99% lines**, 89.50% statements, 84.45% branches, 85.50% functions                                       |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas |
 | Production build + OpenNext Worker packaging | Pass                                                                                                         |
 | Desktop/mobile end-to-end tests              | **14 passed**, including 320px keyboard/offline journey and script-size gate                                 |
@@ -28,7 +28,7 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 Expanded profile inputs; structured steps/caveats for all 60 bilingual guidance items; forecast chart/table and retrieval age; per-action impact explanations; weekly/adult-commuter scenarios; private-by-design shared links; school/community source checklists; fuel input-energy calculator, DIY safety guide and glossary; persisted theme/language and read-aloud pause; keyboard combobox; local rules planning/chat; bounded chat history/plan/air context; stricter unsafe-prose guards; upload cancellation/deadline; configurable provider limits; sliding-window Retry-After responses; source and history secret scans.
 
-The regression suite caught and fixed an upload-cancellation race. Offline browser tests build a plan, ask a grounded question and download JSON without network after the Plan route is loaded. Live-air success and HTTP 429 tests use controlled provider responses; real provider verification is reported separately.
+The regression suite caught and fixed an upload-cancellation race. Live AI review also found an unsupported transit/exposure paraphrase. Transport explanations now remain curated; other explanations retain validated AI personalization. Offline browser tests build a plan, ask a grounded question and download JSON without network after the Plan route is loaded. Live-air success and HTTP 429 tests use controlled provider responses; real provider verification is reported separately.
 
 ## Reproducible evidence
 

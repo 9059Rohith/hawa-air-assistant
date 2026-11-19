@@ -27,12 +27,8 @@ export function groundedWhy(
     /maximum protection|ensure.{0,15}(?:safety|protection)|पूर्ण सुरक्षा|पूरी सुरक्षा/i.test(
       proposed,
     );
-  const transportHealth =
-    action.category === "Transport" &&
-    /exposure|safer|cleaner air|health|breath|smoke|inhal|lungs|साँस|धुआँ|संपर्क|एक्सपोज़र|स्वास्थ्य|सुरक्षित|प्रदूषण/i.test(
-      proposed,
-    );
-  return overpromise || transportHealth
+  // Keep this category curated: a phrase blacklist cannot establish route exposure.
+  return overpromise || action.category === "Transport"
     ? lang === "hi"
       ? action.hi.summary
       : action.summary

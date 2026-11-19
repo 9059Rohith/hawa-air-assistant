@@ -211,6 +211,9 @@ it("transport and protection overclaims fall back to their cited guidance", asyn
     health.summary,
   );
   expect(groundedWhy(a, "Compare a feasible shared commute.", "en")).toBe(
-    "Compare a feasible shared commute.",
+    a.summary,
+  );
+  expect(groundedWhy(health, "Check the fit around your nose.", "en")).toBe(
+    "Check the fit around your nose.",
   );
 });
