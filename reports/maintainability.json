@@ -103,5 +103,6 @@
   "enforcedApplicationRules": {
     "complexity": 15
   },
-  "vitestCases": 468
+  "vitestCases": 468,
+  "sourceCommit": "d42a343f837de7b59734823d9400fba61b962a3e"
 }

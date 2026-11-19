@@ -10,13 +10,13 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | Entire production source coverage            | **93.52% lines**, 91.65% statements, 86.45% branches, 90.11% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **34 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **38 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 437 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 464 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
 | Submission source                            | Approximately **1.03 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
@@ -25,13 +25,17 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 468 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 34/34. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 468 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 38/38. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
 ## Application-wide code-quality pass
 
 All eight remaining functions above complexity 15 were separated into focused components and helpers. The current audit reports **zero functions over 15**, and lint enforces that limit across every application TypeScript/TSX file without suppressions. This extends the earlier service/library gate; those modules also retain nesting and function-length limits. The architecture gate covers 69 modules and 23 client entry points.
 
 Planning lifecycle and bounded response validation now have separate owners. Clipboard absence produces an actionable notice. Household age fields update when the number of children decreases, and blank age entries no longer become newborns. Library search trims surrounding spaces, and purifier feedback explains both room-area and ceiling-height bounds. These behaviors have regression tests.
+
+All **38 production desktop/mobile browser tests** passed, with no failed, skipped or flaky cases.
+
+Version **12** is deployed from `d42a343f837de7b59734823d9400fba61b962a3e` at the same public URL. A real production AI request returned HTTP 200, `generatedBy: llm`, and ten actions in **6,565 ms**. This is one observed sample, not a guaranteed response time. Public axe checks passed all 15 route/theme states with no detected violations or runtime errors; the home payload remains **117,314 gzip bytes**.
 
 ## Previous version 11 maintainability follow-up
 
