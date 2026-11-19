@@ -1,0 +1,64 @@
+"use client";
+import { useEffect, useState, type ReactNode } from "react";
+import { useHawa } from "./Provider";
+export function Field({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      {children}
+    </div>
+  );
+}
+export function ReadAloud({ text }: { text: string }) {
+  const { t, profile } = useHawa();
+  const [available, setAvailable] = useState(false);
+  useEffect(() => {
+    setAvailable("speechSynthesis" in window);
+    return () => {
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+  return available ? (
+    <div className="button-row">
+      <button
+        onClick={() => {
+          speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = profile.lang === "hi" ? "hi-IN" : "en-IN";
+          speechSynthesis.speak(utterance);
+        }}
+      >
+        {t.read}
+      </button>
+      <button onClick={() => speechSynthesis.cancel()}>{t.stop}</button>
+    </div>
+  ) : (
+    <p>Read-aloud is unavailable in this browser.</p>
+  );
+}
+export function Notice() {
+  const { notice } = useHawa();
+  return (
+    <p role="status" className={notice ? "notice" : "sr-only"}>
+      {notice}
+    </p>
+  );
+}
+export function Footer() {
+  const { t } = useHawa();
+  return (
+    <footer>
+      <strong>HAWA ≋</strong>
+      <p>{t.general}</p>
+      <small>{t.privacy}</small>
+    </footer>
+  );
+}
