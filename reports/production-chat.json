@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-11-19T14:49:09.510Z",
+  "sourceCommit": "26833dd139945eb176ea0f1e7d39c92d3b0c69c1",
+  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site/plan",
+  "method": "Real in-app browser UI, no mocks",
+  "journey": "Home manual PM2.5 -> rules plan -> online chat -> urgent phrase -> mask?",
+  "urgent": {
+    "input": "I can’t breathe",
+    "mode": "urgent",
+    "visibleAlert": true
+  },
+  "chat": {
+    "input": "mask?",
+    "mode": "llm",
+    "citation": "kb:mask-fit",
+    "copyControl": true
+  },
+  "consoleErrors": [],
+  "consoleWarnings": [],
+  "limitations": "One live AI response and scripted UI checks are not a statistical model evaluation."
+}

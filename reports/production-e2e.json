@@ -1,12 +1,13 @@
 {
-  "verifiedAt": "2026-11-19T14:15:42.023Z",
-  "sourceCommit": "4acac19a5fa59fce0db07d6261e6a2f8504e77f6",
+  "verifiedAt": "2026-11-19T14:49:09.510Z",
+  "sourceCommit": "26833dd139945eb176ea0f1e7d39c92d3b0c69c1",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 14,
+  "passed": 16,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
   "flows": [
+    "Urgent client alert with zero chat requests; punctuated English and Hindi grounded fallback after HTTP 503",
     "Mocked browser air forecast reaches a plan without repeat provider requests",
     "Mocked provider 429 preserves manual recovery",
     "Manual reading, profile, rules plan, what-if, chat and Hindi",
