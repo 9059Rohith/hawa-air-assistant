@@ -1,4 +1,4 @@
-# Verified quality report — 19 November 2026
+# Verified quality report — 20 November 2026
 
 Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
 
@@ -6,8 +6,8 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **468 passed (381 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **93.52% lines**, 91.65% statements, 86.45% branches, 90.11% functions                                              |
+| Unit/component/API tests                     | **486 passed (399 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **93.98% lines**, 92.35% statements, 86.54% branches, 91.73% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
 | Desktop/mobile end-to-end tests              | **38 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
@@ -16,18 +16,24 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 464 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 478 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
-| Submission source                            | Approximately **1.03 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Submission source                            | Approximately **1.05 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 468 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 38/38. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 486 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 38/38. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Application-wide code-quality pass
+## Guidance discovery and accessible correction
+
+Profile errors now identify the affected field by its human-readable label, explain bounds or integer/age-count requirements, and deduplicate array failures. Activating an error link opens the correct wizard step and focuses the input after rendering. Invalid controls reference the specific error through ARIA.
+
+The guidance library indexes bilingual source text once, normalizes Unicode compatibility characters and punctuation, and matches every query word regardless of order. Queries are bounded to 200 characters and remain on-device. A topic selector narrows results; an explicit empty state and Clear filters button restore all guidance and keyboard focus. No new runtime dependency or paid search request is added.
+
+## Previous version 12 application-wide code-quality pass
 
 All eight remaining functions above complexity 15 were separated into focused components and helpers. The current audit reports **zero functions over 15**, and lint enforces that limit across every application TypeScript/TSX file without suppressions. This extends the earlier service/library gate; those modules also retain nesting and function-length limits. The architecture gate covers 69 modules and 23 client entry points.
 

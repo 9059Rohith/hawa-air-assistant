@@ -537,3 +537,53 @@ it("empty child-age entries are rejected instead of silently becoming newborns",
   fireEvent.click(screen.getByText("Review & build"));
   expect(screen.getByText("Check these values")).toBeInTheDocument();
 });
+
+it("profile error links open the correct step and focus the invalid field", async () => {
+  wrap(<ProfileWizard busy={false} onGenerate={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("Adults"), { target: { value: "0" } });
+  fireEvent.click(screen.getByRole("button", { name: "5. Preferences" }));
+  fireEvent.click(screen.getByRole("button", { name: "Build my daily plan" }));
+  fireEvent.click(
+    screen.getByRole("link", { name: "Adults: Enter a number from 1 to 20." }),
+  );
+  await waitFor(() => expect(screen.getByLabelText("Adults")).toHaveFocus());
+  expect(screen.getByLabelText("Adults")).toHaveAttribute(
+    "aria-describedby",
+    "adults-hint adults-error",
+  );
+});
+it("child-age errors expose one labelled correction link after leaving the household step", async () => {
+  wrap(<ProfileWizard busy={false} onGenerate={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "2" },
+  });
+  fireEvent.blur(screen.getByLabelText(/Children’s ages/), {
+    target: { value: "bad,19" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "5. Preferences" }));
+  fireEvent.click(screen.getByRole("button", { name: "Build my daily plan" }));
+  fireEvent.click(
+    screen.getByRole("link", { name: /Children’s ages: Enter whole ages/ }),
+  );
+  await waitFor(() =>
+    expect(screen.getByLabelText(/Children’s ages/)).toHaveFocus(),
+  );
+  expect(screen.getByLabelText(/Children’s ages/)).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+});
+it("empty library search recovers by clearing query and topic together", () => {
+  wrap(<Learn />);
+  fireEvent.change(screen.getByLabelText("Topic"), {
+    target: { value: "Transport" },
+  });
+  fireEvent.change(screen.getByLabelText("Search guidance / सलाह खोजें"), {
+    target: { value: "unknownxyz" },
+  });
+  expect(screen.getByText(/No guidance matches/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+  expect(screen.getByLabelText("Search guidance / सलाह खोजें")).toHaveFocus();
+  expect(screen.getByLabelText("Topic")).toHaveValue("all");
+  expect(screen.getByText("60 guidance items")).toBeInTheDocument();
+});

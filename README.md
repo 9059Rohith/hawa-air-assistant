@@ -6,7 +6,7 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
-**Completion status:** the core application is implemented and deployed, with **468/468 Vitest cases and 38/38 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. The submission draft is filled, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969.** Code quality scored 89; this follow-up release targets that gap and has not yet been re-evaluated. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
+**Completion status:** the core application is implemented and deployed, with **486/486 Vitest cases and 38/38 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. Submission links are prepared, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969.** Code quality scored 89; this follow-up release targets that gap and has not yet been re-evaluated. A 100% evaluation score or top-1% placement has not been established. See the [submission handoff](docs/SUBMISSION.md).
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
@@ -31,7 +31,7 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 - Inspect every calculation, input and source. Quantitative results are labelled low-confidence scenarios; fuel-energy scenarios are separate from qualitative particle-source guidance; waste benefits are not fabricated.
 - Ask follow-up questions, with validated AI language or rules fallback, knowledge citations and urgent-symptom escalation.
 - View a keyboard-accessible forecast chart, per-action steps/caveats and a seven-day scenario table.
-- Print, download JSON, share a link containing only curated action IDs, size a purifier, browse 60 bilingual guidance entries and create a community notice.
+- Print, download JSON, share a link containing only curated action IDs, size a purifier, search and filter 60 bilingual guidance entries by topic and create a community notice.
 - Choose Hindi, simple wording, light/dark/high-contrast themes and browser read-aloud. Some engineering explanations and secondary controls remain English.
 
 ## Why it is different
@@ -120,7 +120,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Current verified release: **468 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 93.52% overall lines; 38 production desktop/mobile journeys passed; zero axe violations across 15 states; 114.6 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
+Current verified release: **486 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 93.98% overall lines; 38 production desktop/mobile journeys passed; zero axe violations across 15 states; 114.6 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
 
 ## Project structure and scripts
 

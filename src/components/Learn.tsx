@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { knowledge } from "@/data/knowledge";
+import { useRef, useState } from "react";
+import { guidanceTopics, searchGuidance } from "@/lib/guidance-search";
 import { sources } from "@/data/sources";
 import { BANDS } from "@/domain/aqi";
 import { purifierSize } from "@/domain/impact";
@@ -189,12 +189,14 @@ function FiltrationGlossary({ hi }: { hi: boolean }) {
 
 function GuidanceLibrary({ hi }: { hi: boolean }) {
   const [query, setQuery] = useState("");
-  const items = knowledge.filter((a) =>
-    [a.title, a.summary, a.hi.title, a.hi.summary]
-      .join(" ")
-      .toLocaleLowerCase()
-      .includes(query.trim().toLocaleLowerCase()),
-  );
+  const [topic, setTopic] = useState("all");
+  const search = useRef<HTMLInputElement>(null);
+  const items = searchGuidance(query, topic);
+  function reset() {
+    setQuery("");
+    setTopic("all");
+    search.current?.focus();
+  }
   return (
     <>
       {" "}
@@ -203,27 +205,64 @@ function GuidanceLibrary({ hi }: { hi: boolean }) {
         <label htmlFor="knowledge-search">Search guidance / सलाह खोजें</label>
         <input
           id="knowledge-search"
+          ref={search}
+          maxLength={200}
+          aria-describedby="guidance-help"
+          aria-controls="guidance-results"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Mask, cooking, school…"
         />
+        <p id="guidance-help" className="fine">
+          {hi
+            ? "English या हिन्दी में खोजें। कई शब्द किसी भी क्रम में लिख सकते हैं।"
+            : "Search in English or Hindi. Combine words in any order."}
+        </p>
+        <label htmlFor="guidance-topic">{hi ? "विषय" : "Topic"}</label>
+        <select
+          id="guidance-topic"
+          value={topic}
+          onChange={(event) => setTopic(event.target.value)}
+          aria-controls="guidance-results"
+        >
+          <option value="all">{hi ? "सभी विषय" : "All topics"}</option>
+          {guidanceTopics.map((item) => (
+            <option key={item.id} value={item.id}>
+              {hi ? item.hi : item.id}
+            </option>
+          ))}
+        </select>
         <p role="status">
           {items.length} {hi ? "सलाह के विषय" : "guidance items"}
         </p>
-        {items.map((a) => (
-          <details className="library-item" id={a.id} key={a.id}>
-            <summary>{hi ? a.hi.title : a.title}</summary>
-            <p>{hi ? a.hi.summary : a.summary}</p>
-            <p>
-              {a.category} · {a.cost}
-            </p>
-            {a.sources.map((id) => (
-              <a key={id} href={sources[id as keyof typeof sources].url}>
-                {sources[id as keyof typeof sources].title}
-              </a>
-            ))}
-          </details>
-        ))}
+        {!items.length && (
+          <p>
+            {hi
+              ? "कोई सलाह नहीं मिली। कम शब्द या दूसरा विषय आज़माएँ।"
+              : "No guidance matches. Try fewer words or a different topic."}
+          </p>
+        )}
+        {(query || topic !== "all") && (
+          <button onClick={reset}>
+            {hi ? "फ़िल्टर साफ करें" : "Clear filters"}
+          </button>
+        )}
+        <div id="guidance-results">
+          {items.map((a) => (
+            <details className="library-item" id={a.id} key={a.id}>
+              <summary>{hi ? a.hi.title : a.title}</summary>
+              <p>{hi ? a.hi.summary : a.summary}</p>
+              <p>
+                {a.category} · {a.cost}
+              </p>
+              {a.sources.map((id) => (
+                <a key={id} href={sources[id as keyof typeof sources].url}>
+                  {sources[id as keyof typeof sources].title}
+                </a>
+              ))}
+            </details>
+          ))}
+        </div>
       </section>
     </>
   );

@@ -308,3 +308,49 @@ test("child-age fields follow changes in household size", async ({ page }) => {
   await page.getByLabel("Children", { exact: true }).fill("1");
   await expect(page.getByLabel(/Children’s ages/)).toHaveValue("5");
 });
+
+test("error correction opens a hidden wizard step and moves keyboard focus", async ({
+  page,
+}) => {
+  await page.goto("/plan");
+  await page.getByLabel("Adults", { exact: true }).fill("0");
+  await page
+    .getByRole("button", { name: "5. Preferences", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await page
+    .getByRole("link", {
+      name: "Adults: Enter a number from 1 to 20.",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByLabel("Adults", { exact: true })).toBeFocused();
+  await expect(page.getByLabel("Adults", { exact: true })).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+  await page.getByLabel("Adults", { exact: true }).fill("2");
+  await page
+    .getByRole("button", { name: "Review & build", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Check these values" }),
+  ).toHaveCount(0);
+});
+test("guidance topic search recovers from no matches and supports reordered words", async ({
+  page,
+}) => {
+  await page.goto("/learn");
+  const query = page.getByLabel("Search guidance / सलाह खोजें");
+  await query.fill("fit mask");
+  await expect(page.locator("#guidance-results #mask-fit")).toBeVisible();
+  await page.getByLabel("Topic", { exact: true }).selectOption("Transport");
+  await expect(page.getByText(/No guidance matches/)).toBeVisible();
+  await page
+    .getByRole("button", { name: "Clear filters", exact: true })
+    .click();
+  await expect(query).toBeFocused();
+  await expect(page.locator("#guidance-results details")).toHaveCount(60);
+});

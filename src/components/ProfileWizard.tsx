@@ -1,9 +1,10 @@
 "use client";
-import { useRef, useState } from "react";
-import { ProfileSchema, type Profile } from "@/domain/types";
+import { useEffect, useRef, useState } from "react";
+import type { Profile } from "@/domain/types";
 import { useHawa } from "./Provider";
 import { Field } from "./ui";
 import { numbers, choices, checks, optionLabel } from "./profile-fields";
+import { profileIssues, type ProfileIssue } from "./profile-validation";
 export function ProfileWizard({
   onGenerate,
   busy,
@@ -13,7 +14,16 @@ export function ProfileWizard({
 }) {
   const { profile, setProfile, t, save } = useHawa();
   const [step, setStep] = useState(0);
-  const [errors, setErrors] = useState<{ key: string; message: string }[]>([]);
+  const [errors, setErrors] = useState<ProfileIssue[]>([]);
+  const [pendingField, setPendingField] = useState<string | null>(null);
+  useEffect(() => {
+    if (!pendingField) return;
+    const frame = requestAnimationFrame(() => {
+      document.getElementById(pendingField)?.focus();
+      setPendingField(null);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pendingField, step]);
   const summary = useRef<HTMLDivElement>(null);
   const hi = profile.lang === "hi";
   const titles = hi
@@ -30,15 +40,7 @@ export function ProfileWizard({
     setErrors([]);
   }
   function validate() {
-    const parsed = ProfileSchema.safeParse(profile);
-    const found = parsed.success
-      ? []
-      : parsed.error.issues.map((e) => ({
-          key: String(e.path[0]),
-          message: hi
-            ? "दिखाई गई सीमा में मान भरें।"
-            : "Enter a value within the displayed limits.",
-        }));
+    const found = profileIssues(profile, hi);
     setErrors(found);
     if (found.length) {
       requestAnimationFrame(() => summary.current?.focus());
@@ -84,17 +86,16 @@ export function ProfileWizard({
             <h3>{hi ? "इन मानों की जाँच करें" : "Check these values"}</h3>
             <ul>
               {errors.map((e) => (
-                <li key={e.key}>
+                <li key={e.key} id={`${e.key}-error`}>
                   <a
                     href={`#${e.key}`}
-                    onClick={() => {
-                      const target = numbers.findIndex((group) =>
-                        group.some((f) => f.key === e.key),
-                      );
-                      if (target >= 0) setStep(target);
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setStep(e.step);
+                      setPendingField(e.key);
                     }}
                   >
-                    {e.key}: {e.message}
+                    {e.label}: {e.message}
                   </a>
                 </li>
               ))}
@@ -112,36 +113,12 @@ export function ProfileWizard({
               errors={errors}
             />
             {step === 0 && profile.children > 0 && (
-              <Field
-                id="childAges"
-                label={
-                  hi
-                    ? "बच्चों की उम्र (वर्ष, अल्पविराम से अलग; वैकल्पिक)"
-                    : "Children’s ages (years, comma-separated; optional)"
-                }
-              >
-                <input
-                  id="childAges"
-                  key={profile.childAges.join(",")}
-                  defaultValue={profile.childAges.join(", ")}
-                  inputMode="numeric"
-                  onBlur={(e) =>
-                    change(
-                      "childAges",
-                      e.target.value.trim()
-                        ? e.target.value
-                            .split(",")
-                            .map((v) => (v.trim() ? Number(v.trim()) : NaN))
-                        : [],
-                    )
-                  }
-                />
-                <small>
-                  {hi
-                    ? "दो वर्ष से छोटे बच्चे को मास्क न पहनाएँ।"
-                    : "Never put a mask on a child under two."}
-                </small>
-              </Field>
+              <ChildAges
+                profile={profile}
+                hi={hi}
+                errors={errors}
+                change={change}
+              />
             )}
             {step === 4 && (
               <>
@@ -218,7 +195,7 @@ function ProfileFields({
               Number.isFinite(profile[f.key]) ? String(profile[f.key]) : ""
             }
             aria-invalid={errors.some((e) => e.key === f.key)}
-            aria-describedby={`${f.key}-hint`}
+            aria-describedby={`${f.key}-hint${errors.some((e) => e.key === f.key) ? ` ${f.key}-error` : ""}`}
             onChange={(e) =>
               change(
                 f.key,
@@ -235,6 +212,10 @@ function ProfileFields({
         <Field key={f.key} id={f.key} label={hi ? f.hi : f.en}>
           <select
             id={f.key}
+            aria-invalid={errors.some((e) => e.key === f.key)}
+            aria-describedby={
+              errors.some((e) => e.key === f.key) ? `${f.key}-error` : undefined
+            }
             value={String(profile[f.key])}
             onChange={(e) =>
               change(f.key, e.target.value as Profile[keyof Profile])
@@ -251,7 +232,12 @@ function ProfileFields({
       {(checks[step] ?? []).map((f) => (
         <label className="check" key={f.key}>
           <input
+            id={f.key}
             type="checkbox"
+            aria-invalid={errors.some((e) => e.key === f.key)}
+            aria-describedby={
+              errors.some((e) => e.key === f.key) ? `${f.key}-error` : undefined
+            }
             checked={Boolean(profile[f.key])}
             onChange={(e) => change(f.key, e.target.checked)}
           />
@@ -259,5 +245,56 @@ function ProfileFields({
         </label>
       ))}
     </>
+  );
+}
+
+function ChildAges({
+  profile,
+  hi,
+  errors,
+  change,
+}: {
+  profile: Profile;
+  hi: boolean;
+  errors: ProfileIssue[];
+  change: (key: keyof Profile, value: Profile[keyof Profile]) => void;
+}) {
+  return (
+    <Field
+      id="childAges"
+      label={
+        hi
+          ? "बच्चों की उम्र (वर्ष, अल्पविराम से अलग; वैकल्पिक)"
+          : "Children’s ages (years, comma-separated; optional)"
+      }
+    >
+      <input
+        id="childAges"
+        key={profile.childAges.join(",")}
+        defaultValue={profile.childAges.join(", ")}
+        inputMode="text"
+        aria-invalid={errors.some((e) => e.key === "childAges")}
+        aria-describedby={
+          errors.some((e) => e.key === "childAges")
+            ? "childAges-error"
+            : undefined
+        }
+        onBlur={(e) =>
+          change(
+            "childAges",
+            e.target.value.trim()
+              ? e.target.value
+                  .split(",")
+                  .map((v) => (v.trim() ? Number(v.trim()) : NaN))
+              : [],
+          )
+        }
+      />
+      <small>
+        {hi
+          ? "दो वर्ष से छोटे बच्चे को मास्क न पहनाएँ।"
+          : "Never put a mask on a child under two."}
+      </small>
+    </Field>
   );
 }
