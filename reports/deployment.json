@@ -1,8 +1,8 @@
 {
-  "id": "appgdep_6aff1fafbec88191b09b5532999b93c3",
+  "id": "appgdep_6b0058d2dcc88191978b1a39b1a6cd30",
   "project_id": "appgprj_6afeed85792081919589d29e4744d45b",
   "title": "HAWA — Breathe smarter",
-  "version_id": "appgprj_6afeed85792081919589d29e4744d45b~appgver_45cb1c49b0f48191a20cbd9d445b96eb",
+  "version_id": "appgprj_6afeed85792081919589d29e4744d45b~appgver_c8e8606118408191a2913f48226ecd80",
   "type": "publish",
   "status": "succeeded",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
@@ -11,7 +11,7 @@
   "provider_deployment_id": "release---6afeef961d54819189abbf169183dfb5",
   "failure_message": null,
   "env_set_revision": 1,
-  "updated_at": "2026-11-19T16:11:43.029750+00:00",
-  "sourceCommit": "d42a343f837de7b59734823d9400fba61b962a3e",
-  "versionNumber": 12
+  "updated_at": "2026-11-20T14:27:45.465968+00:00",
+  "sourceCommit": "e14363a677fef5f15b19aecb8ac9728c82315550",
+  "versionNumber": 13
 }

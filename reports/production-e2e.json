@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-19T16:14:01.654Z",
-  "sourceCommit": "d42a343f837de7b59734823d9400fba61b962a3e",
+  "verifiedAt": "2026-11-20T14:30:11.279Z",
+  "sourceCommit": "e14363a677fef5f15b19aecb8ac9728c82315550",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 38,
+  "passed": 42,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
@@ -17,7 +17,8 @@
     "Home JavaScript stays below 117,500 bytes gzip",
     "Validation focus/correction, persisted theme/language, blocked-storage planning, public shared-kit validation, exported actions/impact, provider failure, malformed successful plan response, keyboard skip/Escape",
     "Truncated AI stream replaces partial text with cited local guidance and re-enables Send",
-    "Community notice handles unavailable clipboard; child-age fields follow household-size changes"
+    "Community notice handles unavailable clipboard; child-age fields follow household-size changes",
+    "Hidden wizard-step correction links focus invalid inputs; reordered guidance queries combine with topic filters and reset recovery"
   ],
   "priorReleaseObservation": {
     "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
@@ -28,5 +29,5 @@
   "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
   "skipped": 0,
   "flaky": 0,
-  "durationMs": 111966.807
+  "durationMs": 118240.659
 }

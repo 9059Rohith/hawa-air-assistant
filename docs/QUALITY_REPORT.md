@@ -10,13 +10,13 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | Entire production source coverage            | **93.98% lines**, 92.35% statements, 86.54% branches, 91.73% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **38 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **42 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 478 historical blobs scanned before this release commit                                              |
+| Working-tree and Git-history secret patterns | **0 matches**; 498 historical blobs scanned before this release commit                                              |
 | Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
 | Submission source                            | Approximately **1.05 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
@@ -25,13 +25,17 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 486 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 38/38. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 486 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 42/42. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
 ## Guidance discovery and accessible correction
 
 Profile errors now identify the affected field by its human-readable label, explain bounds or integer/age-count requirements, and deduplicate array failures. Activating an error link opens the correct wizard step and focuses the input after rendering. Invalid controls reference the specific error through ARIA.
 
 The guidance library indexes bilingual source text once, normalizes Unicode compatibility characters and punctuation, and matches every query word regardless of order. Queries are bounded to 200 characters and remain on-device. A topic selector narrows results; an explicit empty state and Clear filters button restore all guidance and keyboard focus. No new runtime dependency or paid search request is added.
+
+All **42 production desktop/mobile browser tests** passed, with no failed, skipped or flaky cases.
+
+Version **13** is deployed from `e14363a677fef5f15b19aecb8ac9728c82315550` at the same public URL. One real production OpenAI request returned ten actions with `generatedBy: llm` in **11,262 ms**. This observed sample includes variable provider latency and is not a response-time guarantee. The public home bundle remains **117,314 gzip bytes**; all 15 production route/theme axe checks report zero detected violations and runtime errors.
 
 ## Previous version 12 application-wide code-quality pass
 
