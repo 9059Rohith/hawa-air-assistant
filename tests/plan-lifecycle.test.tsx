@@ -168,3 +168,44 @@ it("local mode generates without calling any API", async () => {
   );
   expect(fetcher).not.toHaveBeenCalled();
 });
+it.each(["success", "failure"])(
+  "rules-mode selection cancels an online plan and ignores late %s",
+  async (outcome) => {
+    let resolve!: (response: Response) => void, reject!: (error: Error) => void;
+    const network = vi.fn<
+      (url: string, init: RequestInit) => Promise<Response>
+    >(
+      () =>
+        new Promise((yes, no) => {
+          resolve = yes;
+          reject = no;
+        }),
+    );
+    vi.stubGlobal("fetch", network);
+    setup();
+    fireEvent.click(screen.getByText("Generate"));
+    fireEvent.click(screen.getByLabelText(/Use rules mode/));
+    expect(network.mock.calls[0]?.[1].signal?.aborted).toBe(true);
+    expect(screen.getByText("Generate")).toBeEnabled();
+    fireEvent.click(screen.getByText("Generate"));
+    await act(async () => {
+      if (outcome === "success")
+        resolve(
+          Response.json({
+            ...plan,
+            headline: "Obsolete AI plan",
+            generatedBy: "llm",
+          }),
+        );
+      else reject(new Error("Late failure"));
+    });
+    expect(screen.getByTestId("current")).toHaveTextContent(plan.headline);
+    expect(screen.getByTestId("current")).not.toHaveTextContent(
+      "Obsolete AI plan",
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No network request was needed",
+    );
+    expect(network).toHaveBeenCalledOnce();
+  },
+);

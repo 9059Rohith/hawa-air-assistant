@@ -34,6 +34,7 @@ function send(text: string) {
 function reply(text: string) {
   return new Response(
     `data: ${JSON.stringify({ mode: "llm" })}\n\ndata: ${JSON.stringify({ text })}\n\ndata: [DONE]\n\n`,
+    { headers: { "Content-Type": "text/event-stream" } },
   );
 }
 it("shows urgent guidance immediately without waiting on an online provider", () => {
@@ -100,6 +101,7 @@ it("cancels a pending reader on Stop without waiting for the server to close", a
           },
           cancel,
         }),
+        { headers: { "Content-Type": "text/event-stream" } },
       ),
     ),
   );
@@ -107,7 +109,9 @@ it("cancels a pending reader on Stop without waiting for the server to close", a
   send("mask fitting");
   await act(async () => {
     stream.enqueue(
-      new TextEncoder().encode('data: {"text":"Partial answer"}\n\n'),
+      new TextEncoder().encode(
+        'data: {"mode":"llm"}\n\ndata: {"text":"Partial answer"}\n\n',
+      ),
     );
   });
   await screen.findByText("Partial answer");
@@ -119,7 +123,11 @@ it("aborts outstanding work when chat unmounts", async () => {
   const cancel = vi.fn();
   vi.stubGlobal(
     "fetch",
-    vi.fn().mockResolvedValue(new Response(new ReadableStream({ cancel }))),
+    vi.fn().mockResolvedValue(
+      new Response(new ReadableStream({ cancel }), {
+        headers: { "Content-Type": "text/event-stream" },
+      }),
+    ),
   );
   const view = render(<ChatPanel plan={plan} offline={false} />);
   send("cooking smoke");
@@ -129,12 +137,19 @@ it("aborts outstanding work when chat unmounts", async () => {
 });
 
 it.each([
-  'data: {"text":"Truncated remote answer"}\n\n',
-  'data: {"text":17}\n\ndata: [DONE]\n\n',
+  'data: {"mode":"llm"}\n\ndata: {"text":"Truncated remote answer"}\n\n',
+  'data: {"mode":"llm"}\n\ndata: {"text":17}\n\ndata: [DONE]\n\n',
 ])(
   "replaces an invalid or incomplete stream with cited local guidance",
   async (wire) => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(wire)));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(wire, {
+          headers: { "Content-Type": "text/event-stream" },
+        }),
+      ),
+    );
     render(<ChatPanel plan={plan} offline={false} />);
     send("How should a mask fit?");
     await waitFor(() =>
@@ -168,4 +183,75 @@ it("clears prior conversation when a different plan is selected", async () => {
   send("cooking smoke");
   await screen.findByText("New plan answer");
   expect(JSON.parse(network.mock.calls[1]![1].body).messages).toEqual([]);
+});
+it.each(["success", "failure"])(
+  "switching to rules mode ignores a late online %s",
+  async (outcome) => {
+    let resolve!: (response: Response) => void, reject!: (error: Error) => void;
+    const network = vi.fn<
+      (url: string, init: RequestInit) => Promise<Response>
+    >(
+      () =>
+        new Promise((yes, no) => {
+          resolve = yes;
+          reject = no;
+        }),
+    );
+    vi.stubGlobal("fetch", network);
+    const view = render(<ChatPanel plan={plan} offline={false} />);
+    send("kitchen smoke");
+    view.rerender(<ChatPanel plan={plan} offline={true} />);
+    expect(network.mock.calls[0]?.[1].signal?.aborted).toBe(true);
+    expect(screen.getByRole("button", { name: "Send" })).toBeEnabled();
+    send("mask fitting");
+    expect(screen.getByText(/Response mode: rules/)).toBeInTheDocument();
+    await act(async () => {
+      if (outcome === "success") resolve(reply("Obsolete answer"));
+      else reject(new Error("Late failure"));
+    });
+    expect(screen.queryByText("Obsolete answer")).not.toBeInTheDocument();
+    expect(screen.getByText(/Response mode: rules/)).toBeInTheDocument();
+    expect(network).toHaveBeenCalledOnce();
+  },
+);
+it("rules-mode switching cancels a partial reader and clears its answer", async () => {
+  const cancel = vi.fn();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () =>
+        new Response(
+          new ReadableStream({
+            start(c) {
+              c.enqueue(
+                new TextEncoder().encode(
+                  'data: {"mode":"llm"}\n\ndata: {"text":"Partial online answer"}\n\n',
+                ),
+              );
+            },
+            cancel,
+          }),
+          { headers: { "Content-Type": "text/event-stream" } },
+        ),
+    ),
+  );
+  const view = render(<ChatPanel plan={plan} offline={false} />);
+  send("mask fitting");
+  await screen.findByText("Partial online answer");
+  view.rerender(<ChatPanel plan={plan} offline={true} />);
+  await waitFor(() => expect(cancel).toHaveBeenCalledOnce());
+  expect(screen.queryByText("Partial online answer")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Send" })).toBeEnabled();
+});
+it("does not carry rules-only conversation into a later online request", async () => {
+  const network = vi
+    .fn()
+    .mockImplementation(async () => reply("Online answer"));
+  vi.stubGlobal("fetch", network);
+  const view = render(<ChatPanel plan={plan} offline={true} />);
+  send("mask fitting");
+  view.rerender(<ChatPanel plan={plan} offline={false} />);
+  send("kitchen smoke");
+  await screen.findByText("Online answer");
+  expect(JSON.parse(network.mock.calls[0]![1].body).messages).toEqual([]);
 });

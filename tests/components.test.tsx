@@ -356,6 +356,7 @@ it("chat consumes validated SSE and renders citation links", async () => {
       .mockResolvedValue(
         new Response(
           'data: {"mode":"rules"}\n\ndata: {"text":"Use filtration [kb:clean-room]"}\n\ndata: [DONE]\n\n',
+          { headers: { "Content-Type": "text/event-stream" } },
         ),
       ),
   );
@@ -375,6 +376,7 @@ it("chat escalates urgent responses and handles service failure", async () => {
       .mockResolvedValueOnce(
         new Response(
           'data: {"mode":"urgent"}\n\ndata: {"text":"Seek urgent care"}\n\ndata: [DONE]\n\n',
+          { headers: { "Content-Type": "text/event-stream" } },
         ),
       )
       .mockRejectedValueOnce(new Error()),

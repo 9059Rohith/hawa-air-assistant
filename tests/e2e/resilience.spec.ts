@@ -67,6 +67,91 @@ async function buildLocal(page: Page) {
     page.getByRole("region", { name: "Generated plan" }),
   ).toBeVisible();
 }
+test("switching to rules mode releases a pending plan request", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/plan", async (route) => {
+    await waiting;
+    await route
+      .fulfill({ status: 503, body: "unavailable" })
+      .catch(() => undefined);
+  });
+  await prepare(page);
+  const generate = page.locator('.wizard button[type="submit"]');
+  const requested = page.waitForRequest("**/api/plan");
+  await generate.click();
+  await requested;
+  await expect(generate).toBeDisabled();
+  await page.getByLabel(/Use rules mode/).check();
+  await expect(generate).toBeEnabled();
+  await generate.click();
+  release();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+  await expect(page.locator(".notice")).toContainText(
+    "No network request was needed",
+  );
+});
+
+test("switching to rules mode releases chat and supports an immediate local answer", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/chat", async (route) => {
+    await waiting;
+    await route
+      .fulfill({ status: 503, body: "unavailable" })
+      .catch(() => undefined);
+  });
+  await buildLocal(page);
+  await page.getByLabel(/Use rules mode/).uncheck();
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("mask fitting");
+  const requested = page.waitForRequest("**/api/chat");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await requested;
+  await page.getByLabel(/Use rules mode/).check();
+  await expect(
+    page.getByRole("button", { name: "Send", exact: true }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  release();
+  await expect(
+    page.getByText("Response mode: rules", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".reply a").first()).toBeVisible();
+});
+
+test("contradictory chat provenance falls back to cited guidance", async ({
+  page,
+}) => {
+  await page.route("**/api/chat", (route) =>
+    route.fulfill({
+      contentType: "text/event-stream",
+      body: 'data: {"mode":"llm"}\n\ndata: {"text":"Contradictory remote answer"}\n\ndata: {"mode":"rules"}\n\ndata: [DONE]\n\n',
+    }),
+  );
+  await buildLocal(page);
+  await page.getByLabel(/Use rules mode/).uncheck();
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("mask fitting");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(
+    page.getByText("Response mode: rules", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".reply")).not.toContainText(
+    "Contradictory remote answer",
+  );
+  await expect(page.locator(".reply a").first()).toBeVisible();
+});
 test("invalid household input focuses a useful error and can be corrected", async ({
   page,
 }) => {

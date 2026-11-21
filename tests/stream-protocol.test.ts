@@ -66,7 +66,10 @@ it.each(["llm", "rules", "urgent"])("accepts the declared %s mode", (mode) => {
   expect(parseChatEvent("data:" + JSON.stringify({ mode }))).toEqual({ mode });
 });
 it.each([
-  ["missing completion", 'data: {"text":"partial"}\n\n'],
+  [
+    "missing completion",
+    'data: {"mode":"llm"}\n\ndata: {"text":"partial"}\n\n',
+  ],
   ["empty completion", "data: [DONE]\n\n"],
   ["unterminated event", 'data: {"text":"partial"}'],
   ["invalid JSON", "data: not-json\n\n"],
@@ -77,9 +80,11 @@ it.each([
   ],
   [
     "oversized answer",
-    Array(4)
-      .fill("data: " + JSON.stringify({ text: "x".repeat(3000) }) + "\n\n")
-      .join("") + "data: [DONE]\n\n",
+    'data: {"mode":"llm"}\n\n' +
+      Array(4)
+        .fill("data: " + JSON.stringify({ text: "x".repeat(3000) }) + "\n\n")
+        .join("") +
+      "data: [DONE]\n\n",
   ],
   ["oversized response", ":" + "x".repeat(32769)],
 ])("rejects %s and releases its reader", async (_name, text) => {
@@ -175,3 +180,23 @@ it("provider reader refuses oversized JSON", async () => {
     readJsonResponse(Response.json({ text: "x".repeat(262145) })),
   ).rejects.toBeInstanceOf(StreamLimitError);
 });
+it.each([
+  ['data: {"text":"Unattributed"}\n\ndata: [DONE]\n\n', "must precede"],
+  [
+    'data: {"mode":"llm"}\n\ndata: {"mode":"rules"}\n\ndata: {"text":"Mixed"}\n\ndata: [DONE]\n\n',
+    "Duplicate",
+  ],
+  [
+    'data: {"mode":"llm"}\n\ndata: {"text":"Partial"}\n\ndata: {"mode":"rules"}\n\ndata: [DONE]\n\n',
+    "Duplicate",
+  ],
+])(
+  "rejects missing or contradictory response provenance %#",
+  async (wire, error) => {
+    const body = stream(wire, 3);
+    await expect(
+      consumeChatStream(body, new AbortController().signal, () => {}),
+    ).rejects.toThrow(error);
+    expect(body.locked).toBe(false);
+  },
+);

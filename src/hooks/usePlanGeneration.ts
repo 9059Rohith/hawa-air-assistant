@@ -10,7 +10,7 @@ export function usePlanGeneration(offline: boolean) {
   useEffect(() => {
     setBusy(false);
     return () => active.current?.abort();
-  }, [profile, location, air]);
+  }, [profile, location, air, offline]);
   async function generate() {
     if (!location || !air) {
       setNotice(

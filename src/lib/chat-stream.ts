@@ -26,6 +26,7 @@ export function parseChatEvent(event: string): ChatEvent | "done" | null {
 class ChatDecoder {
   private buffer = "";
   private replyLength = 0;
+  private modeSeen = false;
   completed = false;
   constructor(private onEvent: (event: ChatEvent) => void) {}
 
@@ -49,7 +50,13 @@ class ChatDecoder {
       this.completed = true;
       return;
     }
-    if ("text" in event) this.replyLength += event.text.length;
+    if ("mode" in event) {
+      if (this.modeSeen) throw new Error("Duplicate chat mode");
+      this.modeSeen = true;
+    } else {
+      if (!this.modeSeen) throw new Error("Chat mode must precede text");
+      this.replyLength += event.text.length;
+    }
     if (this.replyLength > MAX_REPLY_CHARACTERS)
       throw new Error("Chat answer is too large");
     this.onEvent(event);
