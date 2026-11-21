@@ -43,14 +43,14 @@ export function PlanView({ plan }: { plan: Plan }) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   async function share() {
-    const url =
-      location.origin +
-      "/community" +
-      shareFragment(
-        selected.map((a) => a.id),
-        profile.lang,
-      );
     try {
+      const url =
+        location.origin +
+        "/community" +
+        shareFragment(
+          selected.map((a) => a.id),
+          profile.lang,
+        );
       if (navigator.share) await navigator.share({ title: "HAWA", text, url });
       else await navigator.clipboard.writeText(url);
       notify(

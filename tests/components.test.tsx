@@ -426,6 +426,59 @@ it("forecast points have keyboard text alternatives in both languages", () => {
   rerender(<Forecast air={{ ...fixture.air, hourly: [] }} hi />);
   expect(screen.queryByRole("img")).toBeNull();
 });
+it("read-aloud buttons do not submit forms and announce recoverable errors", () => {
+  const speak = vi.fn(),
+    submit = vi.fn();
+  vi.stubGlobal("speechSynthesis", {
+    speak,
+    cancel: vi.fn(),
+    pause: vi.fn(),
+    resume: vi.fn(),
+  });
+  vi.stubGlobal(
+    "SpeechSynthesisUtterance",
+    class {
+      lang = "";
+      constructor(public text: string) {}
+    },
+  );
+  wrap(
+    <form onSubmit={submit}>
+      <ReadAloud text="Hello" />
+    </form>,
+  );
+  expect(screen.getByRole("button", { name: "Pause" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Read aloud" }));
+  fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+  expect(screen.getByRole("button", { name: "Resume" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Resume" }));
+  expect(submit).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Hindi" }));
+  speak.mockImplementation(() => {
+    throw new Error("unavailable");
+  });
+  const read = screen.getByRole("button", { name: "सुनें" });
+  fireEvent.click(read);
+  expect(screen.getByRole("alert")).toHaveTextContent("फिर कोशिश करें");
+  speak.mockImplementation(() => {});
+  fireEvent.click(read);
+  fireEvent.click(screen.getByRole("button", { name: "विराम दें" }));
+  expect(screen.getByRole("button", { name: "जारी रखें" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+});
+it("localizes the unavailable read-aloud state", () => {
+  vi.stubGlobal("speechSynthesis", undefined);
+  wrap(<ReadAloud text="Hello" />);
+  fireEvent.click(screen.getByRole("button", { name: "Hindi" }));
+  expect(
+    screen.getByText("इस ब्राउज़र में आवाज़ में पढ़ना उपलब्ध नहीं है।"),
+  ).toBeVisible();
+});
 it("shared kit restores only public curated steps", async () => {
   history.replaceState(null, "", shareFragment([knowledge[0]!.id], "hi"));
   wrap(<SharedKit />);

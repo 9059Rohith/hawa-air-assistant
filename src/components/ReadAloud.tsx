@@ -1,54 +1,49 @@
 "use client";
-import { useEffect, useState } from "react";
 import { useHawa } from "./Provider";
+import { useReadAloud } from "@/hooks/useReadAloud";
 export function ReadAloud({ text }: { text: string }) {
-  const { t, profile } = useHawa();
-  const [available, setAvailable] = useState(false);
-  const [paused, setPaused] = useState(false);
-  useEffect(() => {
-    setAvailable("speechSynthesis" in window);
-    return () => {
-      window.speechSynthesis?.cancel();
-    };
-  }, []);
+  const { t, profile, resetSignal } = useHawa();
+  const { available, status, failed, start, stop, togglePause } = useReadAloud(
+    text,
+    profile.lang,
+    resetSignal,
+  );
+  const paused = status === "paused";
   return available ? (
     <div className="button-row">
-      <button
-        onClick={() => {
-          speechSynthesis.cancel();
-          setPaused(false);
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = profile.lang === "hi" ? "hi-IN" : "en-IN";
-          speechSynthesis.speak(utterance);
-        }}
-      >
+      <button type="button" onClick={start}>
         {t.read}
       </button>
       <button
-        onClick={() => {
-          if (paused) speechSynthesis.resume();
-          else speechSynthesis.pause();
-          setPaused(!paused);
-        }}
+        type="button"
+        disabled={status === "idle"}
+        aria-pressed={paused}
+        onClick={togglePause}
       >
         {profile.lang === "hi"
           ? paused
             ? "जारी रखें"
-            : "रोकें"
+            : "विराम दें"
           : paused
             ? "Resume"
             : "Pause"}
       </button>
-      <button
-        onClick={() => {
-          speechSynthesis.cancel();
-          setPaused(false);
-        }}
-      >
+      <button type="button" disabled={status === "idle"} onClick={stop}>
         {t.stop}
       </button>
+      {failed && (
+        <p role="alert">
+          {profile.lang === "hi"
+            ? "आवाज़ में पढ़ना अभी उपलब्ध नहीं है। फिर कोशिश करें या पाठ पढ़ें।"
+            : "Read-aloud is unavailable right now. Try again or read the text."}
+        </p>
+      )}
     </div>
   ) : (
-    <p>Read-aloud is unavailable in this browser.</p>
+    <p>
+      {profile.lang === "hi"
+        ? "इस ब्राउज़र में आवाज़ में पढ़ना उपलब्ध नहीं है।"
+        : "Read-aloud is unavailable in this browser."}
+    </p>
   );
 }

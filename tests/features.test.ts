@@ -120,8 +120,11 @@ it("share fragments accept only bounded curated IDs and never carry household da
       encodeURIComponent(
         JSON.stringify({ v: 2, lang: "en", ids: [allowed[0]] }),
       ),
-    shareFragment(["unknown"], "en"),
-    shareFragment([], "en"),
+    "#kit=" +
+      encodeURIComponent(
+        JSON.stringify({ v: 1, lang: "en", ids: ["unknown"] }),
+      ),
+    "#kit=" + encodeURIComponent(JSON.stringify({ v: 1, lang: "en", ids: [] })),
     "#kit=" + "x".repeat(2000),
   ])
     expect(readSharedKit(hash, allowed)).toBeNull();

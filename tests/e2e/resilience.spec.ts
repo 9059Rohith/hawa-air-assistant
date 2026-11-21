@@ -67,6 +67,122 @@ async function buildLocal(page: Page) {
     page.getByRole("region", { name: "Generated plan" }),
   ).toBeVisible();
 }
+
+test("sharing excludes empty selections and rejects extra private fields", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: async ({ url }: { url: string }) => {
+        sessionStorage.setItem("test-shared-url", url);
+      },
+    });
+  });
+  await buildLocal(page);
+  const scenario = page.locator(".plan-results details.panel").first();
+  await scenario.locator("summary").click();
+  const selections = scenario.getByRole("checkbox");
+  for (const selection of await selections.all()) await selection.uncheck();
+  await expect(
+    page.getByRole("button", { name: "Share / copy", exact: true }),
+  ).toBeDisabled();
+  await selections.first().check();
+  await page.getByRole("button", { name: "Share / copy", exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => sessionStorage.getItem("test-shared-url")))
+    .not.toBeNull();
+  const shared = await page.evaluate(() =>
+    sessionStorage.getItem("test-shared-url")!,
+  );
+  const payload = JSON.parse(decodeURIComponent(new URL(shared).hash.slice(5)));
+  expect(Object.keys(payload).sort()).toEqual(["ids", "lang", "v"]);
+  expect(payload.ids).toHaveLength(1);
+  await page.goto(shared);
+  await expect(
+    page.getByRole("heading", { name: "Shared clean-air steps" }),
+  ).toBeVisible();
+  await page.goto(
+    `/community#kit=${encodeURIComponent(JSON.stringify({ ...payload, profile: { location: "private address" } }))}`,
+  );
+  await expect(
+    page.getByRole("heading", { name: "Shared clean-air steps" }),
+  ).toHaveCount(0);
+  await expect(page.getByText("private address")).toHaveCount(0);
+});
+
+test("read-aloud controls settle on completion, error and clear-data", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    class Voice {
+      lang = "";
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(public text: string) {}
+    }
+    let current: Voice | undefined;
+    let paused = false;
+    Object.defineProperty(window, "SpeechSynthesisUtterance", {
+      configurable: true,
+      value: Voice,
+    });
+    Object.defineProperty(window, "speechSynthesis", {
+      configurable: true,
+      value: {
+        get paused() {
+          return paused;
+        },
+        speak: (utterance: Voice) => {
+          if (paused) throw new Error("Engine is still paused");
+          current = utterance;
+        },
+        cancel: () => {
+          current = undefined;
+        },
+        pause: () => {
+          paused = true;
+        },
+        resume: () => {
+          paused = false;
+        },
+      },
+    });
+    window.addEventListener("test-speech-end", () => current?.onend?.());
+    window.addEventListener("test-speech-error", () => current?.onerror?.());
+  });
+  await page.goto("/community");
+  const read = page.getByRole("button", { name: "Read aloud", exact: true });
+  const pause = page.getByRole("button", { name: "Pause", exact: true });
+  const stop = page.getByRole("button", { name: "Stop", exact: true });
+  await expect(pause).toBeDisabled();
+  await read.click();
+  await pause.click();
+  await expect(
+    page.getByRole("button", { name: "Resume", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
+  await pause.click();
+  await stop.click();
+  await read.click();
+  await expect(stop).toBeEnabled();
+  await page.evaluate(() => window.dispatchEvent(new Event("test-speech-end")));
+  await expect(stop).toBeDisabled();
+  await read.click();
+  await page.evaluate(() =>
+    window.dispatchEvent(new Event("test-speech-error")),
+  );
+  const speechAlert = page
+    .getByRole("alert")
+    .filter({ hasText: "Read-aloud is unavailable right now" });
+  await expect(speechAlert).toBeVisible();
+  await read.click();
+  await expect(speechAlert).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Clear my data", exact: true })
+    .click();
+  await expect(stop).toBeDisabled();
+});
 test("specific chat questions keep citations focused in English and Hindi", async ({
   page,
 }) => {
