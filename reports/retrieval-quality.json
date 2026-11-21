@@ -1,0 +1,68 @@
+{
+  "measuredAt": "2026-11-21T11:39:06.346Z",
+  "baselineCommit": "7d67a70ad8afbf51118f2465c349eee8546812ff",
+  "method": "Execute baseline source from git show and current retriever on six specified regression cases",
+  "modelCalls": 0,
+  "beforePassed": 2,
+  "afterPassed": 6,
+  "cases": [
+    {
+      "query": "How should a mask fit?",
+      "first": "mask-fit",
+      "excluded": ["filter-change", "pets"],
+      "exact": ["mask-fit"],
+      "before": ["mask-fit", "filter-change", "pets"],
+      "after": ["mask-fit"],
+      "beforePass": false,
+      "afterPass": true
+    },
+    {
+      "query": "masks fitting",
+      "first": "mask-fit",
+      "excluded": ["filter-change", "pets"],
+      "exact": ["mask-fit"],
+      "before": ["mask-fit"],
+      "after": ["mask-fit"],
+      "beforePass": true,
+      "afterPass": true
+    },
+    {
+      "query": "मास्क फिट",
+      "first": "mask-fit",
+      "excluded": ["filter-change", "pets"],
+      "exact": ["mask-fit"],
+      "before": ["mask-fit", "clean-fuel", "filter-change", "pets"],
+      "after": ["mask-fit"],
+      "beforePass": false,
+      "afterPass": true
+    },
+    {
+      "query": "car",
+      "first": "carpool",
+      "excluded": ["co-alarm", "coal-safety"],
+      "before": ["coal-safety", "transit", "carpool", "clean-bedding"],
+      "after": ["carpool"],
+      "beforePass": false,
+      "afterPass": true
+    },
+    {
+      "query": "CO alarms",
+      "first": "co-alarm",
+      "excluded": ["carpool"],
+      "before": ["co-alarm"],
+      "after": ["co-alarm"],
+      "beforePass": true,
+      "afterPass": true
+    },
+    {
+      "query": "बस",
+      "first": "transit",
+      "excluded": ["coal-safety"],
+      "before": [],
+      "after": ["transit"],
+      "beforePass": false,
+      "afterPass": true
+    }
+  ],
+  "limitations": "Targeted regression cases, not a general retrieval benchmark, medical validation or competition score."
+}

@@ -67,6 +67,59 @@ async function buildLocal(page: Page) {
     page.getByRole("region", { name: "Generated plan" }),
   ).toBeVisible();
 }
+test("specific chat questions keep citations focused in English and Hindi", async ({
+  page,
+}) => {
+  let networkCalls = 0;
+  await page.route("**/api/chat", (route) => {
+    networkCalls++;
+    return route.abort();
+  });
+  await buildLocal(page);
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("How should a mask fit?");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply a")).toHaveCount(1);
+  await expect(page.locator(".reply a")).toHaveAttribute(
+    "href",
+    "/learn#mask-fit",
+  );
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await page.getByLabel("आपका सवाल").fill("मास्क फिट");
+  await page.getByRole("button", { name: "भेजें", exact: true }).click();
+  await expect(page.locator(".reply a")).toHaveCount(1);
+  await expect(page.locator(".reply a")).toHaveAttribute(
+    "href",
+    "/learn#mask-fit",
+  );
+  expect(networkCalls).toBe(0);
+});
+
+test("chat does not mistake car for carbon and recovers from an unknown question", async ({
+  page,
+}) => {
+  await buildLocal(page);
+  await page.getByRole("button", { name: "Ask HAWA", exact: true }).click();
+  await page.getByLabel("Your question").fill("car");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply a").first()).toHaveAttribute(
+    "href",
+    "/learn#carpool",
+  );
+  await expect(page.locator('.reply a[href="/learn#co-alarm"]')).toHaveCount(0);
+  await page.getByLabel("Your question").fill("quantum cryptocurrency");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply")).toContainText(
+    "not have enough grounded information",
+  );
+  await expect(page.locator(".reply a")).toHaveCount(0);
+  await page.getByLabel("Your question").fill("CO alarms");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".reply a").first()).toHaveAttribute(
+    "href",
+    "/learn#co-alarm",
+  );
+});
 test("switching to rules mode releases a pending plan request", async ({
   page,
 }) => {
