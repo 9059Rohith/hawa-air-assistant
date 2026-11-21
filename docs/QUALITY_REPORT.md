@@ -1,4 +1,4 @@
-# Verified quality report — 20 November 2026
+# Verified quality report — 21 November 2026
 
 Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
 
@@ -6,28 +6,36 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **486 passed (399 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **93.98% lines**, 92.35% statements, 86.54% branches, 91.73% functions                                              |
+| Unit/component/API tests                     | **507 passed (420 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **94.7% lines**, 93.16% statements, 87.39% branches, 91.89% functions                                               |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **42 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **46 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
-| Modern home JavaScript                       | **117,314 gzip bytes (114.6 KiB)**; budget 117,500 bytes                                                            |
+| Modern home JavaScript                       | **117,492 gzip bytes (114.7 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 498 historical blobs scanned before this release commit                                              |
-| Build artifact credential scan               | **0 matches across 45 files**                                                                                       |
-| Submission source                            | Approximately **1.05 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Working-tree and Git-history secret patterns | **0 matches**; 527 historical blobs scanned after the application commit                                            |
+| Build artifact credential scan               | **0 matches across 46 files**                                                                                       |
+| Submission source                            | Approximately **1.06 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 486 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 42/42. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 507 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 46/46. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Guidance discovery and accessible correction
+## Location cancellation and bounded recovery
+
+City search, approximate geolocation and live air responses now respect Clear, Stop, manual readings, query replacement and unmount. Clearing data synchronously aborts the reset signal; stale completions cannot repopulate the page. Manual recovery remains usable while a remote request is pending. City and air responses are capped at 256 KiB, with eight-second deadlines covering headers and body. Expired cached air cannot be returned after a slow failed refresh. See [ADR 0007](adr/0007-location-request-lifecycle.md).
+
+Version **14** is deployed from `ad50aff90c85e076fa76f1aaf7eee1b16e713e34` at the same public URL. All **46 production desktop/mobile tests** passed, with no failed, skipped or flaky cases; all 15 production axe states report zero violations and runtime errors. The home payload is **117,492 gzip bytes**, within the unchanged 117,500-byte budget. One actual production AI request returned HTTP 200, `generatedBy: llm`, and 10 actions in **6,056 ms**. This is a sample, not a latency guarantee.
+
+The first local run of the two new browser journeys counted theme dropdown options in addition to city suggestions. Selectors were scoped to the city list, retaining the same behavior assertions; the corrected full local and production suites passed. No runtime change was needed for that test correction.
+
+## Previous version 13 guidance discovery and accessible correction
 
 Profile errors now identify the affected field by its human-readable label, explain bounds or integer/age-count requirements, and deduplicate array failures. Activating an error link opens the correct wizard step and focuses the input after rendering. Invalid controls reference the specific error through ARIA.
 
