@@ -3,6 +3,7 @@
   "gzipBytes": 117492,
   "scripts": 9,
   "budget": 117500,
-  "origin": "http://localhost:3100",
-  "measuredAt": "2026-11-21T11:05:59.864Z"
+  "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "measuredAt": "2026-11-21T11:09:35.076Z",
+  "sourceCommit": "a5e87e572958c8df4a7c0bb541335d425b875079"
 }

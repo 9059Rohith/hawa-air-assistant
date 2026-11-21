@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-21T10:51:16.398Z",
-  "sourceCommit": "ad50aff90c85e076fa76f1aaf7eee1b16e713e34",
+  "verifiedAt": "2026-11-21T11:11:52.190Z",
+  "sourceCommit": "a5e87e572958c8df4a7c0bb541335d425b875079",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 46,
+  "passed": 52,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
@@ -19,7 +19,8 @@
     "Truncated AI stream replaces partial text with cited local guidance and re-enables Send",
     "Community notice handles unavailable clipboard; child-age fields follow household-size changes",
     "Hidden wizard-step correction links focus invalid inputs; reordered guidance queries combine with topic filters and reset recovery",
-    "Manual recovery during stalled city search; Clear resets query/readings/suggestions and permits a new lookup"
+    "Manual recovery during stalled city search; Clear resets query/readings/suggestions and permits a new lookup",
+    "Pending plan/chat cancellation on rules-mode change; contradictory chat provenance recovers to cited guidance"
   ],
   "priorReleaseObservation": {
     "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
@@ -30,5 +31,5 @@
   "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
   "skipped": 0,
   "flaky": 0,
-  "durationMs": 109452.015
+  "durationMs": 133204.663
 }

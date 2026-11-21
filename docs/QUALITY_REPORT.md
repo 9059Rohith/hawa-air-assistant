@@ -6,28 +6,36 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **507 passed (420 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **94.7% lines**, 93.16% statements, 87.39% branches, 91.89% functions                                               |
+| Unit/component/API tests                     | **528 passed (441 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **94.82% lines**, 93.29% statements, 87.42% branches, 92.18% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **46 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **52 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,492 gzip bytes (114.7 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 527 historical blobs scanned after the application commit                                            |
+| Working-tree and Git-history secret patterns | **0 matches**; 561 historical blobs scanned after the application commit                                            |
 | Build artifact credential scan               | **0 matches across 46 files**                                                                                       |
-| Submission source                            | Approximately **1.06 MB**, below 10 MB; source-size gate is stricter at 8 MB                                        |
+| Submission source                            | Approximately **1.1 MB**, below 10 MB; source-size gate is stricter at 8 MB                                         |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
 
 Coverage includes unexecuted route shells; low-coverage files are not hidden. Full coverage means tested code paths, not proof of medical accuracy. CI runs contrast checks before browser tests and includes the browser JavaScript-size gate.
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 507 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 46/46. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 528 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 52/52. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Location cancellation and bounded recovery
+## Chat transport and rules-mode cancellation
+
+Chat HTTP construction and stream validation now have a dedicated client, separate from UI state and conversation history. Non-success and incorrect-media-type bodies are cancelled. A thirty-second deadline spans headers and body. The stream must declare one mode before text and cannot relabel a partial answer. Invalid responses recover to cited local guidance. Switching rules mode aborts pending plan/chat work, releases busy controls and resets chat history; late success or failure cannot overwrite the newer result. See [ADR 0008](adr/0008-chat-transport-and-mode-ownership.md).
+
+Version **15** is deployed from `a5e87e572958c8df4a7c0bb541335d425b875079` at the unchanged public URL. All **52 production desktop/mobile tests** passed with no failures, skips or flaky cases; all 15 production axe states passed with zero detected violations or runtime errors. The initial home bundle remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget.
+
+One unmocked production chat request passed through the shipped HTTP client and SSE decoder, returning HTTP 200, mode `llm`, and 3 citation(s) in **3,300 ms**. This is one integration sample, not a statistical model evaluation or guaranteed response time. Older plan and browser-UI AI evidence keeps its original timestamp and source revision.
+
+## Previous version 14 location cancellation and bounded recovery
 
 City search, approximate geolocation and live air responses now respect Clear, Stop, manual readings, query replacement and unmount. Clearing data synchronously aborts the reset signal; stale completions cannot repopulate the page. Manual recovery remains usable while a remote request is pending. City and air responses are capped at 256 KiB, with eight-second deadlines covering headers and body. Expired cached air cannot be returned after a slow failed refresh. See [ADR 0007](adr/0007-location-request-lifecycle.md).
 
@@ -94,6 +102,7 @@ The regression suite caught and fixed an upload-cancellation race. Live AI revie
 - `reports/secret-scan.json`
 - `reports/ci.json`
 - `reports/production-ai.json`
+- `reports/production-chat-client.json`
 - `reports/production-e2e.json`
 - `reports/fresh-clone.json`
 - `reports/demo.json`
