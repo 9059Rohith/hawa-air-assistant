@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-21T11:11:52.190Z",
-  "sourceCommit": "a5e87e572958c8df4a7c0bb541335d425b875079",
+  "verifiedAt": "2026-11-21T11:46:19.764Z",
+  "sourceCommit": "4df9560d75e5cac411545be75f1c8d21cf0f72ec",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 52,
+  "passed": 56,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
@@ -20,7 +20,8 @@
     "Community notice handles unavailable clipboard; child-age fields follow household-size changes",
     "Hidden wizard-step correction links focus invalid inputs; reordered guidance queries combine with topic filters and reset recovery",
     "Manual recovery during stalled city search; Clear resets query/readings/suggestions and permits a new lookup",
-    "Pending plan/chat cancellation on rules-mode change; contradictory chat provenance recovers to cited guidance"
+    "Pending plan/chat cancellation on rules-mode change; contradictory chat provenance recovers to cited guidance",
+    "Focused English/Hindi citations, car versus carbon, and recovery from unknown questions"
   ],
   "priorReleaseObservation": {
     "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
@@ -31,5 +32,5 @@
   "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
   "skipped": 0,
   "flaky": 0,
-  "durationMs": 133204.663
+  "durationMs": 120368.937
 }

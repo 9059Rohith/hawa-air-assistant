@@ -77,5 +77,6 @@
     }
   ],
   "errors": [],
-  "measuredAt": "2026-11-21T11:40:42.432Z"
+  "measuredAt": "2026-11-21T11:40:42.432Z",
+  "sourceCommit": "4df9560d75e5cac411545be75f1c8d21cf0f72ec"
 }

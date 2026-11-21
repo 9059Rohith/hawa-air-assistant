@@ -1,14 +1,14 @@
 {
-  "verifiedAt": "2026-11-21T11:09:41.206Z",
+  "verifiedAt": "2026-11-21T11:44:20.339Z",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site/api/chat",
   "method": "Unmocked production API through the shipped requestChat client and SSE decoder",
   "requests": 1,
   "status": 200,
   "mediaType": "text/event-stream",
   "mode": "llm",
-  "characters": 285,
-  "citations": ["mask-fit", "filter-change", "pets"],
-  "elapsedMs": 3300,
+  "characters": 92,
+  "citations": ["mask-fit"],
+  "elapsedMs": 2713,
   "limitations": "One actual provider response; not a statistical evaluation or latency guarantee.",
-  "sourceCommit": "a5e87e572958c8df4a7c0bb541335d425b875079"
+  "sourceCommit": "4df9560d75e5cac411545be75f1c8d21cf0f72ec"
 }

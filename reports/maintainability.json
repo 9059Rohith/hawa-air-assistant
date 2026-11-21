@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-21T11:11:52.193Z",
+  "measuredAt": "2026-11-21T11:46:19.765Z",
   "basis": "Same ESLint complexity threshold of 15 before and after this change",
   "before": [
     {
@@ -103,8 +103,8 @@
   "enforcedApplicationRules": {
     "complexity": 15
   },
-  "vitestCases": 528,
-  "sourceCommit": "a5e87e572958c8df4a7c0bb541335d425b875079",
-  "sourceModules": 73,
+  "vitestCases": 559,
+  "sourceCommit": "4df9560d75e5cac411545be75f1c8d21cf0f72ec",
+  "sourceModules": 74,
   "clientRoots": 23
 }
