@@ -6,17 +6,17 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **559 passed (472 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **94.77% lines**, 93.27% statements, 87.6% branches, 92% functions                                                  |
+| Unit/component/API tests                     | **590 passed (503 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **95.29% lines**, 93.91% statements, 88.19% branches, 92.68% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **56 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **60 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
 | Modern home JavaScript                       | **117,492 gzip bytes (114.7 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 590 historical blobs scanned after the application commit                                            |
+| Working-tree and Git-history secret patterns | **0 matches**; 624 historical blobs scanned after the application commit                                            |
 | Build artifact credential scan               | **0 matches across 46 files**                                                                                       |
 | Submission source                            | Approximately **1.1 MB**, below 10 MB; source-size gate is stricter at 8 MB                                         |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
@@ -25,15 +25,27 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 559 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 56/56. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 590 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 60/60. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Focused guidance retrieval
+## Strict sharing and speech lifecycle
+
+Shared links now use the same strict schema when created and read: version, language and one to ten curated action IDs only. Unexpected metadata and invalid selections are rejected, closing the mismatch between the privacy assurance and permissive parsing. Valid links still round-trip; the existing Share button remains disabled when no action is selected.
+
+A dedicated speech hook owns utterances and their callbacks. Natural completion and browser errors reset the controls. Text/language changes, Clear and unmount cancel playback; stale callbacks cannot change a newer session. Browser failures are recoverable and localized, buttons do not submit enclosing forms, and Hindi Pause/Stop labels are distinct. Both the speech hook and share module have **100% lines, statements, branches and functions covered**. Speech tests simulate browser APIs, not physical audio output. See [ADR 0010](adr/0010-share-contract-and-speech-ownership.md).
+
+Version **17** is deployed from `719a0bceb7030827db0fcd9b743e6e74d2272dd0` at the same public URL. All **60 local and 60 production desktop/mobile tests** pass without failures, skips or flaky results. All 15 production axe states have zero detected violations and runtime errors. Home JavaScript remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget. Whole-source line coverage is **95.29%**. No new paid AI call was needed for this UI/share change; previous unmocked AI evidence below retains its original release and timestamp.
+
+The first new component-test run used a guessed Hindi read label; the observed label was corrected to “सुनें”. It also exposed identical Pause/Stop labels, which were fixed in the application. The final complete suites pass. GitHub-hosted CI remains blocked by the account billing lock; local checks and deployed browser verification are reported separately. No new external judging score has been observed.
+
+A final specification review identified that cancelling speech does not clear the browser engine’s paused state. Restart now resumes that engine, including Pause → Stop → Read; regression doubles preserve native pause semantics. The first browser run also matched Next.js’s route announcer as well as the speech error. The selector now identifies the speech error specifically, retaining the visibility and recovery assertions.
+
+## Previous version 16 focused guidance retrieval
 
 Chat retrieval is separated from urgent routing and response formatting. A reusable index matches normalized whole words and explicit word variants, then retains the strongest query coverage with deterministic heading/order tie-breaking. Queries are bounded before normalization. Specific mask-fit questions no longer bring in filter-maintenance or pet guidance, and car does not match carbon. Hindi smoke spellings and the bus term remain supported. The library browsing search is unchanged.
 
 The new retrieval module has **100% lines, statements, branches and functions covered**. A targeted six-case comparison against the previous committed retriever improves from **2/6 to 6/6**, without model calls. These specified regression cases are not a general precision/recall benchmark or predicted judging score. See [ADR 0009](adr/0009-focused-guidance-retrieval.md) and [case evidence](../reports/retrieval-quality.json).
 
-Version **16** is deployed from `4df9560d75e5cac411545be75f1c8d21cf0f72ec` at the unchanged public URL. All **56 production desktop/mobile tests** pass with no failures, skips or flaky cases; all 15 production axe states have zero detected violations and runtime errors. Home JavaScript remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget.
+Version **16** was deployed from `4df9560d75e5cac411545be75f1c8d21cf0f72ec` at the unchanged public URL. All **56 production desktop/mobile tests** pass with no failures, skips or flaky cases; all 15 production axe states have zero detected violations and runtime errors. Home JavaScript remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget.
 
 One actual production question, “How should a mask fit?”, passed through the shipped client and decoder and returned HTTP 200, mode `llm`, and only the `mask-fit` citation in **2,713 ms**. This single integration sample does not establish general model quality or a latency guarantee.
 

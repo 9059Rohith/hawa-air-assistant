@@ -9,8 +9,8 @@ Challenge 6: Urban Air Quality Assistant. The core application is implemented, p
 | Public narrated and captioned demo | [Watch the 3:08 demonstration](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view)                                                                                           |
 | Repository size                    | Approximately 1.1 MB of submission source; below the 10 MB limit                                                                                                                                 |
 | Implementation coverage            | [Original-brief traceability](TRACEABILITY.md), with explicit modelling and hosting decisions                                                                                                    |
-| Verification                       | 559 Vitest cases (including 87 acceptance cases), 100% domain coverage, 94.77% overall lines; 56 production desktop/mobile browser tests; 15 axe page/theme states with zero detected violations |
-| Build, lint and strict types       | Passed; production Worker deployed as version 16 from `4df9560d75e5cac411545be75f1c8d21cf0f72ec`                                                                                                 |
+| Verification                       | 590 Vitest cases (including 87 acceptance cases), 100% domain coverage, 95.29% overall lines; 60 production desktop/mobile browser tests; 15 axe page/theme states with zero detected violations |
+| Build, lint and strict types       | Passed; production Worker deployed as version 17 from `719a0bceb7030827db0fcd9b743e6e74d2272dd0`                                                                                                 |
 | Live integrations                  | Actual OpenAI chat verified through the shipped client; prior plan and browser-air evidence retains its release timestamp                                                                        |
 | GitHub CI                          | Workflow activated, but GitHub blocks all job steps because of the account billing lock                                                                                                          |
 | Hack2skill draft                   | Existing links retained; owner has submitted once. This improvement pass does not use a remaining attempt                                                                                        |
@@ -18,7 +18,7 @@ Challenge 6: Urban Air Quality Assistant. The core application is implemented, p
 
 The refreshed demo replaced the existing Drive file version without changing its public link. The sharing dialog confirms **Anyone with the link — Viewer**. It records labelled manual data and loaded-page offline rules mode; the separate real AI check is not portrayed as part of that recording.
 
-GitHub metadata rechecked on 21 November 2026 confirms a public repository and a reported size of **1,286 KiB**, below the 10 MB submission limit. See [repository evidence](../reports/repository.json).
+GitHub metadata rechecked on 21 November 2026 confirms a public repository and a reported size of **1,431 KiB**, below the 10 MB submission limit. See [repository evidence](../reports/repository.json).
 
 See [the quality report](QUALITY_REPORT.md) for dated measurements, an earlier intermittent browser-test failure, subsequent passing runs, accessibility review limits and the platform-managed Lighthouse finding. Documentation/evidence commits after the deployed source revision do not change the application bundle.
 
