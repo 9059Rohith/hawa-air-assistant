@@ -11,6 +11,7 @@ import { baseProfile } from "@/data/personas";
 import type { Profile, Location, Air, Plan } from "@/domain/types";
 import { copy } from "@/i18n";
 type State = {
+  resetSignal: AbortSignal;
   profile: Profile;
   setProfile: (p: Profile) => void;
   location: Location | null;
@@ -28,6 +29,9 @@ type State = {
 const Context = createContext<State | null>(null);
 export function Provider({ children }: { children: ReactNode }) {
   const edited = useRef(false);
+  const [resetController, setResetController] = useState(
+    () => new AbortController(),
+  );
   const [profile, setProfile] = useState(baseProfile),
     [location, setLocation] = useState<Location | null>(null),
     [air, setAir] = useState<Air | null>(null),
@@ -78,6 +82,8 @@ export function Provider({ children }: { children: ReactNode }) {
     }
   }
   function clear() {
+    resetController.abort();
+    setResetController(new AbortController());
     edited.current = true;
     // Clear live sensitive state even when browser persistence is blocked.
     setProfile(baseProfile);
@@ -97,6 +103,7 @@ export function Provider({ children }: { children: ReactNode }) {
   return (
     <Context.Provider
       value={{
+        resetSignal: resetController.signal,
         profile,
         setProfile: (value) => {
           edited.current = true;

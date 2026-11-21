@@ -1,5 +1,54 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test("manual recovery remains available during a stalled city search", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/api/geocode?*", async (route) => {
+    await waiting;
+    await route
+      .fulfill({ json: [{ name: "Delhi", lat: 28.61, lon: 77.21 }] })
+      .catch(() => undefined);
+  });
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Find your city" }).fill("Delhi");
+  await expect(
+    page.getByRole("button", { name: "Stop request" }),
+  ).toBeVisible();
+  await page.getByLabel(/Have a PM2.5/).fill("150");
+  await page.getByRole("button", { name: "Use reading", exact: true }).click();
+  release();
+  await expect(page.getByText(/Your manual reading/)).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Search", exact: true }),
+  ).toBeEnabled();
+  await expect(page.locator('#city-results [role="option"]')).toHaveCount(0);
+});
+
+test("clear data resets an active city lookup and permits another search", async ({
+  page,
+}) => {
+  await page.route("**/api/geocode?*", async (route) => {
+    await route.fulfill({ json: [{ name: "Delhi", lat: 28.61, lon: 77.21 }] });
+  });
+  await page.goto("/");
+  const city = page.getByRole("combobox", { name: "Find your city" });
+  await city.fill("Delhi");
+  await expect(page.locator('#city-results [role="option"]')).toHaveCount(1);
+  await page.getByLabel(/Have a PM2.5/).fill("150");
+  await page
+    .getByRole("button", { name: "Clear my data", exact: true })
+    .click();
+  await expect(city).toHaveValue("");
+  await expect(page.getByLabel(/Have a PM2.5/)).toHaveValue("");
+  await expect(page.locator('#city-results [role="option"]')).toHaveCount(0);
+  await city.fill("Delhi");
+  await expect(page.locator('#city-results [role="option"]')).toHaveCount(1);
+});
+
 async function prepare(page: Page) {
   await page.goto("/");
   await page.getByLabel(/Have a PM2.5/).fill("120");

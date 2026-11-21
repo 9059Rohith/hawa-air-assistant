@@ -173,3 +173,51 @@ it("server recomputes staleness for client snapshots", async () => {
   });
   expect(plan.air.stale).toBe(true);
 });
+it("refuses a cached reading that expires while a failed refresh is in flight", async () => {
+  const now = Date.now(),
+    clock = vi.spyOn(Date, "now").mockReturnValue(now);
+  const fetcher = vi.fn().mockResolvedValueOnce(Response.json(provider));
+  vi.stubGlobal("fetch", fetcher);
+  const load = createBrowserAirClient();
+  await load(cities.Delhi);
+  clock.mockReturnValue(now + 10799999);
+  fetcher.mockImplementationOnce(async () => {
+    clock.mockReturnValue(now + 10800001);
+    throw new Error("Refresh failed");
+  });
+  await expect(load(cities.Delhi)).rejects.toThrow("Refresh failed");
+});
+it("bounds successful air bodies and cancels failed HTTP bodies", async () => {
+  const cancel = vi.fn();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () => new Response(new ReadableStream({ cancel }), { status: 429 }),
+    ),
+  );
+  await expect(createBrowserAirClient()(cities.Delhi)).rejects.toThrow();
+  expect(cancel).toHaveBeenCalledOnce();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(" ".repeat(262145))),
+  );
+  await expect(createBrowserAirClient()(cities.Delhi)).rejects.toThrow(
+    "byte limit",
+  );
+});
+it("ends a stalled air body at the original fetch deadline", async () => {
+  const controller = new AbortController(),
+    cancel = vi.fn();
+  vi.spyOn(AbortSignal, "timeout").mockReturnValue(controller.signal);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(new ReadableStream({ cancel }))),
+  );
+  const result = expect(
+    createBrowserAirClient()(cities.Delhi),
+  ).rejects.toThrow();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  controller.abort();
+  await result;
+  expect(cancel).toHaveBeenCalledOnce();
+});

@@ -1,6 +1,7 @@
 import { LocationSchema, type Air, type Location } from "@/domain/types";
 import { airUrl, parseAir } from "./air-data";
 import { AppError } from "./errors";
+import { readJsonResponse } from "./streams";
 
 /** Tab-memory only: no persistent location history and no shared-host egress. */
 export function createBrowserAirClient() {
@@ -27,14 +28,16 @@ export function createBrowserAirClient() {
     if (existing) return existing;
     const request = (async () => {
       try {
+        const deadline = AbortSignal.timeout(8000);
         const response = await fetch(airUrl(location), {
           mode: "cors",
           credentials: "omit",
           referrerPolicy: "no-referrer",
           redirect: "error",
-          signal: AbortSignal.timeout(8000),
+          signal: deadline,
         });
         if (!response.ok) {
+          void response.body?.cancel().catch(() => undefined);
           const raw = response.headers.get("Retry-After");
           const seconds =
             raw && /^\d+$/.test(raw)
@@ -47,14 +50,18 @@ export function createBrowserAirClient() {
             Math.max(60000, Number.isFinite(seconds) ? seconds * 1000 : 0);
           throw unavailable();
         }
-        const air = parseAir(await response.json(), "open-meteo-browser");
+        const air = parseAir(
+          await readJsonResponse(response, deadline),
+          "open-meteo-browser",
+        );
         cache.delete(key);
         cache.set(key, { air, at: Date.now() });
         if (cache.size > 20) cache.delete(cache.keys().next().value!);
         return air;
       } catch (error) {
         retryAt = Math.max(retryAt, Date.now() + 60000);
-        if (saved && age < 10800000) return { ...saved.air, stale: true };
+        if (saved && Date.now() - saved.at < 10800000)
+          return { ...saved.air, stale: true };
         throw error;
       } finally {
         pending.delete(key);
