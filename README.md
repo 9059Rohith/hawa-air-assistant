@@ -6,7 +6,7 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
-**Completion status:** the core application is implemented and deployed, with **620/620 Vitest cases and 64/64 production browser tests passing**, **100% domain test coverage**, and zero detected axe violations across 15 checked states. Submission links are prepared, but the supplied LinkedIn link describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969.** Code quality scored 89; this follow-up release targets that gap and has not yet been re-evaluated. Future evaluation scores and final placement are not guaranteed. See the [submission handoff](docs/SUBMISSION.md).
+**Completion status:** the existing HAWA application is deployed as **version 19** at the same public URL. The readiness update passes **663/663 Vitest cases**, **70/70 production desktop/mobile browser tests**, **100% domain coverage**, and 24 production axe page/theme/plan states with zero detected violations. [Dated verification](docs/QUALITY_REPORT.md) records production results separately. Submission copy and links are prepared; the saved LinkedIn URL describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969 on 19 November 2026.** This update has not consumed an assessment attempt or received a new score. See the [submission handoff](docs/SUBMISSION.md) and [ready-to-copy fields](docs/SUBMISSION_COPY.md).
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
@@ -29,6 +29,7 @@ A family facing winter smog needs more than an alarming AQI number. It needs pra
 - Configure a five-step profile including child ages, dwelling, ventilation, ceiling height, cooking/heating duration, fuel, mask/activity and time budget; or start with Meera, Ramesh or Ananya. Demo air is clearly identified as illustrative.
 - Generate a plan with up to ten curated actions for indoor air, daily routines, transport, cooking, heating and community participation.
 - Toggle actions in a what-if comparison. Combined exposure effects are recomputed rather than adding percentages.
+- Rebuild after household, city or air-data changes before exporting or asking follow-ups. Print, JSON and bilingual copied summaries follow the selected actions and retain data provenance and scenario limits; clipboard denial leaves selectable text.
 - Inspect every calculation, input and source. Quantitative results are labelled low-confidence scenarios; fuel-energy scenarios are separate from qualitative particle-source guidance; waste benefits are not fabricated.
 - Ask follow-up questions, with validated AI language or rules fallback, knowledge citations and urgent-symptom escalation. Switching to rules mode cancels active AI work and prevents local conversation history from entering a later online request.
 - Focus chat citations using whole-word query coverage, explicit word variants and bounded English/Hindi input. The [targeted retrieval comparison](reports/retrieval-quality.json) records expected references and excluded tangential matches.
@@ -122,7 +123,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Current verified release: **620 Vitest cases passed (including 87 scenario cases); 100% domain coverage; 95.35% overall lines; 64 production desktop/mobile journeys passed; zero axe violations across 15 states; 114.7 KiB home JavaScript; no reported dependency vulnerabilities.** Every reported result comes from a command or browser run. [Quality report](docs/QUALITY_REPORT.md), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json), [15 browser accessibility states](reports/browser-accessibility.json). Local performance is not a production latency promise.
+Current verification: **663 Vitest cases passed (including the same 87 acceptance cases); 100% domain coverage; 95.89% overall lines; 70 desktop/mobile journeys passed; zero axe violations across 24 page/theme/plan states; 114.7 KiB home JavaScript; no reported dependency vulnerabilities.** Production results retain their deployed revision in separate reports. [Quality report](docs/QUALITY_REPORT.md), [readiness evidence](reports/submission-readiness.json), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json). Local performance is not a production latency promise.
 
 ## Project structure and scripts
 

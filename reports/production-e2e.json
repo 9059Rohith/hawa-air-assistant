@@ -1,39 +1,14 @@
 {
-  "verifiedAt": "2026-11-26T11:08:14.450Z",
-  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db",
-  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 64,
+  "measuredAt": "2026-11-26T20:46:34.819Z",
+  "tests": 70,
+  "passed": 70,
   "failed": 0,
-  "workers": 1,
-  "projects": ["desktop", "mobile"],
-  "flows": [
-    "Urgent client alert with zero chat requests; punctuated English and Hindi grounded fallback after HTTP 503",
-    "Mocked browser air forecast reaches a plan without repeat provider requests",
-    "Mocked provider 429 preserves manual recovery",
-    "Manual reading, profile, rules plan, what-if, chat and Hindi",
-    "All routes reflow and expose navigation",
-    "Community, fuel and purifier calculators",
-    "Keyboard location selection and loaded-page offline planning/chat/export at 320px",
-    "Home JavaScript stays below 117,500 bytes gzip",
-    "Validation focus/correction, persisted theme/language, blocked-storage planning, public shared-kit validation, exported actions/impact, provider failure, malformed successful plan response, keyboard skip/Escape",
-    "Truncated AI stream replaces partial text with cited local guidance and re-enables Send",
-    "Community notice handles unavailable clipboard; child-age fields follow household-size changes",
-    "Hidden wizard-step correction links focus invalid inputs; reordered guidance queries combine with topic filters and reset recovery",
-    "Manual recovery during stalled city search; Clear resets query/readings/suggestions and permits a new lookup",
-    "Pending plan/chat cancellation on rules-mode change; contradictory chat provenance recovers to cited guidance",
-    "Focused English/Hindi citations, car versus carbon, and recovery from unknown questions",
-    "Strict shared-kit privacy fields, empty-selection protection and valid share round-trip",
-    "Read-aloud pause/resume, completion, error recovery and Clear cancellation with simulated speech",
-    "Latest language survives reload over saved household data; oversized saved data permits manual planning"
-  ],
-  "priorReleaseObservation": {
-    "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
-    "passed": 13,
-    "failed": 1,
-    "description": "First mobile air-to-plan test lost state during navigation in one full run. Cause not established. Targeted test then passed three consecutive repetitions. Final release passed all fourteen with one worker; intermittent risk is not claimed eliminated."
-  },
-  "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
   "skipped": 0,
   "flaky": 0,
-  "durationMs": 193588.467
+  "projects": ["desktop", "mobile"],
+  "workers": 1,
+  "evidence": "npx playwright test --config .git/worker-playwright.config.ts --workers=1 --reporter=json",
+  "durationMs": 247684.47,
+  "sourceCommit": "eb154df123ac2800b76564f00c6b0a2486f045bb",
+  "versionNumber": 19
 }

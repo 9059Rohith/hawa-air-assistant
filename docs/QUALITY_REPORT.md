@@ -10,6 +10,8 @@ Local verification: **663/663 Vitest cases** (576 unit/component/API/contract ca
 
 See `reports/submission-readiness.json`, `reports/submission-local-accessibility.json` and [ready-to-copy submission fields](SUBMISSION_COPY.md). These automated checks do not establish clinical accuracy, independent assistive-technology review or a new official competition score.
 
+Production version **19**, source `eb154df123ac2800b76564f00c6b0a2486f045bb`, passes **70/70 desktop/mobile browser tests** with zero skipped or flaky cases. All **24 production axe states** have zero detected violations and runtime errors; production home scripts remain **117,494 gzip bytes**. One unmocked production plan passed the shipped client’s schema and request-context checks, returning ten actions in mode `llm` in **6,987 ms**. This is one integration sample, not a latency or model-quality guarantee. See `reports/production-e2e.json`, `reports/submission-production-accessibility.json`, `reports/submission-production-ai.json` and `reports/deployment.json`. The existing public captioned demo still demonstrates the core app flows; the new stale-plan and export regressions are covered separately.
+
 ## Previous version 18 baseline
 
 | Check                                        | Current release result                                                                                              |

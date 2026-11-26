@@ -1,0 +1,12 @@
+{
+  "verifiedAt": "2026-11-26T20:42:33.116Z",
+  "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "sourceCommit": "eb154df123ac2800b76564f00c6b0a2486f045bb",
+  "versionNumber": 19,
+  "client": "requestPlan with production HTTP and full response/context validation",
+  "generatedBy": "llm",
+  "actionCount": 10,
+  "airSource": "manual",
+  "pm25": 120,
+  "elapsedMs": 6987
+}
