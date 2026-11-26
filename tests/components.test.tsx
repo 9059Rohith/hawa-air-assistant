@@ -164,6 +164,20 @@ it("loads sample households without implying live data", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Example household");
   }
 });
+it("restores a newer language choice alongside the saved household", async () => {
+  localStorage.setItem(
+    "hawa-profile-v1",
+    JSON.stringify({ ...baseProfile, adults: 4, lang: "en" }),
+  );
+  localStorage.setItem("hawa-language", "hi");
+  wrap(<Footer />);
+  await waitFor(() => expect(document.documentElement.lang).toBe("hi"));
+  fireEvent.click(screen.getByRole("button", { name: "Save" }));
+  expect(JSON.parse(localStorage.getItem("hawa-profile-v1")!)).toMatchObject({
+    adults: 4,
+    lang: "hi",
+  });
+});
 it("manual PM2.5 creates a labeled data path", async () => {
   wrap(
     <>

@@ -359,6 +359,47 @@ test("theme and language persist across reload; clear removes household preferen
   ).toBeNull();
   await expect(page.getByRole("status")).toContainText("cleared");
 });
+test("new language preferences survive reload over an older saved profile", async ({
+  page,
+}) => {
+  await prepare(page);
+  await page
+    .getByRole("button", { name: "Save profile on this device", exact: true })
+    .click();
+  const saved = await page.evaluate(() =>
+    localStorage.getItem("hawa-profile-v1"),
+  );
+  expect(JSON.parse(saved!).lang).toBe("en");
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+  await expect(
+    page.getByRole("button", { name: "English", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() => localStorage.getItem("hawa-profile-v1")),
+  ).toBe(saved);
+});
+test("oversized saved data cannot block manual planning", async ({ page }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("hawa-profile-v1", " ".repeat(8193)),
+  );
+  await page.goto("/");
+  await expect(page.getByRole("status")).toContainText(
+    "Saved preferences could not be read",
+  );
+  await page.getByLabel(/Have a PM2.5/).fill("120");
+  await page.getByRole("button", { name: "Use reading", exact: true }).click();
+  await page.getByRole("link", { name: /Build my daily plan/ }).click();
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await page.getByLabel(/Use rules mode/).check();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Generated plan" }),
+  ).toBeVisible();
+});
 test("storage denied still supports manual local planning", async ({
   page,
 }) => {

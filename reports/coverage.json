@@ -1,14 +1,14 @@
 {
   "total": {
-    "lines": { "total": 1190, "covered": 1134, "skipped": 0, "pct": 95.29 },
+    "lines": { "total": 1205, "covered": 1149, "skipped": 0, "pct": 95.35 },
     "statements": {
-      "total": 1315,
-      "covered": 1235,
+      "total": 1333,
+      "covered": 1253,
       "skipped": 0,
-      "pct": 93.91
+      "pct": 93.99
     },
-    "functions": { "total": 383, "covered": 355, "skipped": 0, "pct": 92.68 },
-    "branches": { "total": 1322, "covered": 1166, "skipped": 0, "pct": 88.19 },
+    "functions": { "total": 385, "covered": 357, "skipped": 0, "pct": 92.72 },
+    "branches": { "total": 1336, "covered": 1182, "skipped": 0, "pct": 88.47 },
     "branchesTrue": { "total": 0, "covered": 0, "skipped": 0, "pct": 100 }
   },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\middleware.ts": {
@@ -186,10 +186,10 @@
     "branches": { "total": 73, "covered": 56, "skipped": 0, "pct": 76.71 }
   },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\components\\Provider.tsx": {
-    "lines": { "total": 51, "covered": 50, "skipped": 0, "pct": 98.03 },
+    "lines": { "total": 52, "covered": 51, "skipped": 0, "pct": 98.07 },
     "functions": { "total": 11, "covered": 10, "skipped": 0, "pct": 90.9 },
-    "statements": { "total": 54, "covered": 51, "skipped": 0, "pct": 94.44 },
-    "branches": { "total": 17, "covered": 12, "skipped": 0, "pct": 70.58 }
+    "statements": { "total": 56, "covered": 53, "skipped": 0, "pct": 94.64 },
+    "branches": { "total": 21, "covered": 17, "skipped": 0, "pct": 80.95 }
   },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\components\\ReadAloud.tsx": {
     "lines": { "total": 5, "covered": 5, "skipped": 0, "pct": 100 },
@@ -383,6 +383,12 @@
     "statements": { "total": 8, "covered": 7, "skipped": 0, "pct": 87.5 },
     "branches": { "total": 6, "covered": 6, "skipped": 0, "pct": 100 }
   },
+  "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\lib\\profile.ts": {
+    "lines": { "total": 3, "covered": 3, "skipped": 0, "pct": 100 },
+    "functions": { "total": 1, "covered": 1, "skipped": 0, "pct": 100 },
+    "statements": { "total": 4, "covered": 4, "skipped": 0, "pct": 100 },
+    "branches": { "total": 6, "covered": 6, "skipped": 0, "pct": 100 }
+  },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\lib\\rules-plan.ts": {
     "lines": { "total": 4, "covered": 4, "skipped": 0, "pct": 100 },
     "functions": { "total": 1, "covered": 1, "skipped": 0, "pct": 100 },
@@ -438,10 +444,10 @@
     "branches": { "total": 19, "covered": 18, "skipped": 0, "pct": 94.73 }
   },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\services\\rate-limit.ts": {
-    "lines": { "total": 12, "covered": 12, "skipped": 0, "pct": 100 },
-    "functions": { "total": 3, "covered": 3, "skipped": 0, "pct": 100 },
-    "statements": { "total": 13, "covered": 13, "skipped": 0, "pct": 100 },
-    "branches": { "total": 17, "covered": 16, "skipped": 0, "pct": 94.11 }
+    "lines": { "total": 23, "covered": 23, "skipped": 0, "pct": 100 },
+    "functions": { "total": 4, "covered": 4, "skipped": 0, "pct": 100 },
+    "statements": { "total": 25, "covered": 25, "skipped": 0, "pct": 100 },
+    "branches": { "total": 21, "covered": 21, "skipped": 0, "pct": 100 }
   },
   "C:\\Users\\BhaviChasvi\\Downloads\\hawa\\src\\services\\single-flight.ts": {
     "lines": { "total": 10, "covered": 10, "skipped": 0, "pct": 100 },

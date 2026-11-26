@@ -51,11 +51,12 @@ export function Provider({ children }: { children: ReactNode }) {
         )
           setProfile((p) => ({ ...p, lang }));
         if (value) {
-          const { ProfileSchema } = await import("@/domain/types");
-          const parsed = ProfileSchema.parse(JSON.parse(value));
+          const { readProfile } = await import("@/lib/profile");
+          const parsed = readProfile(value, lang);
           if (active && !edited.current) setProfile(parsed);
         }
       } catch {
+        if (!active || edited.current) return;
         setNotice(
           "Saved preferences could not be read. You can continue without saving.",
         );
