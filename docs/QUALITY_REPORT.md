@@ -1,4 +1,4 @@
-# Verified quality report — 21 November 2026
+# Verified quality report — 26 November 2026
 
 Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
 
@@ -6,17 +6,17 @@ Observed software evidence, not an evaluation-score or ranking prediction. The p
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Strict TypeScript                            | Pass                                                                                                                |
 | ESLint + Prettier                            | Pass                                                                                                                |
-| Unit/component/API tests                     | **590 passed (503 unit/component/API/contract + 87 acceptance cases)**                                              |
-| Entire production source coverage            | **95.29% lines**, 93.91% statements, 88.19% branches, 92.68% functions                                              |
+| Unit/component/API tests                     | **620 passed (533 unit/component/API/contract + 87 acceptance cases)**                                              |
+| Entire production source coverage            | **95.35% lines**, 93.99% statements, 88.47% branches, 92.72% functions                                              |
 | Domain coverage                              | **100% lines, statements, branches and functions** for AQI, emissions, impact, safety, selection and schemas        |
 | Production build + OpenNext Worker packaging | Pass                                                                                                                |
-| Desktop/mobile end-to-end tests              | **60 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
+| Desktop/mobile end-to-end tests              | **64 production tests passed**, including urgent/Hindi chat and 320px keyboard/offline journey and script-size gate |
 | axe                                          | **15 page/theme states, zero detected violations**                                                                  |
 | Runtime errors in browser audit              | **0**                                                                                                               |
 | Text/surface contrast                        | All 12 checked pairs exceed 4.5:1                                                                                   |
-| Modern home JavaScript                       | **117,492 gzip bytes (114.7 KiB)**; budget 117,500 bytes                                                            |
+| Modern home JavaScript                       | **117,494 gzip bytes (114.7 KiB)**; budget 117,500 bytes                                                            |
 | Dependency audit                             | **0 reported vulnerabilities**                                                                                      |
-| Working-tree and Git-history secret patterns | **0 matches**; 624 historical blobs scanned after the application commit                                            |
+| Working-tree and Git-history secret patterns | **0 matches**; 656 historical blobs scanned after the application commit                                            |
 | Build artifact credential scan               | **0 matches across 46 files**                                                                                       |
 | Submission source                            | Approximately **1.1 MB**, below 10 MB; source-size gate is stricter at 8 MB                                         |
 | Hosted CI                                    | Workflow active; GitHub account billing lock prevents job execution                                                 |
@@ -25,15 +25,27 @@ Coverage includes unexecuted route shells; low-coverage files are not hidden. Fu
 
 ## Six-criterion comparison update
 
-The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 590 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 60/60. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
+The comparison with Challenge 5 led to stronger cancellation ownership, immediate local urgent guidance, Unicode/punctuation matching, Unicode-aware output guards and feasible travel selection. All 620 Vitest cases pass; 87 of those are also run by an explicit offline evaluator (1,111 checks, zero model calls). Production browser tests pass 64/64. The overall coverage gates now require 90% lines, 85% statements, 80% branches and 80% functions. [Detailed comparison](CHALLENGE_COMPARISON.md).
 
-## Strict sharing and speech lifecycle
+## Ordered throttling and preference restoration
+
+The limiter now expires buckets in accepted-write order and stops at the first live entry. It avoids scanning all clients on normal requests, rejects invalid configuration/time, preserves budgets on clock rollback, and supplies retry advice for the actual constraint. Rejected requests cannot prolong bucket lifetime. It remains per Worker isolate, not a distributed quota.
+
+A three-sample local benchmark used 5,000 active clients and 20,000 accepted requests per sample. Median processing time changed from **1725.82 ms to 75.51 ms** (22.86× in this workload). This is a local microbenchmark, not page-load latency or a production guarantee. The prior committed implementation, method and every sample are recorded in [benchmark evidence](../reports/rate-limit-efficiency.json). A separate 10,000-request reference-model comparison checks correctness, including expiry, ordering, capacity and retry values.
+
+Saved-profile parsing has a dedicated lazy module, an 8,192-code-unit size bound, and full schema validation. A recent language selection survives reload over an older saved profile without rewriting household information. Delayed restore errors cannot overwrite Clear. Both the limiter and saved-profile parser have **100% lines, statements, branches and functions covered**. See [ADR 0011](adr/0011-throttling-and-preference-restoration.md).
+
+Version **18** is deployed from `6e14582e893691b991e1685e18dc8b8e7c0777db` at the unchanged public URL. **620 tests, 64 local browser checks and 64 production browser checks pass**, with no skipped or flaky browser results. Whole-source line coverage is **95.35%**. All 15 production axe states report zero detected violations and runtime errors. Home JavaScript is **117,494 gzip bytes**, inside the unchanged 117,500-byte budget. No paid model calls were needed for these changes; earlier real-AI evidence retains its timestamp.
+
+The initial new lifecycle test matched both a notice and an output element’s implicit status role; the unused output was removed from the test fixture. A reserved test variable name was also corrected. The complete final suites pass without disabling checks. External judging scores have not been reverified.
+
+## Previous version 17 strict sharing and speech lifecycle
 
 Shared links now use the same strict schema when created and read: version, language and one to ten curated action IDs only. Unexpected metadata and invalid selections are rejected, closing the mismatch between the privacy assurance and permissive parsing. Valid links still round-trip; the existing Share button remains disabled when no action is selected.
 
 A dedicated speech hook owns utterances and their callbacks. Natural completion and browser errors reset the controls. Text/language changes, Clear and unmount cancel playback; stale callbacks cannot change a newer session. Browser failures are recoverable and localized, buttons do not submit enclosing forms, and Hindi Pause/Stop labels are distinct. Both the speech hook and share module have **100% lines, statements, branches and functions covered**. Speech tests simulate browser APIs, not physical audio output. See [ADR 0010](adr/0010-share-contract-and-speech-ownership.md).
 
-Version **17** is deployed from `719a0bceb7030827db0fcd9b743e6e74d2272dd0` at the same public URL. All **60 local and 60 production desktop/mobile tests** pass without failures, skips or flaky results. All 15 production axe states have zero detected violations and runtime errors. Home JavaScript remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget. Whole-source line coverage is **95.29%**. No new paid AI call was needed for this UI/share change; previous unmocked AI evidence below retains its original release and timestamp.
+Version **17** was deployed from `719a0bceb7030827db0fcd9b743e6e74d2272dd0` at the same public URL. All **60 local and 60 production desktop/mobile tests** pass without failures, skips or flaky results. All 15 production axe states have zero detected violations and runtime errors. Home JavaScript remains **117,492 gzip bytes**, within the unchanged 117,500-byte budget. Whole-source line coverage is **95.29%**. No new paid AI call was needed for this UI/share change; previous unmocked AI evidence below retains its original release and timestamp.
 
 The first new component-test run used a guessed Hindi read label; the observed label was corrected to “सुनें”. It also exposed identical Pause/Stop labels, which were fixed in the application. The final complete suites pass. GitHub-hosted CI remains blocked by the account billing lock; local checks and deployed browser verification are reported separately. No new external judging score has been observed.
 

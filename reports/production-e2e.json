@@ -1,8 +1,8 @@
 {
-  "verifiedAt": "2026-11-21T12:12:15.255Z",
-  "sourceCommit": "719a0bceb7030827db0fcd9b743e6e74d2272dd0",
+  "verifiedAt": "2026-11-26T11:08:14.450Z",
+  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db",
   "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "passed": 60,
+  "passed": 64,
   "failed": 0,
   "workers": 1,
   "projects": ["desktop", "mobile"],
@@ -23,7 +23,8 @@
     "Pending plan/chat cancellation on rules-mode change; contradictory chat provenance recovers to cited guidance",
     "Focused English/Hindi citations, car versus carbon, and recovery from unknown questions",
     "Strict shared-kit privacy fields, empty-selection protection and valid share round-trip",
-    "Read-aloud pause/resume, completion, error recovery and Clear cancellation with simulated speech"
+    "Read-aloud pause/resume, completion, error recovery and Clear cancellation with simulated speech",
+    "Latest language survives reload over saved household data; oversized saved data permits manual planning"
   ],
   "priorReleaseObservation": {
     "sourceCommit": "be26a46998f6a05403d084d585961671e7846068",
@@ -34,5 +35,5 @@
   "note": "Provider responses are controlled in browser regression tests. Actual production air and AI checks are recorded separately.",
   "skipped": 0,
   "flaky": 0,
-  "durationMs": 139990.05899999998
+  "durationMs": 193588.467
 }

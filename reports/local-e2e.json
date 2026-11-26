@@ -8,5 +8,6 @@
   "projects": ["desktop", "mobile"],
   "workers": 1,
   "evidence": "npx playwright test --workers=1 --reporter=json",
-  "durationMs": 130089.22199999998
+  "durationMs": 130089.22199999998,
+  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db"
 }

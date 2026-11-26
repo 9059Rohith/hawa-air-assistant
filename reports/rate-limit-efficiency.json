@@ -16,5 +16,6 @@
   "baselineMedianMs": 1725.82,
   "currentMedianMs": 75.51,
   "medianRatio": 22.86,
-  "limitation": "Local microbenchmark of a full live table, not production latency or a judging score. Correctness is checked separately against a 10,000-request reference model."
+  "limitation": "Local microbenchmark of a full live table, not production latency or a judging score. Correctness is checked separately against a 10,000-request reference model.",
+  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db"
 }
