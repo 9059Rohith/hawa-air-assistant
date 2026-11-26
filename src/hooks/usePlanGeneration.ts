@@ -4,7 +4,7 @@ import { useHawa } from "@/components/Provider";
 import { localPlan } from "@/lib/rules-plan";
 import { requestPlan } from "@/lib/plan-client";
 export function usePlanGeneration(offline: boolean) {
-  const { profile, location, air, setPlan, setNotice } = useHawa();
+  const { profile, location, air, setAir, setPlan, setNotice } = useHawa();
   const [busy, setBusy] = useState(false);
   const active = useRef<AbortController | null>(null);
   useEffect(() => {
@@ -42,6 +42,7 @@ export function usePlanGeneration(offline: boolean) {
       );
       if (!current()) return;
       if (air.source === "demo") result.air.source = "demo";
+      setAir(result.air);
       setPlan(result);
       setNotice(
         result.generatedBy === "llm"

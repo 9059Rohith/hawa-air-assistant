@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { communityImpact } from "@/domain/impact";
 import { useHawa } from "./Provider";
+import { planInputsMatch } from "@/lib/plan-context";
 import { ReadAloud } from "./ReadAloud";
 import { SharedKit } from "./SharedKit";
 export function Community() {
@@ -139,7 +140,9 @@ function CommunityScenario({
   issues,
   setIssues,
 }: CommunityChoices) {
-  const { plan } = useHawa();
+  const { plan, profile, location, air } = useHawa();
+  const currentPlan =
+    plan && planInputsMatch(plan, profile, location, air) ? plan : null;
   const [count, setCount] = useState(100),
     [adoption, setAdoption] = useState(30);
   const sources = hi
@@ -161,7 +164,7 @@ function CommunityScenario({
       ];
   const valid = Number.isInteger(count) && count >= 1 && count <= 10000;
   const kg = valid
-    ? communityImpact(plan?.impact.co2KgDay ?? 0, count, adoption)
+    ? communityImpact(currentPlan?.impact.co2KgDay ?? 0, count, adoption)
     : 0;
   return (
     <section className="panel">
@@ -197,15 +200,7 @@ function CommunityScenario({
         ))}
       </fieldset>
       <h2>{hi ? "सामूहिक प्रभाव का उदाहरण" : "Collective impact scenario"}</h2>
-      <p>
-        {plan && valid
-          ? hi
-            ? `यदि हर सहभागी परिवार वही एक यात्री वाला परिदृश्य दोहराए तो लगभग ${kg.toFixed(1)} kg यात्रा CO₂/सप्ताह की बचत।`
-            : `About ${kg.toFixed(1)} kg travel CO₂/week avoided if each participating household repeats the same single-commuter scenario.`
-          : hi
-            ? "पहले परिवार की योजना बनाएँ।"
-            : "Build a household plan first to calculate a community scenario."}
-      </p>
+      <p>{communitySummary(hi, !!currentPlan && valid, kg)}</p>
       <p className="fine">
         {hi
           ? "परिवार × भागीदारी × एक यात्री की दैनिक बचत × सात दिन। यह भविष्यवाणी या माप नहीं है। स्वास्थ्य प्रभाव को गुणा नहीं करते।"
@@ -213,6 +208,15 @@ function CommunityScenario({
       </p>
     </section>
   );
+}
+function communitySummary(hi: boolean, ready: boolean, kg: number) {
+  if (!ready)
+    return hi
+      ? "पहले परिवार की योजना बनाएँ।"
+      : "Build a household plan first to calculate a community scenario.";
+  return hi
+    ? `यदि हर सहभागी परिवार वही एक यात्री वाला परिदृश्य दोहराए तो लगभग ${kg.toFixed(1)} kg यात्रा CO₂/सप्ताह की बचत।`
+    : `About ${kg.toFixed(1)} kg travel CO₂/week avoided if each participating household repeats the same single-commuter scenario.`;
 }
 function CommunityInputs({
   hi,

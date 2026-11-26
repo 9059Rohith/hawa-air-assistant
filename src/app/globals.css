@@ -779,6 +779,11 @@ section {
   }
 }
 @media print {
+  .action-list > li[data-included="false"],
+  .scenario-controls,
+  .plan-copy-summary {
+    display: none !important;
+  }
   header,
   .privacy-tools,
   .button-row,
@@ -816,6 +821,16 @@ section {
   h1 {
     font-size: 24pt;
   }
+}
+.plan-copy-summary textarea {
+  min-height: 220px;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.6;
+}
+.scenario-excluded {
+  border-left: 3px solid var(--line);
+  padding-left: 0.75rem;
 }
 .forecast-chart,
 .weekly-chart {

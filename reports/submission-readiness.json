@@ -1,0 +1,84 @@
+{
+  "measuredAt": "2026-11-26T20:38:46.697Z",
+  "sourceBaseCommit": "a072f82d307e688af24c74ae4f4a82f986ae4fca",
+  "workingTreeDirty": true,
+  "application": "existing HAWA",
+  "url": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "unit": {
+    "command": "npx vitest run --coverage --maxWorkers=2",
+    "passed": 663,
+    "failed": 0,
+    "acceptanceCasesIncluded": 87
+  },
+  "evaluation": {
+    "command": "npm run eval",
+    "passed": 87,
+    "assertions": 1111,
+    "modelCalls": 0
+  },
+  "coverage": {
+    "lines": {
+      "total": 1242,
+      "covered": 1191,
+      "skipped": 0,
+      "pct": 95.89
+    },
+    "statements": {
+      "total": 1371,
+      "covered": 1296,
+      "skipped": 0,
+      "pct": 94.52
+    },
+    "functions": {
+      "total": 397,
+      "covered": 371,
+      "skipped": 0,
+      "pct": 93.45
+    },
+    "branches": {
+      "total": 1438,
+      "covered": 1288,
+      "skipped": 0,
+      "pct": 89.56
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "domainCoverage100": true,
+  "browser": {
+    "command": "npx playwright test --workers=1 --reporter=json",
+    "startTime": "2026-11-26T20:34:31.550Z",
+    "duration": 167750.84,
+    "expected": 70,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "projects": ["desktop", "mobile"]
+  },
+  "accessibility": {
+    "states": 24,
+    "violations": 0,
+    "errors": []
+  },
+  "bundle": {
+    "route": "/",
+    "gzipBytes": 117494,
+    "scripts": 9,
+    "budget": 117500,
+    "origin": "http://localhost:3100",
+    "measuredAt": "2026-11-26T20:35:33.242Z"
+  },
+  "build": {
+    "command": "npm run build:sites",
+    "passed": true
+  },
+  "limitations": [
+    "No new official score or assessment attempt",
+    "Saved LinkedIn URL describes CarbonWise; HAWA post still required",
+    "GitHub account billing prevents hosted CI execution"
+  ]
+}

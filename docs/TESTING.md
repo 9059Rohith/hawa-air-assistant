@@ -10,6 +10,8 @@ The rubric regressions cover punctuation and Unicode retrieval, obfuscated outpu
 
 The e2e suite exercises manual data through generated rules plans, action toggles, cited chat, Hindi switching, every route's reflow and community/purifier controls on desktop and mobile. Air/AI service tests mock network responses, while `reports/live-ai.json` records one real provider-backed plan separately.
 
+The submission-readiness update passes 663 Vitest cases (576 unit/component/API/contract plus the same 87 acceptance cases), 70 desktop/mobile browser tests and 24 axe page/theme/plan states. New regressions cover valid-shaped response substitution, changed household/location/air snapshots, accepted provider refreshes, rebuild recovery, display-only language changes, current community projections, empty exports, selected-action print styles and clipboard-denied bilingual summaries. `reports/submission-readiness.json` records the dated run; the earlier 620/64 figures below describe the preceding release.
+
 With the built server running, `node scripts/browser-audit.mjs` checks axe across five routes and three themes, records runtime errors, and produces ignored visual screenshots. `node scripts/check-contrast.mjs` checks palette pairs. `npm run check-bundle` reads actual script tags, excludes legacy `nomodule` scripts that modern browsers do not execute, deduplicates and gzips the build assets.
 
 CI has read-only repository permissions. Its account-level execution status is reported separately from local test success.

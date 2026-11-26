@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-11-26T11:04:50.512Z",
-  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db",
+  "measuredAt": "2026-11-26T20:35:17.697Z",
+  "sourceCommit": "a072f82d307e688af24c74ae4f4a82f986ae4fca",
   "workingTreeDirty": true,
   "mode": "Offline deterministic acceptance evaluation; no model calls",
   "modelCalls": 0,
@@ -8,7 +8,7 @@
   "passed": 87,
   "failed": 0,
   "assertions": 1111,
-  "durationMs": 164,
+  "durationMs": 241,
   "limitations": "These cases check software contracts and scenarios; they do not measure live model quality, medical validity or a competition score.",
   "cases": [
     {

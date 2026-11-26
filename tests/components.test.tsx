@@ -410,7 +410,12 @@ it("workspace generates a plan and preserves it on retry failure", async () => {
     "fetch",
     vi
       .fn()
-      .mockResolvedValueOnce(Response.json(fixture))
+      .mockResolvedValueOnce(
+        Response.json({
+          ...fixture,
+          air: { ...fixture.air, source: "manual" },
+        }),
+      )
       .mockRejectedValueOnce(new Error()),
   );
   wrap(<PlanWorkspace />);
@@ -420,6 +425,9 @@ it("workspace generates a plan and preserves it on retry failure", async () => {
   await screen.findByText(
     "Your rules-based plan is ready. All calculations are available.",
   );
+  expect(
+    screen.queryByRole("region", { name: "Plan needs updating" }),
+  ).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Ask HAWA" }));
   expect(screen.getByLabelText("Your question")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Build my daily plan" }));

@@ -3,12 +3,17 @@ import { useMemo, useState } from "react";
 import { planImpact } from "@/domain/impact";
 import type { Plan } from "@/domain/types";
 import { useHawa } from "./Provider";
-import { ReadAloud } from "./ReadAloud";
 import { ActionCard } from "./ActionCard";
 import { WeeklyProjection } from "./WeeklyProjection";
-import { shareFragment } from "@/lib/share";
-export function PlanView({ plan }: { plan: Plan }) {
-  const { t, profile, setNotice } = useHawa();
+import { PlanActions } from "./PlanActions";
+export function PlanView({
+  plan,
+  outdated = false,
+}: {
+  plan: Plan;
+  outdated?: boolean;
+}) {
+  const { t, profile } = useHawa();
   const hi = profile.lang === "hi";
   const [excluded, setExcluded] = useState<string[]>([]);
   const [commuters, setCommuters] = useState(1);
@@ -20,61 +25,6 @@ export function PlanView({ plan }: { plan: Plan }) {
     () => planImpact(selected, plan.profile, plan.air.pm25),
     [selected, plan],
   );
-  const text = selected.map((a) => (hi ? a.hi.title : a.title)).join("\n");
-  const summary = `${plan.headline}\n${text}\n${totals.percent.toFixed(1)}% · ${(totals.co2KgDay * 7).toFixed(2)} kg CO₂/week`;
-  const notify = (en: string, hin: string) => setNotice(hi ? hin : en);
-  function download() {
-    const url = URL.createObjectURL(
-      new Blob(
-        [
-          JSON.stringify(
-            { ...plan, impact: totals, actions: selected },
-            null,
-            2,
-          ),
-        ],
-        { type: "application/json" },
-      ),
-    );
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "hawa-plan.json";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-  async function share() {
-    try {
-      const url =
-        location.origin +
-        "/community" +
-        shareFragment(
-          selected.map((a) => a.id),
-          profile.lang,
-        );
-      if (navigator.share) await navigator.share({ title: "HAWA", text, url });
-      else await navigator.clipboard.writeText(url);
-      notify(
-        "A link containing only action IDs was shared or copied.",
-        "केवल कदमों की पहचान वाला लिंक साझा या कॉपी हुआ।",
-      );
-    } catch {
-      notify(
-        "Sharing cancelled or unavailable. Print or download instead.",
-        "साझा करना रद्द हुआ या उपलब्ध नहीं है। प्रिंट या डाउनलोड करें।",
-      );
-    }
-  }
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(summary);
-      notify("Summary copied.", "सारांश कॉपी हुआ।");
-    } catch {
-      notify(
-        "Clipboard unavailable. Select the summary text instead.",
-        "क्लिपबोर्ड उपलब्ध नहीं है। सारांश चुनकर कॉपी करें।",
-      );
-    }
-  }
   return (
     <section className="plan-results" aria-label="Generated plan">
       <PlanHeading plan={plan} />
@@ -105,7 +55,7 @@ export function PlanView({ plan }: { plan: Plan }) {
           ? "*समझाने का उदाहरण, धूम्रपान या स्वास्थ्य की भविष्यवाणी नहीं। वयस्क परिदृश्य; मास्क फिट, गतिविधि और इमारत के कारण परिणाम बदलते हैं। यात्रा के पुराने संदर्भ गुणांक हैं, मापा गया निजी उत्सर्जन नहीं।"
           : "*Communication aid, not smoking, a clinical measure or a health prediction. Adult scenario with uncertain mask fit, activity and infiltration. Travel uses dated reference factors, not a current fleet inventory or measured personal emissions."}
       </p>
-      <details className="panel">
+      <details className="panel scenario-controls">
         <summary>{t.whatif}</summary>
         <p>
           {hi
@@ -136,7 +86,14 @@ export function PlanView({ plan }: { plan: Plan }) {
       </details>
       <ol className="action-list">
         {plan.actions.map((a, i) => (
-          <ActionCard key={a.id} action={a} plan={plan} index={i} hi={hi} />
+          <ActionCard
+            key={a.id}
+            action={a}
+            plan={plan}
+            index={i}
+            hi={hi}
+            included={!excluded.includes(a.id)}
+          />
         ))}
       </ol>
       <section className="panel">
@@ -186,17 +143,12 @@ export function PlanView({ plan }: { plan: Plan }) {
           : "Only travel totals scale; child or household health effects are never multiplied."}
       </p>
       <WeeklyProjection kg={totals.co2KgDay * commuters} hi={hi} />
-      <div className="button-row">
-        <button onClick={() => window.print()}>{t.print}</button>
-        <button onClick={download}>{t.download}</button>
-        <button disabled={!selected.length} onClick={() => void share()}>
-          {hi ? "लिंक साझा / कॉपी करें" : "Share / copy"}
-        </button>
-        <button onClick={() => void copy()}>
-          {hi ? "सारांश कॉपी करें" : "Copy summary"}
-        </button>
-      </div>
-      <ReadAloud text={summary} />
+      <PlanActions
+        plan={plan}
+        selected={selected}
+        impact={totals}
+        outdated={outdated}
+      />
     </section>
   );
 }

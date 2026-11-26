@@ -524,3 +524,105 @@ test("keyboard skip and city Escape return control without selecting stale resul
   await expect(city).not.toHaveAttribute("aria-activedescendant");
   await expect(city).toBeFocused();
 });
+
+test("changed household requires rebuilding before export and follow-up", async ({
+  page,
+}) => {
+  await buildLocal(page);
+  await page.getByRole("button", { name: "1. Household", exact: true }).click();
+  await page.getByLabel("Adults", { exact: true }).fill("4");
+  await expect(
+    page.getByRole("region", { name: "Plan needs updating" }),
+  ).toBeVisible();
+  for (const name of [
+    "Print",
+    "Download JSON",
+    "Share / copy",
+    "Copy summary",
+    "Ask HAWA",
+  ])
+    await expect(
+      page.getByRole("button", { name, exact: true }),
+    ).toBeDisabled();
+  await page.getByRole("button", { name: "Review & build" }).click();
+  await page
+    .getByRole("button", { name: "Build my daily plan", exact: true })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Plan needs updating" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Download JSON" }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "सारांश कॉपी करें", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    page.getByRole("region", { name: "योजना अपडेट करें" }),
+  ).toHaveCount(0);
+});
+
+test("print includes only selected actions and empty selections block output", async ({
+  page,
+}) => {
+  await buildLocal(page);
+  await page.locator(".scenario-controls summary").click();
+  const selections = page.locator(".scenario-controls").getByRole("checkbox");
+  await selections.first().uncheck();
+  const excluded = page.locator('.action-list > li[data-included="false"]');
+  await expect(excluded).toBeVisible();
+  await expect(excluded).toContainText("Not included in the selected scenario");
+  await page.emulateMedia({ media: "print" });
+  await expect(excluded).toBeHidden();
+  await expect(
+    page.locator('.action-list > li[data-included="true"]').first(),
+  ).toBeVisible();
+  await expect(page.locator(".scenario-controls")).toBeHidden();
+  await page.emulateMedia({ media: "screen" });
+  for (const selection of await selections.all()) await selection.uncheck();
+  for (const name of ["Print", "Download JSON", "Share / copy", "Copy summary"])
+    await expect(
+      page.getByRole("button", { name, exact: true }),
+    ).toBeDisabled();
+});
+
+test("blocked clipboard exposes selected summary with provenance and limits", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async () => {
+          throw new Error("Clipboard blocked");
+        },
+      },
+    });
+  });
+  await buildLocal(page);
+  await page.locator(".scenario-controls summary").click();
+  const excludedTitle = await page
+    .locator(".action-list > li h3")
+    .first()
+    .innerText();
+  await page
+    .locator(".scenario-controls")
+    .getByRole("checkbox")
+    .first()
+    .uncheck();
+  await page.getByRole("button", { name: "Copy summary", exact: true }).click();
+  const summary = page.getByLabel("Summary with source and limits", {
+    exact: true,
+  });
+  await expect(summary).toBeVisible();
+  const copied = await summary.inputValue();
+  expect(copied).toContain("User-entered PM2.5");
+  expect(copied).toContain("Low-confidence scenario");
+  expect(copied).toContain("not medical advice");
+  expect(copied).not.toContain(excludedTitle);
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await expect(
+    page.getByLabel("स्रोत और सीमाओं सहित सारांश", { exact: true }),
+  ).toHaveValue(/चिकित्सकीय सलाह नहीं/);
+});

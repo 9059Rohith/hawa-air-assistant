@@ -1,6 +1,16 @@
-# Verified quality report — 26 November 2026
+# Verified quality report — 27 November 2026
 
 Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
+
+## Plan consistency and submission readiness
+
+This update preserves the existing HAWA application, public URL and repository. Changed household, location or air inputs now mark the previous plan outdated and require rebuilding through the validated wizard before export or follow-up. Community projections use only current inputs. Online responses are bound to the requested household, location and air provenance. Print, JSON and copied summaries agree on selected actions; empty outputs are disabled. Bilingual summaries retain source, timestamps, units and scenario limits, with selectable text when clipboard access fails. [Decision and regression boundaries](adr/0012-plan-context-and-output-consistency.md).
+
+Local verification: **663/663 Vitest cases** (576 unit/component/API/contract cases plus the same 87 acceptance scenarios), **95.89% overall line coverage**, **100% domain coverage**, **70/70 desktop/mobile browser tests**, and **24 axe page/theme/plan states with zero detected violations or runtime errors**. Strict types, lint, production build, contrast and the unchanged **117,500-byte** home JavaScript gate pass; measured home scripts remain **117,494 gzip bytes**. The initial full unit run passed 662 cases; after adding a refreshed-air regression, a concurrent build/coverage run timed out before one existing city-search request began. The final complete coverage run with two workers passed all 663, retaining the same assertions and coverage thresholds.
+
+See `reports/submission-readiness.json`, `reports/submission-local-accessibility.json` and [ready-to-copy submission fields](SUBMISSION_COPY.md). These automated checks do not establish clinical accuracy, independent assistive-technology review or a new official competition score.
+
+## Previous version 18 baseline
 
 | Check                                        | Current release result                                                                                              |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -163,11 +173,11 @@ Real browser Open-Meteo Delhi data was separately observed at 115.9 µg/m³ (sou
 
 - The public application and repository use the existing links in README. Vercel/Railway account restrictions do not block this Sites deployment.
 - GitHub's billing lock must be resolved by the account owner before hosted CI can execute. Local checks are not presented as hosted CI success.
-- The owner-provided LinkedIn link is entered in the form, but browser verification found it describes CarbonWise, not HAWA. Replace it with a HAWA-specific post. The portal still shows no assessment results or attempts; final submission remains with the owner.
+- The saved LinkedIn link describes CarbonWise, not HAWA. Replace it with a HAWA-specific post using the prepared draft. The last observed portal assessment was 96.94/100 on 19 November, with one of three attempts used. The old deep link returned an unauthenticated 404 on 27 November; the event entry still reaches sign-in. No new score or consumed attempt is claimed.
 - The public captioned demo was refreshed from the deployed application (3 minutes 8 seconds), including loaded-page offline planning, community tools and calculators. It uses labelled manual data and rules mode; real AI is verified separately.
 - Independent NVDA/VoiceOver and professional Hindi review are not claimed. Some source names and technical explanations remain English.
 - No medical validation, empirical local calibration, full regulatory certification, or Docker runtime verification is claimed.
 - Loaded-page offline use works; first visits and uncached page loads need internet. No service-worker installation claim is made.
 - A key pasted into conversation should be rotated through its provider account. No key value is in committed source or packaged artifacts.
 
-The core problem statement is implemented and verified, and all required form fields are prepared. Official assessment remains pending and hosted CI is blocked by the account billing restriction. A 100% evaluation score or top-1% ranking is not claimed. See [traceability](TRACEABILITY.md) for the detailed brief and justified design boundaries.
+The core problem statement is implemented and verified, and submission copy is prepared. A HAWA-specific public LinkedIn URL and owner resubmission remain external steps. A new assessment is pending, and hosted CI is blocked by the account billing restriction. A 100% evaluation score or top-1% ranking is not claimed. See [traceability](TRACEABILITY.md) for the detailed brief and justified design boundaries.

@@ -9,15 +9,17 @@ export function ActionCard({
   plan,
   index,
   hi,
+  included = true,
 }: {
   action: Plan["actions"][number];
   plan: Plan;
   index: number;
   hi: boolean;
+  included?: boolean;
 }) {
   const when = actionTiming(a, plan, hi);
   return (
-    <li>
+    <li data-included={included}>
       <div className="action-index">{String(index + 1).padStart(2, "0")}</div>
       <article>
         <small>
@@ -25,6 +27,13 @@ export function ActionCard({
           {a.effort}/3 · {a.minutes} {hi ? "मिनट" : "min"}
         </small>
         <h3>{hi ? a.hi.title : a.title}</h3>
+        {!included && (
+          <p className="fine scenario-excluded">
+            {hi
+              ? "चुने गए परिदृश्य में शामिल नहीं"
+              : "Not included in the selected scenario"}
+          </p>
+        )}
         <p>
           {plan.profile.lang === (hi ? "hi" : "en")
             ? a.why

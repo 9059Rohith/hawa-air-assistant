@@ -1,13 +1,14 @@
 {
-  "measuredAt": "2026-11-26T11:03:01.992Z",
-  "tests": 64,
-  "passed": 64,
+  "measuredAt": "2026-11-26T20:38:46.784Z",
+  "tests": 70,
+  "passed": 70,
   "failed": 0,
   "skipped": 0,
   "flaky": 0,
   "projects": ["desktop", "mobile"],
   "workers": 1,
   "evidence": "npx playwright test --workers=1 --reporter=json",
-  "durationMs": 130089.22199999998,
-  "sourceCommit": "6e14582e893691b991e1685e18dc8b8e7c0777db"
+  "durationMs": 167750.84,
+  "sourceBaseCommit": "a072f82d307e688af24c74ae4f4a82f986ae4fca",
+  "workingTreeDirty": true
 }

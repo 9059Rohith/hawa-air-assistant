@@ -48,6 +48,9 @@ function Controls() {
         Seed
       </button>
       <button onClick={s.clear}>Clear</button>
+      <button onClick={() => s.setAir({ ...air, source: "open-meteo" })}>
+        Use live reading
+      </button>
       <button onClick={() => s.setProfile({ ...s.profile, budget: "free" })}>
         Change budget
       </button>
@@ -66,6 +69,27 @@ function setup() {
   fireEvent.click(screen.getByText("Seed"));
   return view;
 }
+
+it("accepts a refreshed provider snapshot without immediately invalidating its plan", async () => {
+  const refreshed = {
+    ...plan,
+    air: { ...air, source: "open-meteo" as const, pm25: 75 },
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => Response.json(refreshed)),
+  );
+  setup();
+  fireEvent.click(screen.getByText("Use live reading"));
+  fireEvent.click(screen.getByText("Generate"));
+  await waitFor(() =>
+    expect(screen.getByTestId("current")).toHaveTextContent(refreshed.headline),
+  );
+  expect(
+    screen.queryByRole("region", { name: "Plan needs updating" }),
+  ).toBeNull();
+  expect(screen.getByRole("button", { name: "Ask HAWA" })).toBeEnabled();
+});
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
