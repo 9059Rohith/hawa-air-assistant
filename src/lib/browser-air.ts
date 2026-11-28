@@ -1,3 +1,4 @@
+import { FRESH_AIR_MS, MAX_AIR_AGE_MS } from "@/lib/air-freshness";
 import { LocationSchema, type Air, type Location } from "@/domain/types";
 import { airUrl, parseAir } from "./air-data";
 import { AppError } from "./errors";
@@ -19,9 +20,9 @@ export function createBrowserAirClient() {
     const key = `${location.lat.toFixed(2)},${location.lon.toFixed(2)}`;
     const saved = cache.get(key);
     const age = saved ? Date.now() - saved.at : Infinity;
-    if (saved && age < 900000) return saved.air;
+    if (saved && age < FRESH_AIR_MS) return saved.air;
     if (Date.now() < retryAt) {
-      if (saved && age < 10800000) return { ...saved.air, stale: true };
+      if (saved && age < MAX_AIR_AGE_MS) return { ...saved.air, stale: true };
       throw unavailable();
     }
     const existing = pending.get(key);
@@ -60,7 +61,7 @@ export function createBrowserAirClient() {
         return air;
       } catch (error) {
         retryAt = Math.max(retryAt, Date.now() + 60000);
-        if (saved && Date.now() - saved.at < 10800000)
+        if (saved && Date.now() - saved.at < MAX_AIR_AGE_MS)
           return { ...saved.air, stale: true };
         throw error;
       } finally {

@@ -79,3 +79,46 @@ it("keeps deterministic impact while adding validated personalized explanations"
     localPlan(baseProfile, cities.Delhi, plan.air).impact,
   );
 });
+
+it.each(["manual", "demo"] as const)(
+  "retains the original %s observation on first build and cache hit",
+  async (source) => {
+    const localAir = {
+      ...manualAir(115),
+      source,
+      observedAt: "2026-11-20T09:00:00Z",
+    };
+    const input = {
+      profile: baseProfile,
+      location: cities.Delhi,
+      offline: true,
+      localAir,
+    };
+    expect((await buildPlan(input)).air).toEqual(localAir);
+    const updated = { ...localAir, observedAt: "2026-11-20T10:00:00Z" };
+    expect((await buildPlan({ ...input, localAir: updated })).air).toEqual(
+      updated,
+    );
+  },
+);
+
+it("preserves an illustrative forecast without promoting it to live data", async () => {
+  const localAir = {
+    ...manualAir(75),
+    source: "demo",
+    hourly: [{ time: "2026-11-20T10:00", pm25: 32 }],
+  };
+  const input = {
+    profile: baseProfile,
+    location: cities.Delhi,
+    offline: true,
+    localAir,
+  };
+  expect((await buildPlan(input)).air).toEqual(localAir);
+  await expect(
+    buildPlan({ ...input, localAir: { ...localAir, source: "manual" } }),
+  ).rejects.toThrow();
+  await expect(buildPlan({ ...input, manualPm: 0 })).rejects.toThrow(
+    "one source",
+  );
+});

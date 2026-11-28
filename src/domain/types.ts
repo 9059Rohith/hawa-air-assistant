@@ -87,36 +87,51 @@ export const AirSchema = z.object({
   timezone: z.string(),
 });
 export type Air = z.infer<typeof AirSchema>;
+const boundedSnapshot = AirSchema.extend({
+  fetchedAt: z.string().datetime(),
+  observedAt: z.string().min(1).max(40),
+  timezone: z.string().min(1).max(80),
+  hourly: z
+    .array(
+      z
+        .object({
+          time: z.string().max(40),
+          pm25: z.number().min(0).max(10000),
+        })
+        .strict(),
+    )
+    .max(48),
+}).strict();
+
 export const RequestSchema = z
   .object({
     profile: ProfileSchema,
     location: LocationSchema,
     manualPm: z.number().min(0).max(1000).optional(),
     offline: z.boolean().optional(),
+    localAir: boundedSnapshot
+      .extend({
+        source: z.enum(["manual", "demo"]),
+        pm25: z.number().min(0).max(1000),
+        observedAt: z.string().datetime(),
+      })
+      .refine((air) => air.source === "demo" || air.hourly.length === 0, {
+        message: "A manual measurement cannot supply a forecast.",
+      })
+      .optional(),
     browserAir: z
       .object({
         location: LocationSchema,
-        air: AirSchema.extend({
+        air: boundedSnapshot.extend({
           source: z.literal("open-meteo-browser"),
-          fetchedAt: z.string().datetime(),
-          observedAt: z.string().min(1).max(40),
-          timezone: z.string().min(1).max(80),
-          hourly: z
-            .array(
-              z
-                .object({
-                  time: z.string().max(40),
-                  pm25: z.number().min(0).max(10000),
-                })
-                .strict(),
-            )
-            .max(48),
-        }).strict(),
+        }),
       })
       .strict()
       .optional(),
   })
   .strict();
+
+export type PlanRequest = z.infer<typeof RequestSchema>;
 
 export const ActionSchema = z.object({
   id: z.string(),

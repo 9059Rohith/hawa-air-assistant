@@ -1,4 +1,5 @@
 "use client";
+import { localReading } from "@/lib/local-reading";
 import Link from "next/link";
 import { useHawa } from "./Provider";
 import { LocationForm } from "./LocationForm";
@@ -68,15 +69,7 @@ export function Home() {
               onClick={() => {
                 setProfile({ ...p, lang: profile.lang });
                 setLocation([cities.Delhi, cities.Lucknow, cities.Kolkata][i]!);
-                setAir({
-                  pm25: 120,
-                  hourly: [],
-                  fetchedAt: new Date().toISOString(),
-                  observedAt: new Date().toISOString(),
-                  source: "demo",
-                  stale: false,
-                  timezone: "Asia/Kolkata",
-                });
+                setAir(localReading(120, "demo"));
                 setNotice(
                   "Example household loaded. Review its details before generating a plan.",
                 );

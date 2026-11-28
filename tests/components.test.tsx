@@ -410,12 +410,7 @@ it("workspace generates a plan and preserves it on retry failure", async () => {
     "fetch",
     vi
       .fn()
-      .mockResolvedValueOnce(
-        Response.json({
-          ...fixture,
-          air: { ...fixture.air, source: "manual" },
-        }),
-      )
+      .mockResolvedValueOnce(Response.json(fixture))
       .mockRejectedValueOnce(new Error()),
   );
   wrap(<PlanWorkspace />);
@@ -596,6 +591,13 @@ it("child ages stay synchronized when the number of children decreases", () => {
   });
   fireEvent.blur(screen.getByLabelText(/Children’s ages/), {
     target: { value: "5, 8" },
+  });
+  expect(screen.getByLabelText(/Children’s ages/)).toHaveValue("5, 8");
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "" },
+  });
+  fireEvent.change(screen.getByLabelText("Children"), {
+    target: { value: "2" },
   });
   expect(screen.getByLabelText(/Children’s ages/)).toHaveValue("5, 8");
   fireEvent.change(screen.getByLabelText("Children"), {

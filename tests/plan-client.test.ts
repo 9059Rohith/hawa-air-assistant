@@ -12,7 +12,7 @@ it.each(["manual", "demo", "open-meteo", "open-meteo-browser"] as const)(
   async (source) => {
     const responsePlan = {
       ...plan,
-      air: { ...air, source: source === "demo" ? "manual" : source },
+      air: { ...air, source },
     };
     const fetcher = vi.fn<
       (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
@@ -34,7 +34,7 @@ it.each(["manual", "demo", "open-meteo", "open-meteo-browser"] as const)(
     } else if (source === "open-meteo") {
       expect(payload.manualPm).toBeUndefined();
       expect(payload.browserAir).toBeUndefined();
-    } else expect(payload.manualPm).toBe(130);
+    } else expect(payload.localAir).toEqual({ ...air, source });
   },
 );
 it("cancels an HTTP error body instead of consuming unbounded diagnostic text", async () => {
@@ -113,3 +113,27 @@ it.each([
     requestPlan(baseProfile, cities.Delhi, input, new AbortController().signal),
   ).rejects.toThrow(/air snapshot/);
 });
+
+it.each(["manual", "demo"] as const)(
+  "rejects a rewritten %s observation time even at the same concentration",
+  async (source) => {
+    const input = { ...air, source, observedAt: "2026-11-01T08:30:00Z" };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json({
+          ...plan,
+          air: { ...input, observedAt: "2026-11-01T09:30:00Z" },
+        }),
+      ),
+    );
+    await expect(
+      requestPlan(
+        baseProfile,
+        cities.Delhi,
+        input,
+        new AbortController().signal,
+      ),
+    ).rejects.toThrow("air snapshot");
+  },
+);

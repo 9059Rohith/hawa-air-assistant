@@ -1,3 +1,4 @@
+import { FRESH_AIR_MS, MAX_AIR_AGE_MS } from "@/lib/air-freshness";
 import { z } from "zod";
 import { readJsonResponse } from "@/lib/streams";
 import { Cache } from "./cache";
@@ -12,7 +13,7 @@ export async function getAir(location: Location): Promise<Air> {
   const lat = location.lat.toFixed(2),
     lon = location.lon.toFixed(2),
     key = `${lat},${lon}`;
-  const fresh = cache.get(key, 900000);
+  const fresh = cache.get(key, FRESH_AIR_MS);
   if (fresh) return fresh;
   return airFlight.run(key, async () => {
     try {
@@ -27,23 +28,13 @@ export async function getAir(location: Location): Promise<Air> {
       cache.set(key, air);
       return air;
     } catch (error) {
-      const stale = cache.get(key, 10800000);
+      const stale = cache.get(key, MAX_AIR_AGE_MS);
       if (stale) return { ...stale, stale: true };
       throw error;
     }
   });
 }
-export function manualAir(pm25: number): Air {
-  return {
-    pm25,
-    hourly: [],
-    fetchedAt: new Date().toISOString(),
-    observedAt: new Date().toISOString(),
-    source: "manual",
-    stale: false,
-    timezone: "UTC",
-  };
-}
+export { localReading as manualAir } from "@/lib/local-reading";
 const geo = z.object({
   results: z
     .array(

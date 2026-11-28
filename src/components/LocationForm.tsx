@@ -1,4 +1,5 @@
 "use client";
+import { localReading } from "@/lib/local-reading";
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { Location } from "@/domain/types";
 import { useHawa } from "./Provider";
@@ -24,7 +25,7 @@ export function LocationForm() {
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadId = useRef(0);
   const invalidate = useCallback(() => {
-    ++loadId.current;
+    loadId.current += 1;
     searchAbort.current?.abort();
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
   }, []);
@@ -33,6 +34,7 @@ export function LocationForm() {
     setResults([]);
     setActive(-1);
     setBusy(false);
+    return loadId.current;
   }, [invalidate]);
   useEffect(() => {
     stop();
@@ -40,21 +42,21 @@ export function LocationForm() {
     setManual("");
     return invalidate;
   }, [resetSignal, stop, invalidate]);
-  async function load(l: Location) {
-    stop();
-    const id = ++loadId.current;
-    searchAbort.current?.abort();
-    setResults([]);
-    setActive(-1);
-    setLocation(l);
+  const isCurrent = useCallback(
+    (id: number) => id === loadId.current && !resetSignal.aborted,
+    [resetSignal],
+  );
+  async function load(selected: Location) {
+    const id = stop();
+    setLocation(selected);
     setAir(null);
     setPlan(null);
     setBusy(true);
     try {
       const { loadBrowserAir } = await import("@/lib/browser-air");
-      if (id !== loadId.current || resetSignal.aborted) return;
-      const reading = await loadBrowserAir(l);
-      if (id !== loadId.current || resetSignal.aborted) return;
+      if (!isCurrent(id)) return;
+      const reading = await loadBrowserAir(selected);
+      if (!isCurrent(id)) return;
       setAir(reading);
       setNotice(
         reading.stale
@@ -62,19 +64,17 @@ export function LocationForm() {
           : "Air data updated directly from Open-Meteo.",
       );
     } catch {
-      if (id !== loadId.current || resetSignal.aborted) return;
+      if (!isCurrent(id)) return;
       setNotice(
         "Live data is unavailable. Retry or enter a PM2.5 reading below.",
       );
     } finally {
-      if (id === loadId.current && !resetSignal.aborted) setBusy(false);
+      if (isCurrent(id)) setBusy(false);
     }
   }
   const search = useCallback(async () => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
     if (q.trim().length < 2) return;
-    stop();
-    const id = loadId.current;
+    const id = stop();
     const controller = new AbortController();
     searchAbort.current = controller;
     setBusy(true);
@@ -84,23 +84,22 @@ export function LocationForm() {
         q,
         AbortSignal.any([controller.signal, resetSignal]),
       );
-      if (id !== loadId.current || resetSignal.aborted) return;
+      if (!isCurrent(id)) return;
       setResults(places);
-      setActive(-1);
       setNotice(
         places.length
           ? `${places.length} locations found. Choose one below.`
           : "No locations found. Try a nearby city.",
       );
     } catch {
-      if (controller.signal.aborted || resetSignal.aborted) return;
+      if (!isCurrent(id)) return;
       setNotice(
         "Search is unavailable. Try a nearby city or enter PM2.5 manually.",
       );
     } finally {
-      if (id === loadId.current && !resetSignal.aborted) setBusy(false);
+      if (isCurrent(id)) setBusy(false);
     }
-  }, [q, setNotice, resetSignal, stop]);
+  }, [q, setNotice, resetSignal, stop, isCurrent]);
   useEffect(() => {
     const timer = setTimeout(() => {
       if (q.trim().length >= 2) void search();
@@ -112,16 +111,15 @@ export function LocationForm() {
     };
   }, [q, search]);
   function locate() {
-    stop();
+    const id = stop();
     if (!navigator.geolocation) {
       setNotice("Location access is unavailable. Search for your city.");
       return;
     }
-    const id = loadId.current;
     setBusy(true);
     navigator.geolocation.getCurrentPosition(
       (p) => {
-        if (id !== loadId.current || resetSignal.aborted) return;
+        if (!isCurrent(id)) return;
         void load({
           name: "Your approximate location",
           lat: Math.round(p.coords.latitude * 100) / 100,
@@ -129,7 +127,7 @@ export function LocationForm() {
         });
       },
       () => {
-        if (id !== loadId.current || resetSignal.aborted) return;
+        if (!isCurrent(id)) return;
         setBusy(false);
         setNotice("Location was not shared. Search for your city instead.");
       },
@@ -202,7 +200,7 @@ export function LocationForm() {
       <p className="fine">
         {hi
           ? "ब्राउज़र गोल किए निर्देशांक से Open-Meteo डेटा लेता है। खाते या API कुंजी की ज़रूरत नहीं।"
-          : "Live readings are requested from Open-Meteo by your browser using rounded coordinates. No account or API key is needed."}
+          : "Your browser sends rounded coordinates to Open-Meteo. No account or API key is needed."}
       </p>
       {results.length > 0 && (
         <ul
@@ -211,18 +209,15 @@ export function LocationForm() {
           className="location-results"
           aria-label="Search results"
         >
-          {results.map((l, i) => (
-            <li role="presentation" key={`${l.lat},${l.lon}`}>
+          {results.map((place, i) => (
+            <li role="presentation" key={`${place.lat},${place.lon}`}>
               <button
                 role="option"
                 id={`city-option-${i}`}
                 aria-selected={i === active}
-                onClick={() => {
-                  setResults([]);
-                  void load(l);
-                }}
+                onClick={() => void load(place)}
               >
-                {i + 1}. {l.name}
+                {i + 1}. {place.name}
               </button>
             </li>
           ))}
@@ -245,15 +240,7 @@ export function LocationForm() {
           stop();
           if (!location)
             setLocation({ name: "Manual reading", lat: 0, lon: 0 });
-          setAir({
-            pm25,
-            hourly: [],
-            source: "manual",
-            stale: false,
-            observedAt: new Date().toISOString(),
-            fetchedAt: new Date().toISOString(),
-            timezone: "UTC",
-          });
+          setAir(localReading(pm25));
           setPlan(null);
           setNotice(
             "Using your manual reading. No live forecast is available.",

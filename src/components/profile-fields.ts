@@ -1,18 +1,24 @@
 import type { Profile } from "@/domain/types";
-type Numeric = {
-  key: keyof Profile;
-  en: string;
-  hi: string;
+type KeysOfType<Value> = {
+  [Key in keyof Profile]: Profile[Key] extends Value ? Key : never;
+}[keyof Profile];
+
+type FieldLabel = { en: string; hi: string };
+type Numeric = FieldLabel & {
+  key: KeysOfType<number>;
   min: number;
   max: number;
   step?: number;
 };
+type ChoiceKey = KeysOfType<string>;
 type Choice = {
-  key: keyof Profile;
-  en: string;
-  hi: string;
-  options: readonly string[];
-};
+  [Key in ChoiceKey]: FieldLabel & {
+    key: Key;
+    options: readonly Profile[Key][];
+  };
+}[ChoiceKey];
+type Checkbox = FieldLabel & { key: KeysOfType<boolean> };
+
 export const numbers: Numeric[][] = [
   [
     { key: "adults", en: "Adults", hi: "वयस्क", min: 1, max: 20 },
@@ -182,7 +188,7 @@ export const choices: Choice[][] = [
   ],
   [{ key: "lang", en: "Language", hi: "भाषा", options: ["en", "hi"] }],
 ];
-export const checks: { key: keyof Profile; en: string; hi: string }[][] = [
+export const checks: Checkbox[][] = [
   [
     {
       key: "higherRisk",

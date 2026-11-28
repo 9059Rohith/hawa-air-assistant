@@ -35,6 +35,6 @@ const result = {
   measuredAt: new Date().toISOString(),
 };
 mkdirSync("reports", { recursive: true });
-writeFileSync("reports/bundle.json", JSON.stringify(result, null, 2));
+writeFileSync("reports/bundle.json", JSON.stringify(result, null, 2) + "\n");
 console.log(result);
 if (!scripts.length || bytes > 117500) process.exitCode = 1;

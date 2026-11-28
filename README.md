@@ -6,7 +6,7 @@
 
 **Challenge 6 — Urban Air Quality Assistant**
 
-**Completion status:** the existing HAWA application is deployed as **version 19** at the same public URL. The readiness update passes **663/663 Vitest cases**, **70/70 production desktop/mobile browser tests**, **100% domain coverage**, and 24 production axe page/theme/plan states with zero detected violations. [Dated verification](docs/QUALITY_REPORT.md) records production results separately. Submission copy and links are prepared; the saved LinkedIn URL describes CarbonWise and needs replacement with a HAWA post. **Last observed official assessment: 96.94/100, rank #32/53,969 on 19 November 2026.** This update has not consumed an assessment attempt or received a new score. See the [submission handoff](docs/SUBMISSION.md) and [ready-to-copy fields](docs/SUBMISSION_COPY.md).
+HAWA builds a household air-quality plan from a modelled, manual or illustrative reading. Its TypeScript calculators produce the estimates. Its server-side language model explains selected actions in English or Hindi. [Implementation and verification](docs/QUALITY_REPORT.md).
 
 [Watch the narrated, captioned demo](https://drive.google.com/file/d/1rtsSNE5ervJveCU9nqPGF8UceikRsiU0/view) · [Public source](https://github.com/9059Rohith/hawa-air-assistant) · [Verification evidence](docs/QUALITY_REPORT.md)
 
@@ -14,7 +14,7 @@
 
 The 3-minute 8-second demo records the public application with labelled example air data, loaded-page offline planning, community tools and calculators. Captions and synthetic narration explain its boundaries. Drive access is set to **Anyone with the link — Viewer**.
 
-**Deployment:** hosted on Sites / Cloudflare Workers using OpenNext. No sign-in is required. The original Vercel team and the Railway workspace have account restrictions, so this release uses a separate supported hosting service. See [portable hosting](docs/HOSTING.md) and [verified results and remaining limits](docs/QUALITY_REPORT.md). A ranking or competition score is not claimed.
+**Deployment:** hosted on Sites / Cloudflare Workers using OpenNext. No sign-in is required. The original Vercel team and the Railway workspace have account restrictions, so this release uses a separate supported hosting service. See [portable hosting](docs/HOSTING.md) and [verified results and remaining limits](docs/QUALITY_REPORT.md).
 
 [Six-criterion comparison with Challenge 5](docs/CHALLENGE_COMPARISON.md) · [87-case offline evaluation](reports/scenarios.json)
 
@@ -123,7 +123,7 @@ HAWA targets WCAG 2.2 AA. Automated axe checks and contrast checks are evidence,
 
 ## Performance and verification
 
-Current verification: **663 Vitest cases passed (including the same 87 acceptance cases); 100% domain coverage; 95.89% overall lines; 70 desktop/mobile journeys passed; zero axe violations across 24 page/theme/plan states; 114.7 KiB home JavaScript; no reported dependency vulnerabilities.** Production results retain their deployed revision in separate reports. [Quality report](docs/QUALITY_REPORT.md), [readiness evidence](reports/submission-readiness.json), [bundle measurement](reports/bundle.json), [coverage](reports/coverage.json). Local performance is not a production latency promise.
+The [quality report](docs/QUALITY_REPORT.md) records checks by release. Run the commands above to reproduce the unit, acceptance and browser suites. The competition's last recorded assessment was 97/100 on attempt 2. It predates the current code changes.
 
 ## Project structure and scripts
 

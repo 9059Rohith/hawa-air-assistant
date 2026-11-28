@@ -18,16 +18,15 @@ export async function requestPlan(
   signal: AbortSignal,
 ) {
   const deadline = AbortSignal.any([signal, AbortSignal.timeout(35000)]);
-  const airInput =
-    air.source === "open-meteo-browser"
-      ? { browserAir: { location, air } }
-      : air.source !== "open-meteo"
-        ? { manualPm: air.pm25 }
-        : {};
   const response = await fetch("/api/plan", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, location, offline: false, ...airInput }),
+    body: JSON.stringify({
+      profile,
+      location,
+      offline: false,
+      ...planAirInput(location, air),
+    }),
     signal: deadline,
   });
   if (!response.ok) {
@@ -46,16 +45,26 @@ export async function requestPlan(
   return plan;
 }
 
+function planAirInput(location: Location, air: Air) {
+  switch (air.source) {
+    case "open-meteo":
+      return {};
+    case "open-meteo-browser":
+      return { browserAir: { location, air } };
+    case "manual":
+    case "demo":
+      return { localAir: air };
+  }
+}
+
 function validateAirContext(result: Air, input: Air) {
-  const expected = input.source === "demo" ? "manual" : input.source;
-  if (result.source !== expected)
+  if (result.source !== input.source)
     throw new Error("The returned plan changed its air-data source");
-  if (input.source === "open-meteo") return;
-  if (result.pm25 !== input.pm25)
-    throw new Error("The returned plan changed your air reading");
-  if (
-    input.source === "open-meteo-browser" &&
-    !airSnapshotsMatch({ ...result, stale: input.stale }, input)
-  )
-    throw new Error("The returned plan changed the browser's air snapshot");
+  if (input.source === "open-meteo") return; // The server fetches a current reading.
+  const expected =
+    input.source === "open-meteo-browser" && result.stale
+      ? { ...input, stale: true }
+      : input;
+  if (!airSnapshotsMatch(result, expected))
+    throw new Error("The returned plan changed the requested air snapshot");
 }

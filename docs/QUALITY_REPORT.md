@@ -1,6 +1,14 @@
-# Verified quality report — 27 November 2026
+# HAWA verification by release
 
-Observed software evidence, not an evaluation-score or ranking prediction. The portal was inspected on 19 November 2026: **96.94/100**, rank **#32/53,969**, with **code quality 89** as the lowest category. This follow-up targets maintainability and response handling; a new official score requires owner resubmission.
+## Code quality update, 28 November 2026
+
+The profile wizard now owns navigation and validation while `ProfileFields` renders typed controls. Numeric, boolean and enumerated controls can only reference compatible profile properties. One helper associates inputs with accessible hints and errors. Clearing the child count while editing preserves previously entered ages until a valid replacement is chosen.
+
+Manual and illustrative readings now cross the API boundary with the original observation. Tests cover repeated builds, rewritten timestamps, conflicting sources and illustrative forecasts. The legacy scalar input remains supported. The browser and server share the same freshness limits for model data. A manual observation cannot supply a forecast.
+
+Local verification passed 668 tests, including 87 acceptance cases with 1,111 assertions. Coverage was 95.91% of lines for the application and 100% for every domain coverage metric. The dependency check found zero violations across 83 source modules. Home JavaScript measured 117,461 gzip bytes against the 117,500-byte limit. The [coverage breakdown](../reports/coverage.json) uses repository-relative paths.
+
+## Previous release, 27 November 2026
 
 ## Plan consistency and submission readiness
 

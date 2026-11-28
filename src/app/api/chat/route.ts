@@ -8,21 +8,23 @@ import { scrubUserText } from "@/lib/guard";
 import { readBody } from "@/services/transport";
 import { errorResponse } from "@/lib/errors";
 import { language } from "@/services/llm";
-const schema = RequestSchema.extend({
-  message: z.string().min(1).max(800),
-  messages: z
-    .array(
-      z
-        .object({
-          role: z.enum(["user", "assistant"]),
-          content: z.string().max(800),
-        })
-        .strict(),
-    )
-    .max(10)
-    .optional(),
-  actionIds: z.array(z.string().max(80)).max(10).optional(),
-}).strict();
+const schema = RequestSchema.omit({ localAir: true })
+  .extend({
+    message: z.string().min(1).max(800),
+    messages: z
+      .array(
+        z
+          .object({
+            role: z.enum(["user", "assistant"]),
+            content: z.string().max(800),
+          })
+          .strict(),
+      )
+      .max(10)
+      .optional(),
+    actionIds: z.array(z.string().max(80)).max(10).optional(),
+  })
+  .strict();
 export const maxDuration = 40;
 export async function POST(request: Request) {
   try {

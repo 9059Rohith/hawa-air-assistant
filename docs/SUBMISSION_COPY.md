@@ -18,10 +18,14 @@ HAWA helps families and communities navigate urban smog with practical daily pla
 - Methodology: https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site/about
 - Event sign-in: https://vision.hack2skill.com/event/pwvirtual1/registration
 
-## Required social-post field
+## Challenge 6 form
 
-Replace the saved CarbonWise LinkedIn URL with an actual HAWA post. [Ready-to-publish HAWA copy](LINKEDIN_DRAFT.md) is provided. A draft document is not a public post URL.
+Use the [existing submission page](https://hack2skill.com/event/pwvirtual1/dashboard/submissions/6afaaed39be15aea670e2bed). The form includes a required LinkedIn field. Its existing value is managed by the entrant. The dashboard showed 2 of 3 attempts used and 97/100 on 28 November 2026.
 
-## Final handoff
+## Changes in the deployed version
 
-The last observed official assessment on 19 November 2026 was 96.94/100, rank #32/53,969, with one of three attempts used. No newer score is claimed. The old deep submission link returned an unauthenticated 404 on 27 November; sign in through the event entry and open the existing Challenge 6 submission. Recheck the required post link and current portal fields before using a remaining assessment attempt. GitHub-hosted CI remains subject to the account billing restriction; local and production verification are recorded separately.
+HAWA keeps each plan tied to its air reading. Rebuilding preserves the original observation time, source, timezone and any illustrative forecast. Manual measurements cannot acquire a forecast, and the API rejects conflicting sources. Older clients can still send a single PM2.5 value. Browser and server now use the same freshness limits. The profile wizard separates navigation from typed form controls, shares accessible error handling, and preserves children's ages while their household count is being edited. City search and location lookup use a shared check so late replies cannot replace newer choices. Verification: 668 passing automated cases, including 87 acceptance scenarios; 100% domain coverage and 95.91% application line coverage. The dependency check found zero violations across 83 source modules.
+
+## Generative AI services used
+
+HAWA uses OpenAI on the server for two tasks: explaining selected household actions and answering follow-up questions in English or Hindi. The model receives bounded context from the household profile, air reading, selected actions and curated guidance. It can explain an action, while deterministic TypeScript calculates the air index, exposure scenarios and travel CO2 estimates. The server validates model output against the selected action IDs before displaying it. When the provider is unavailable or output fails validation, HAWA gives a labelled rules-based response. Urgent phrases use a predefined response. Open-Meteo supplies modelled air data. Manual readings and household examples retain their own source labels.

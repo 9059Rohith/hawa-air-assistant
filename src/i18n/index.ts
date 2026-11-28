@@ -30,7 +30,6 @@ export const copy = {
     download: "Download JSON",
     ask: "Ask HAWA",
     whatif: "What if you made these changes?",
-    calculate: "How we calculated this",
     rules: "Rules-based guidance",
     ai: "AI-personalized guidance",
     general:
@@ -70,7 +69,6 @@ export const copy = {
     download: "JSON डाउनलोड",
     ask: "हवा से पूछें",
     whatif: "इन बदलावों से क्या होगा?",
-    calculate: "हमने गणना कैसे की",
     rules: "नियम आधारित सलाह",
     ai: "AI से व्यक्तिगत सलाह",
     general:

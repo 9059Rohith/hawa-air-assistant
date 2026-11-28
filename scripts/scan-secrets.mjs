@@ -52,6 +52,9 @@ const result = {
   measuredAt: new Date().toISOString(),
 };
 mkdirSync("reports", { recursive: true });
-writeFileSync("reports/secret-scan.json", JSON.stringify(result, null, 2));
+writeFileSync(
+  "reports/secret-scan.json",
+  JSON.stringify(result, null, 2) + "\n",
+);
 console.log(JSON.stringify(result));
 if (matchedFiles.length || historyMatches) process.exitCode = 1;

@@ -1,8 +1,8 @@
 {
   "route": "/",
-  "gzipBytes": 117494,
+  "gzipBytes": 117461,
   "scripts": 9,
   "budget": 117500,
-  "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
-  "measuredAt": "2026-11-26T20:42:22.209Z"
+  "origin": "http://localhost:3137",
+  "measuredAt": "2026-11-28T15:07:40.745Z"
 }

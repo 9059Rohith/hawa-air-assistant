@@ -41,7 +41,6 @@ export function usePlanGeneration(offline: boolean) {
         controller.signal,
       );
       if (!current()) return;
-      if (air.source === "demo") result.air.source = "demo";
       setAir(result.air);
       setPlan(result);
       setNotice(
