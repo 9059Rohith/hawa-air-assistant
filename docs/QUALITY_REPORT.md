@@ -8,6 +8,8 @@ Manual and illustrative readings now cross the API boundary with the original ob
 
 Local verification passed 668 tests, including 87 acceptance cases with 1,111 assertions. Coverage was 95.91% of lines for the application and 100% for every domain coverage metric. The dependency check found zero violations across 83 source modules. Home JavaScript measured 117,461 gzip bytes against the 117,500-byte limit. The [coverage breakdown](../reports/coverage.json) uses repository-relative paths.
 
+Production version 20 uses commit `f176a1e3423759d74533c2268cd09fd0e6d7f7f7`. All 70 desktop and mobile journeys passed locally. On the public URL, 47 passed on the initial run, which encountered DNS, connection and navigation failures. All 23 affected tests passed on retry. The accessibility audit recorded zero violations and zero runtime errors across 24 states. A real AI plan returned ten actions and preserved the manual measurement's timestamp. [Production measurements](../reports/version-20-production.json).
+
 ## Previous release, 27 November 2026
 
 ## Plan consistency and submission readiness

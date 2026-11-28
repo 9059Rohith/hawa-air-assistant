@@ -1,0 +1,142 @@
+{
+  "version": 20,
+  "sourceCommit": "f176a1e3423759d74533c2268cd09fd0e6d7f7f7",
+  "verifiedAt": "2026-11-28T15:15:46.687597+00:00",
+  "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+  "livePlan": {
+    "verifiedAt": "2026-11-28T15:11:13.863Z",
+    "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+    "sourceCommit": "f176a1e3423759d74533c2268cd09fd0e6d7f7f7",
+    "versionNumber": 20,
+    "preservedObservation": true,
+    "client": "requestPlan with production HTTP and full response/context validation",
+    "generatedBy": "llm",
+    "actionCount": 10,
+    "airSource": "manual",
+    "pm25": 120,
+    "elapsedMs": 9800
+  },
+  "homeBundle": {
+    "route": "/",
+    "gzipBytes": 117461,
+    "scripts": 9,
+    "budget": 117500,
+    "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+    "measuredAt": "2026-11-28T15:11:04.008Z"
+  },
+  "browserTests": {
+    "localProductionBuildPassed": 70,
+    "initialPublicRun": {
+      "passed": 47,
+      "failed": 23
+    },
+    "publicRerun": {
+      "passed": 23,
+      "failed": 0
+    },
+    "note": "The initial public run encountered DNS lookup failures, a connection reset and a navigation timeout. All affected cases passed on retry."
+  },
+  "accessibility": {
+    "origin": "https://hawa-air-assistant.vabjashwanthreddy.chatgpt.site",
+    "measuredAt": "2026-11-28T15:11:20.955Z",
+    "checks": [
+      {
+        "state": "//light",
+        "violations": []
+      },
+      {
+        "state": "//dark",
+        "violations": []
+      },
+      {
+        "state": "//hc",
+        "violations": []
+      },
+      {
+        "state": "/plan/light",
+        "violations": []
+      },
+      {
+        "state": "/plan/dark",
+        "violations": []
+      },
+      {
+        "state": "/plan/hc",
+        "violations": []
+      },
+      {
+        "state": "/community/light",
+        "violations": []
+      },
+      {
+        "state": "/community/dark",
+        "violations": []
+      },
+      {
+        "state": "/community/hc",
+        "violations": []
+      },
+      {
+        "state": "/learn/light",
+        "violations": []
+      },
+      {
+        "state": "/learn/dark",
+        "violations": []
+      },
+      {
+        "state": "/learn/hc",
+        "violations": []
+      },
+      {
+        "state": "/about/light",
+        "violations": []
+      },
+      {
+        "state": "/about/dark",
+        "violations": []
+      },
+      {
+        "state": "/about/hc",
+        "violations": []
+      },
+      {
+        "state": "selected-plan/light",
+        "violations": []
+      },
+      {
+        "state": "selected-plan/dark",
+        "violations": []
+      },
+      {
+        "state": "selected-plan/hc",
+        "violations": []
+      },
+      {
+        "state": "hindi-plan/light",
+        "violations": []
+      },
+      {
+        "state": "hindi-plan/dark",
+        "violations": []
+      },
+      {
+        "state": "hindi-plan/hc",
+        "violations": []
+      },
+      {
+        "state": "outdated-plan/light",
+        "violations": []
+      },
+      {
+        "state": "outdated-plan/dark",
+        "violations": []
+      },
+      {
+        "state": "outdated-plan/hc",
+        "violations": []
+      }
+    ],
+    "errors": []
+  }
+}
